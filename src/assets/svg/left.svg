@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="76px" height="77px" viewBox="0 0 76 77" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>left@1x</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="31.2" cy="31.2" r="31.2"></circle>
+        <filter x="-16.8%" y="-16.8%" width="133.7%" height="133.7%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.438780923   0 0 0 0 0.558385027   0 0 0 0 0.67798913  0 0 0 1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页" transform="translate(-241.000000, -2923.000000)">
+            <g id="编组" transform="translate(248.000000, 2623.000000)">
+                <g id="left" transform="translate(0.000000, 307.200000)">
+                    <g id="Oval">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                        <use fill="#6F8397" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    </g>
+                    <path d="M21.4593269,33.977111 L29.4613223,42.1211316 C30.0886787,42.7596228 31.1001309,42.7596228 31.7274873,42.1211316 L39.7294827,33.977111 C40.3568391,33.3386198 40.3568391,32.3092156 39.7294827,31.6707244 C39.1021262,31.0322332 38.090674,31.0322332 37.4633176,31.6707244 L32.2012055,37.0262323 L32.2012055,21.4288041 C32.2012055,20.5297042 31.4842267,19.8 30.6008064,19.8 C29.7173861,19.8 29.0004073,20.5297042 29.0004073,21.4288041 L29.0004073,37.0392628 L23.7382952,31.6837548 C23.4182154,31.357994 23.0085132,31.2016288 22.598811,31.2016288 C22.1891089,31.2016288 21.7794067,31.357994 21.4721301,31.6837548 C20.8447737,32.3092156 20.8447737,33.3386198 21.4593269,33.977111 L21.4593269,33.977111 Z" id="Path" fill="#FFFFFF" transform="translate(30.600000, 31.200000) rotate(-270.000000) translate(-30.600000, -31.200000) "></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

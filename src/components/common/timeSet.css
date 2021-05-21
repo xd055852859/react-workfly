@@ -1,0 +1,75 @@
+.timeSet,
+.timeSet-date {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+}
+.timeSet-title {
+  width: 100%;
+  height: 30px;
+  padding-left: 10px;
+  box-sizing: border-box;
+  line-height: 30px;
+}
+.timeSet-title > span {
+  margin-left: 10px;
+  color: #1890ff;
+}
+.timeSet-time-logo,
+.timeSet-date-logo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: space-between;
+}
+.timeSet-date-logo {
+  height: 40px;
+}
+.timeSet-time-logo img,
+.timeSet-date-logo img {
+  width: 16px;
+  height: 16px;
+  margin-right: 3px;
+}
+.timeSet-time-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+.timeSet-time-choose {
+  width: 0;
+  height: 0;
+  border-width: 9px;
+  border-style: solid;
+  position: absolute;
+  top: -2px;
+  right: -9px;
+  z-index: 5;
+}
+.timeSet-date-info {
+  display: flex;
+  flex-wrap: wrap;
+}
+.timeSet-time-item,
+.timeSet-date-item {
+  width: 20px;
+  height: 20px;
+  line-height: 19px;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+  background-color: #505050;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.timeSet-freeTime {
+  width: calc(100% - 70px);
+  height: 30px;
+  border-radius: 10px;
+  border: 2px solid #dfdfdf;
+  margin-right:5px;
+}

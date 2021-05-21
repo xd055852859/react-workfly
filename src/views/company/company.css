@@ -1,0 +1,222 @@
+.company {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.company-menu-logo {
+  width: 70%;
+  height: 120px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.company-menu-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.company-menu-name {
+  width: 80%;
+  height: 40px;
+  line-height: 40px;
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+}
+
+.company-menu {
+  width: 170px;
+  height: 100%;
+  background: #001529;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  position: relative;
+  z-index: 1;
+}
+.company-menu-logout {
+  width: 100%;
+  height: 70px;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.company-menu-link {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  padding-left: 26px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.company-menu-button {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  z-index: 2;
+}
+
+.company-container {
+  width: calc(100% - 170px);
+  height: 100%;
+  background: #fff;
+}
+
+.company-header {
+  width: 100%;
+  height: 70px;
+  background: #ffffff;
+  box-shadow: 0px 8px 14px 0px rgba(72, 89, 102, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 14px;
+  box-sizing: border-box;
+}
+
+.company-header-title {
+  /* width: 90px; */
+  height: 100%;
+  font-size: 18px;
+  font-family: MicrosoftYaHei;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+
+.company-menu-link-icon {
+  width: 30px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.company-submenu {
+  width: 100%;
+  height: 38px;
+  color: #fff;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.company-button {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.company-info {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.company-info-container {
+  width: 100%;
+  height: calc(100% - 72px);
+  /* margin-top: 25px;
+  margin-left: 25px; */
+  background-color: #fff;
+  border: 1px solid #ececec;
+  overflow: auto;
+  box-sizing: border-box;
+}
+.company-info-title {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+.MuiTableContainer-root::-webkit-scrollbar {
+  height: 8px;
+}
+
+.company-avatar-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.company-avatar {
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.company-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.company-choose-info {
+  width: 100%;
+}
+
+.company-choose-info:hover {
+  background: rgba(240, 240, 240, 0.3);
+}
+.company-path-tree {
+  height: 100%;
+  font-size: 14px;
+  margin-left: 10px;
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  padding-top: 2.5px;
+  box-sizing: border-box;
+}
+.companySearch-container {
+  width: 250px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.companySearch-button {
+  /* color: #fff; */
+  position: absolute;
+  top: 3px;
+  right: 0px;
+  z-index: 5;
+}

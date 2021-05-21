@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="113px" height="111px" viewBox="0 0 113 111" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>靠谱的工作@1x</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页" transform="translate(-912.000000, -3446.000000)">
+            <g id="靠谱的工作" transform="translate(912.000000, 3446.000000)">
+                <path d="M88,15 L8,15 C4,15 0,19 0,23 L0,87 C0,91.8 4,95 8,95 L40,95 L32.8,108.6 C32,109.4 32.8,111 34.4,111 L60.8,111 C62.4,111 62.4,109.4 62.4,108.6 L56,95 L88,95 C92.8,95 96,91 96,87 L96,23 C96,19 92,15 88,15 Z" id="形状" fill="#2A5082" fill-rule="nonzero"></path>
+                <path d="M92,75 C92,79.8 88.8,83 84,83 L12,83 C7.2,83 4,79.8 4,75 L4,27 C4,22.2 7.2,19 12,19 L84,19 C88.8,19 92,22.2 92,27 L92,75 Z" id="路径" fill="#FFFFFF"></path>
+                <polygon id="路径" fill="#2A5082" points="20 31 76 31 76 47 20 47"></polygon>
+                <polygon id="路径" fill="#2A5082" points="55.2 51 76 51 76 71.8 55.2 71.8"></polygon>
+                <circle id="椭圆形" stroke="#979797" stroke-width="8" fill="#FFFFFF" cx="48" cy="89" r="1"></circle>
+                <polygon id="路径" fill="#2A5082" points="20 51 52 51 52 55 20 55"></polygon>
+                <polygon id="路径" fill="#2A5082" points="20 59 52 59 52 63 20 63"></polygon>
+                <polygon id="路径" fill="#2A5082" points="20 67 52 67 52 71 20 71"></polygon>
+                <path d="M105,16 L113,16 L113,20 L105,20 L105,16 Z M100.672,9.552 L106.332,3.896 L109.16,6.724 L103.5,12.38 L100.672,9.552 Z M93,0 L97,0 L97,8 L93,8 L93,0 Z" id="形状" fill="#2A5082" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>

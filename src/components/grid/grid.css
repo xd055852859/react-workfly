@@ -1,0 +1,233 @@
+.grid {
+  height: 100%;
+  width: 100%;
+  color: #fff;
+  position: relative;
+  overflow: auto;
+}
+.grid-container {
+  height: calc(100% - 75px);
+  width: 100%;
+}
+.grid-group-container {
+  position: relative;
+}
+.grid-group-item {
+  position: relative;
+  z-index: 1;
+}
+.grid-label-item {
+  padding-bottom: 10px;
+  box-sizing: border-box;
+  display: flex;
+  min-height: 30px;
+}
+.grid-title {
+  display: flex;
+  justify-content: space-between;
+  min-height: 40px;
+  position: relative;
+}
+.grid-label-title {
+  padding-right: 5px 10px;
+  box-sizing: border-box;
+}
+.grid-title-task {
+  width: 100%;
+  box-sizing: border-box;
+}
+.grid-title-subtitle {
+  width: 25%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 5px;
+  position: relative;
+  z-index: 2;
+}
+
+.grid-label-tr {
+  width: 74%;
+  display: flex;
+}
+.grid-label-td,
+.grid-label-topTd,
+.grid-label-bottomTd {
+  width: 4%;
+  min-width: 25px;
+  margin-right: -1px;
+  margin-bottom: -1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  font-size: 8px;
+  flex-shrink: 0;
+}
+.grid-label-td {
+  border: 1px solid #ededed;
+}
+.grid-label-topTd {
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+.grid-label-bottomTd {
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+.grid-group-date {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.chooseTr:hover {
+  background: rgba(240, 240, 240, 0.3);
+}
+.taskItem-day {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  padding: 3px 0px 0px 6px;
+  background-color: #ffbd03;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin-right: 5px;
+  font-size: 12px;
+}
+.taskItem-time {
+  width: 0;
+  height: 0;
+  border-width: 20px;
+  border-style: solid;
+  border-color: #35a6f8 transparent transparent transparent;
+  position: absolute;
+  top: -2px;
+  right: -20px;
+}
+.taskItem-time-hour {
+  width: 10px;
+  height: 10px;
+  line-height: 10px;
+  font-size: 8px;
+  position: absolute;
+  top: 0px;
+  z-index: 1;
+  transform: scale(0.7);
+}
+.taskItem-time-day {
+  width: 10px;
+  height: 10px;
+  line-height: 10px;
+  font-size: 10px;
+  position: absolute;
+  bottom: 0px;
+  z-index: 3;
+}
+.grid-label-td-avatar {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.grid-label-td-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* .grid::-webkit-scrollbar {
+  width: 3px;
+  height: 5px;
+} */
+.line-img-group {
+  width: 20px;
+  height: calc(100% + 1px);
+  border-left: 1px solid #d7d7d7;
+  border-top: 1px solid #d7d7d7;
+  position: absolute;
+  top: 13px;
+  left: 10px;
+  z-index: 0;
+}
+.line-img-label {
+  width: 25px;
+  height: calc(100% + 1px);
+  border-left: 1px solid #d7d7d7;
+  border-top: 1px solid #d7d7d7;
+  position: absolute;
+  top: 15px;
+  left: 40px;
+  z-index: 0;
+}
+.line-img-label-top {
+  width: 1px;
+  height: 43px;
+  border-left: 1px solid #d7d7d7;
+  border-top: 1px solid #d7d7d7;
+  position: absolute;
+  top: 12px;
+  left: 10px;
+  z-index: 0;
+  border-top-left-radius: 5px;
+}
+.line-img-task {
+  width: 35px;
+  height: calc(100% + 2px);
+  border-left: 1px solid #d7d7d7;
+  border-bottom: 1px solid #d7d7d7;
+  position: absolute;
+  top: -30px;
+  left: -35px;
+  z-index: 0;
+  border-bottom-left-radius: 5px;
+}
+.point-group,
+.point-label {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #666;
+  position: absolute;
+  top: 9px;
+  left: -5px;
+}
+.point-label {
+  left: -10px;
+}
+.grid-groupLogo {
+  width: 25px;
+  height: 25px;
+  overflow: hidden;
+  /* border-radius: 50%; */
+  margin-right: 5px;
+}
+.grid-groupLogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.grid-grouptitle {
+  height: 28px;
+  line-height: 28px;
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid rgba(217, 217, 217, 1);
+  display: flex;
+  position: relative;
+  z-index: 5;
+  padding: 0px 5px;
+  box-sizing: border-box;
+}
+.grid-date-label {
+  width: 74%;
+  display: flex;
+  margin-right: 1px;
+}
+.grid-date-label-title {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}

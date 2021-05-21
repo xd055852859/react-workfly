@@ -1,0 +1,112 @@
+.createMoreTask {
+  width: 428px;
+  height: 500px;
+  position: fixed;
+  z-index: 20;
+  background-color: #fff;
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+}
+.createMoreTask-left,
+.createMoreTask-right {
+  width: 50%;
+  height: 100%;
+  padding: 10px 0px;
+  box-sizing: border-box;
+}
+.createMoreTask-left {
+  border: 1px solid #dedede;
+}
+.createMoreTask-left-container,
+.createMoreTask-right-container {
+  width: 100%;
+  height: calc(100% - 30px);
+  overflow: auto;
+}
+.createMoreTask-item {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+  padding: 0px 8px;
+  box-sizing: border-box;
+}
+.createMoreTask-item-title {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.createMoreTask-item:hover {
+  background: #f0f0f0;
+}
+.createMoreTask-item:hover .createMoreTask-item-label,
+.createMoreTask-item:hover .createMoreTask-item-name {
+  color: #1890ff;
+}
+.createMoreTask-item-left {
+  width: calc(100% - 35px);
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.createMoreTask-item-name,
+.createMoreTask-item-label {
+  width: 70px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+}
+.createMoreTask-avatar {
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
+  border-radius: 5px;
+  margin-right: 5px;
+}
+.createMoreTask-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.createMoreTask-logo {
+  width: 20px;
+  height: 12px;
+  margin-left: 10px;
+}
+.createMoreTask-right-header {
+  width: 100%;
+  height: 35px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding:0px 8px;
+  box-sizing: border-box;
+  font-weight:bold;
+}
+.createMoreTask-groupName {
+  width: calc(100% - 35px);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+}
+.createMoreTask-left-input {
+  width: calc(100% - 65px);
+  height: 30px;
+  border: 1px solid #dfdfdf;
+  border-radius: 5px;
+  padding:0px 5px;
+  box-sizing: border-box;
+}

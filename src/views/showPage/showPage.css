@@ -1,0 +1,368 @@
+.showPage-container {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  color: #fff;
+  background-size: cover;
+  background-attachment: fixed;
+  position: relative;
+  z-index: 1;
+}
+.showPage-clock {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.showPage {
+  width: 365px;
+  height: 100%;
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  padding: 0px 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.showPage-bg1 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+}
+.showPage-bg2 {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  -webkit-filter: blur(8px);
+  filter: blur(8px);
+  z-index: -2;
+  /* background-color: rgba(0, 0, 0); */
+  /* background-image: url('https://cdn-icare.qingtime.cn/1596679987203_画板备份10.jpg'); */
+  background-size: cover;
+  background-attachment: fixed;
+}
+.showPage-b {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* -webkit-filter: grayscale(40%) blur(8px);
+  filter: grayscale(40%) blur(8px); */
+  z-index: -1;
+  background-color: rgba(0, 0, 0, 0.27);
+  /* background-image: url('https://cdn-icare.qingtime.cn/1596679987203_画板备份10.jpg'); */
+}
+.showPage-time {
+  width: 600px;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: absolute;
+}
+
+.showPage-time-title {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 130px;
+}
+
+.showPage-time-subtitle {
+  width: 100%;
+  /* height: 25px; */
+  font-size: 12px;
+  position: absolute;
+  bottom: 30px;
+}
+.showPage-time-prompt {
+  width: 100%;
+  /* height: 25px; */
+  font-size: 15px;
+  position: absolute;
+  text-align: center;
+  bottom: 15px;
+}
+.showPage-time-subtitle-top {
+  font-size: 25px;
+  margin-bottom: 5px;
+}
+.showPage-time-subtitle > div {
+  text-align: center;
+}
+
+.showPage-logo {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 22px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.showPage-set {
+  width: 300px;
+  height: 100%;
+  position: fixed;
+  top: 0px;
+  background-color: #fff;
+  color: #333;
+  overflow: hidden;
+}
+.showPage-set-container {
+  width: 100%;
+  height: 100%;
+}
+.showPage-set-title {
+  width: 100%;
+  font-size: 16px;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.showPage-task-title {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.showPage-task-menu {
+  width: 100%;
+  height: 25px;
+  display: flex;
+  margin-bottom: 5px;
+}
+.showPage-task-menu-item {
+  cursor: pointer;
+}
+.showPage-task-container {
+  height: calc(100% - 80px);
+  width: 100%;
+}
+.showPage-timeos-container {
+  width: 100%;
+  height: calc(100% - 80px);
+  overflow: auto;
+}
+.contentHeader-set-container {
+  width: 528px;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 5;
+}
+.showPage-set-time {
+  display: flex;
+  align-items: center;
+}
+.showPage-set-time img {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+.showPage-container .contentHeader-set-left {
+  width: 260px;
+  height: 100%;
+  padding: 8px 10px;
+  box-sizing: border-box;
+}
+.showPage-input {
+  width: 300px;
+  height: 35px;
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  border-radius: 30px;
+  padding: 0px 10px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 15px;
+  left: 10px;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 5;
+}
+.showPage-button {
+  width: 500px;
+  position: absolute;
+  top: calc(50% + 70px);
+  left: calc(50% - 250px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  z-index: 3;
+}
+.showPage-input input {
+  height: 100%;
+  border: 0px;
+  background-color: transparent;
+  flex: 1;
+  color: #fff;
+}
+.showPage-input input::-webkit-input-placeholder {
+  color: #eee;
+}
+.showPage-input-img {
+  height: 35px;
+  width: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px;
+  cursor: pointer;
+}
+.showPage-input-img img {
+  height: 20px;
+}
+.showPage-input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.showPage-weather {
+  display: flex;
+  position: absolute;
+  top: 15px;
+  background-color: transparent;
+}
+.showPage-weather-item {
+  height: 200px;
+  padding: 0px 15px;
+}
+.showPage-weather-item-top {
+  height: 12px;
+  font-size: 9px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #ffffff;
+  line-height: 12px;
+  text-align: center;
+  text-shadow: 0px 1px 2px rgba(94, 94, 94, 0.5);
+}
+.showPage-weather-item-bottom {
+  height: 55px;
+  font-size: 28px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #ffffff;
+  line-height: 55px;
+  text-shadow: 0px 1px 2px rgba(94, 94, 94, 0.5);
+  display: flex;
+}
+.showPage-weather-item-img {
+  width: 55px;
+  height: 55px;
+}
+.showPage-weather-item-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.showPage-weather-icon {
+  transform: scale(0.6);
+  margin-bottom: 23px;
+}
+.showPage-bigLogo {
+  width: 120px;
+  height: 50px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+.showPage-bigLogo img {
+  width: 100%;
+  height: 100%;
+}
+.bg {
+  width: 260px;
+  height: 100%;
+  padding: 8px 0px 0px 6px;
+  box-sizing: border-box;
+  /* overflow: auto; */
+  position: relative;
+}
+.showPage-button-item {
+  width: 80px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  position: relative;
+  z-index: 1;
+}
+.showPage-button-close {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  z-index: 3;
+  cursor: pointer;
+  display: none;
+}
+.showPage-button-item:hover .showPage-button-close {
+  display: flex;
+}
+.showPage-button-item:hover {
+  background-color: #d3d3d3;
+}
+.showPage-fileContainer {
+  width: calc(100% - 375px);
+  height: 100%;
+  background-color: #fff;
+  color: #333;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 30;
+}
+@keyframes setRight {
+  from {
+    right: 0px;
+  }
+
+  to {
+    right: -260px;
+  }
+}
+
+@keyframes setLeft {
+  from {
+    right: -260px;
+  }
+
+  to {
+    right: 0px;
+  }
+}
+
+@keyframes showRight {
+  from {
+    right: 260px;
+  }
+
+  to {
+    right: 0px;
+  }
+}
+
+@keyframes showLeft {
+  from {
+    right: 0px;
+  }
+
+  to {
+    right: 260px;
+  }
+}

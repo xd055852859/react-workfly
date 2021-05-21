@@ -1,0 +1,256 @@
+@import '../../assets/css/button.css';
+.vitality-container {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  position: relative;
+  padding: 0px 8%;
+  box-sizing: border-box;
+}
+.vitality-top {
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(239, 239, 239, 1);
+}
+.vitality-img {
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 50%;
+  margin-right: 9px;
+}
+.vitality-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.vitality-top-info {
+  width: calc(100% - 40px);
+  height: 60px;
+}
+
+.vitality-title {
+  width: 100%;
+  height: 30px;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(51, 51, 51, 1);
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+.vitality-top-title,
+.vitality-bottom-title {
+  display: flex;
+  height: 29px;
+  justify-content: flex-start;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(51, 51, 51, 1);
+}
+.vitality-top-title > div,
+.vitality-bottom-title > div {
+  height: 29px;
+  line-height: 29px;
+}
+.vitality-bottom-title > div {
+  width: 100%;
+}
+.vitality-bottom-title {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(153, 153, 153, 1);
+}
+.vitality-top-num {
+  display: flex;
+  margin-left: 10px;
+}
+.vitality-numImg {
+  width: 18px;
+  height: 12px;
+  margin: 0px 5px;
+}
+.vitality-numImg img {
+  width: 100%;
+  height: 100%;
+}
+.vitality-chart {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-items: flex-start;
+  box-sizing: border-box;
+  position: relative;
+}
+.vitality-chart-title {
+  width: 100%;
+  height: 25px;
+  line-height: 25px;
+  display: flex;
+}
+.vitality-month {
+  width: 23%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+.vitality-week {
+  width: 90%;
+  height: 500px;
+}
+.vitality-month-container,
+.vitality-log-container {
+  width: 100%;
+  height: calc(100% - 31px);
+  display: flex;
+  flex-wrap: wrap;
+  overflow: auto;
+}
+.vitality-log-container {
+  align-content: flex-start;
+  height: 100%;
+  overflow: auto;
+}
+.vitality-month-info {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  padding-left: 10px;
+  box-sizing: border-box;
+  margin-bottom: 5px;
+}
+.vitality-month-title {
+  height: 26px;
+  line-height: 26px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  padding: 0px 10px;
+  border-radius: 15px;
+  background-color: #1890ff;
+  cursor: pointer;
+  margin: 10px;
+}
+.vitality-month-item {
+  width: calc(96% / 7);
+  cursor: pointer;
+}
+.vitality-month-item-day {
+  height: 36px;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 36px;
+  color: #333;
+  margin-left: -1px;
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+.vitality-month-item-title {
+  height: 17px;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(94, 138, 251, 1);
+  line-height: 17px;
+  text-align: center;
+  border: 1px solid transparent;
+  margin-right: 1px;
+  margin-bottom: 1px;
+}
+.vitality-changeNum {
+  width: 0;
+  height: 0;
+  border-width: 30px;
+  border-style: solid;
+  border-color: #4370e3 transparent transparent transparent;
+  position: absolute;
+  top: 0px;
+  right: -30px;
+}
+.vitality-changeNum-box {
+  position: absolute;
+  right: -0px;
+  top: -10px;
+  z-index: 10;
+  font-size: 8px;
+  transform: scale(0.8);
+}
+.vitality-log {
+  width: 100%;
+  height: calc(100% - 30px);
+  padding: 0px 10px;
+  box-sizing: border-box;
+}
+.vitality-log-container {
+  padding: 0px 5px;
+  box-sizing: border-box;
+}
+.vitality-msg {
+  width: 100%;
+  min-height: 26px;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(51, 51, 51, 1);
+  line-height: 26px;
+  display: flex;
+  padding: 0px 8px;
+  box-sizing: border-box;
+  /* align-items: center; */
+}
+.vitality-msg > div {
+  margin-right: 5px;
+  /* overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; */
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+}
+.close-icon {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 22px;
+}
+.vitality-chart-info {
+  width: 100%;
+  height: calc(100% - 70px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.vitality-box {
+  width: 77%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.vitality-doc {
+  position: absolute;
+  top: 45px;
+  right: 8%;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(94, 138, 251, 1);
+  cursor: pointer;
+}
+.vitality-choose {
+  /* width: 100px; */
+  height: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left:10px;
+}
+.vitality-choose-icon {
+  width: 7px;
+  height: 11px;
+  margin: 0px 5px;
+  cursor: pointer;
+}

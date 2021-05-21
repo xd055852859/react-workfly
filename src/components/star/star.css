@@ -1,0 +1,12 @@
+.ball {
+  height: 40px;
+  width: 40px;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  z-index: 4;
+  animation: run-right-right 2s 0.4s 1 linear,
+    run-right-top 2s 0.4s 1 cubic-bezier(0, 1, 0, 1);
+  animation-fill-mode: forwards;
+  display: none;
+}

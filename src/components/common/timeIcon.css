@@ -1,0 +1,50 @@
+.taskItem-day {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  padding: 3px 0px 0px 6px;
+  color: #fff;
+  background-color: #ffbd03;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  /* margin-right: 5px; */
+  font-size: 12px;
+  /* margin-top: 4px; */
+  cursor: pointer;
+  word-wrap: normal;
+}
+
+.taskItem-time {
+  width: 0;
+  height: 0;
+  border-width: 20px;
+  border-style: solid;
+  border-color: #35a6f8 transparent transparent transparent;
+  position: absolute;
+  top: -2px;
+  right: -20px;
+}
+
+.taskItem-time-hour {
+  width: 10px;
+  height: 10px;
+  line-height: 10px;
+  font-size: 8px;
+  color: #fff;
+  position: absolute;
+  top: 0px;
+  z-index: 1;
+  transform: scale(0.7);
+}
+
+.taskItem-time-day {
+  width: 10px;
+  height: 10px;
+  line-height: 10px;
+  font-size: 10px;
+  color: #fff;
+  position: absolute;
+  bottom: 0px;
+  z-index: 2;
+}

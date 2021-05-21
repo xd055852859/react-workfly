@@ -1,17 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-
+// import './wdyr'
+import ReactDOM from "react-dom";
+// import './index.less';
+import "./index.css";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import Views from "./view";
+import { AuthProvider } from "./context/auth";
+let url = window.location.href;
+// 自动切换为https
+if (
+  url.indexOf("http://localhost") === -1 &&
+  url.indexOf("https") < 0 &&
+  url.indexOf("192.168.127.209") === -1
+) {
+  url = url.replace("http:", "https:");
+  window.location.replace(url);
+}
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <Provider store={store}>
+    <AuthProvider>
+      <Views />
+    </AuthProvider>
+  </Provider>,
+  document.getElementById("root")
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

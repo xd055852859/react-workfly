@@ -1,0 +1,348 @@
+.contentHeader-set {
+  width: 235px;
+  height: 68px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+.contentHeader-avatar-info {
+  width: 35px;
+  height: 35px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  cursor: pointer;
+}
+.contentHeader-avatar-bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  z-index: -1;
+}
+.contentHeader-avatar {
+  /* width: 30px;
+  height: 30px; */
+  overflow: hidden;
+  border-radius: 50%;
+}
+.contentHeader-avatar img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.contentHeader-set-item {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  position: relative;
+  padding: 6px 10px;
+  box-sizing: border-box;
+}
+.contentHeader-set-vitality {
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  background-color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0px;
+}
+.contentHeader-set-title {
+  width: 100%;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+.contentHeader-set-avatar {
+  width: 100%;
+  height: 150px;
+  cursor: pointer;
+}
+.contentHeader-set-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.contentHeader-set-item-title {
+  display: flex;
+  align-items: center;
+}
+
+.bg {
+  width: 260px;
+  height: 100%;
+  padding: 8px 0px 0px 6px;
+  box-sizing: border-box;
+  /* overflow: auto; */
+  position: relative;
+}
+.bg-title {
+  width: 100%;
+  height: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  margin-top: 5px;
+  margin-bottom: 14px;
+}
+.bg-header {
+  width: 100%;
+  height: 40px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 5;
+  padding: 0px 10px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.bg-container {
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: space-around; */
+}
+.bg-item {
+  width: 82px;
+  height: 38px;
+  background: #46558c;
+  /* border-radius: 8px; */
+  margin-right: 1px;
+  margin-bottom: 1px;
+  background-size: cover;
+  cursor: pointer;
+  padding: 2px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* background-attachment: fixed; */
+}
+.bg-point {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #fff;
+}
+.bg-button {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+.contentHeader-set-item-bg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.contentHeader-set-item-bg-info {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.headerSet-search-title {
+  width: 100%;
+  /* height: 40px; */
+  margin: 10px 0px;
+}
+.headerSet-search-subTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.headerSet-search-info {
+  width: 100%;
+  height: calc(100% - 80px);
+  overflow: auto;
+}
+.addTask-container {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.addTask-item,
+.chooseItem {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+.addTask-item:nth-child(2) {
+  justify-content: center;
+}
+.addTask-avatar {
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.addTask-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.addTask-logo {
+  width: 11px;
+  height: 7px;
+  margin-left: 10px;
+}
+.addTask-create {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 14px;
+  font-weight: bold;
+}
+.chooseItem {
+  width: 100%;
+  height: 38px;
+  padding: 0px 5px;
+  cursor: pointer;
+}
+.chooseItem:hover {
+  background-color: #f0f0f0;
+}
+.headerSet-unRead {
+  min-width: 20px;
+  min-height: 20px;
+  padding: 2px;
+  position: absolute;
+  top: -5px;
+  right: 7px;
+  background-color: #e94848;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+}
+.bg-item-right {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.contentHeader-user .contentHeader-set-container {
+  width: 528px;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 5;
+}
+.contentHeader-set-left {
+  width: 260px;
+  height: 100%;
+  overflow: auto;
+}
+.contentHeader-set-item-radio {
+  width: 130px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.contentHeader-set-item-radio input {
+  margin: 0px 2.5px;
+}
+/* .contentHeader-set-item-radio input + i:after {
+}
+.contentHeader-set-item-radio input[type='radio' i]:checked {
+  background-color: #ff5d5b;
+} */
+.groupCreate {
+  height: 295px;
+}
+.groupCreate-header {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+}
+
+.contentHeader-set-numImg {
+  width: 19px;
+  height: 12px;
+  margin: 0px 5px;
+}
+
+.create-button {
+  width: 100%;
+  height: 55px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* border-bottom: 1px solid #f0f0f0; */
+  padding-bottom: 15px;
+  box-sizing: border-box;
+}
+.contentHeader-user {
+  width: 260px;
+  background-color: #fff;
+  color: #333;
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  position: fixed;
+  top: 65px;
+  right: 0px;
+  z-index: 20;
+  overflow: hidden;
+  display: flex;
+}
+.ant-drawer-close {
+  padding: 10px !important;
+  box-sizing: border-box !important;
+}
+.ant-drawer-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+.headerSet-search-subTitle .ant-input-affix-wrapper {
+  height: 32px !important;
+}
+/* .modal-box {
+  height: 80vh;
+} */
+@keyframes avatarSmall {
+  from {
+    width: 35px;
+    height: 35px;
+  }
+
+  to {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+@keyframes avatarBig {
+  from {
+    width: 25px;
+    height: 25px;
+  }
+
+  to {
+    width: 35px;
+    height: 35px;
+  }
+}

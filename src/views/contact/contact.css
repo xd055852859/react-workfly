@@ -1,0 +1,193 @@
+.contact {
+  width: 100%;
+  height: calc(100vh - 68px);
+  overflow: auto;
+  padding: 5px 0px;
+  box-sizing: border-box;
+  z-index: 1;
+}
+.contact::-webkit-scrollbar {
+  width: 1.5px;
+  height: 1.5px;
+}
+
+.contact .menu-wrapper {
+  background-color: transparent !important;
+}
+.contact-item {
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 9px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.contact-item:hover {
+  background: rgba(255, 255, 255, 0.34);
+}
+.contact-avatar {
+  width: 27px;
+  height: 27px;
+  overflow: hidden;
+  margin-right: 5px;
+  flex-shrink: 0;
+}
+.contact-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.contact-online {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  left: 16px;
+  bottom: 7px;
+  z-index: 5;
+}
+.contact-care-img,
+.contact-uncare-img {
+  width: 16px;
+  height: 14.5px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 5px;
+}
+.contact-uncare-img {
+  display: none;
+}
+.contact-item:hover .contact-uncare-img {
+  display: flex;
+}
+
+.contact-left {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+.contact-right {
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  padding: 3px 0px 0px 6px;
+  color: #fff;
+  background-color: #535353;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin-right: 5px;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.contanct-time {
+  width: 0;
+  height: 0;
+  border-width: 25px;
+  border-style: solid;
+  border-color: #35a6f8 transparent transparent transparent;
+  position: absolute;
+  top: -2px;
+  right: -25px;
+}
+.contanct-time-hour {
+  width: 10px;
+  height: 10px;
+  line-height: 10px;
+  font-size: 8px;
+  color: #fff;
+  position: absolute;
+  top: 2px;
+  /* left: 9px; */
+  z-index: 1;
+  transform: scale(0.8);
+  text-align: center;
+}
+.contanct-time-day {
+  width: 10px;
+  height: 10px;
+  line-height: 10px;
+  font-size: 10px;
+  color: #fff;
+  position: absolute;
+  bottom: 0px;
+  z-index: 3;
+  text-align: center;
+}
+.contact-left-title {
+  width: calc(100% - 35px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.contact::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+}
+.contact-search {
+  width: calc(100% - 85px);
+  height: 35px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0px 9px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: 1px solid #dfdfdf;
+  border-radius: 5px;
+}
+.contact-search-input {
+  width: calc(100% - 24px);
+  height: 30px;
+  border: 0px;
+}
+.contact-search-button {
+  height: 30px;
+  margin-left: 10px;
+  color: #fff;
+}
+.contact-icon-right {
+  width: 75px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.contact-tree-path {
+  width: 100%;
+  height: 40px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 2;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0px 20px;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+.contact-tree-path-item {
+  cursor: pointer;
+}
+.contact-tree-path .MuiBreadcrumbs-separator {
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+}
+.contact-tree-path .ant-breadcrumb > span {
+  color: #bfbfbf;
+}
+.contact-tree-path .ant-breadcrumb > span:last-child {
+  color: #fff;
+}
+.ant-breadcrumb-separator {
+  color: #1890ff;
+}
