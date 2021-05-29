@@ -35,8 +35,8 @@ const ClockIn = forwardRef((prop, ref) => {
   const [showReport, setShowReport] = useState(false);
   const [groupList, setGroupList] = useState<any>([]);
   const [clockInIndex, setClockInIndex] = useState(0);
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
 
   const getClockIn = useCallback(async () => {
     let noteRes: any = await api.auth.getNote(

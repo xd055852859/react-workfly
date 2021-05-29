@@ -1,0 +1,11 @@
+.ant-upload-list-picture-card-container,
+.ant-upload.ant-upload-select-picture-card {
+  width: 80px !important;
+  height: 80px !important;
+}
+.ant-upload-list {
+  width: 100% !important;
+}
+.ant-upload-span > a {
+  width: 300px !important;
+}

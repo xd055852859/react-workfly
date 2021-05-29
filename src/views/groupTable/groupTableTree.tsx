@@ -47,6 +47,7 @@ import { Moveable } from "../../components/common/moveable";
 import DropMenu from "../../components/common/dropMenu";
 
 import emptySvg from "../../assets/svg/empty.svg";
+import packSvg from "../../assets/svg/pack.svg";
 import linkBigIconSvg from "../../assets/svg/linkBigIcon.svg";
 interface GroupTableTreeProps {
   groupKey: string;
@@ -81,7 +82,7 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
   const [deleteDialogShow, setDeleteDialogShow] = useState(false);
   const [itemDialogShow, setItemDialogShow] = useState(false);
   const [typeDialogShow, setTypeDialogShow] = useState(0);
-  const [treeTypeVisible, setTreeTypeVisible] = useState(false);
+  const [treeTypeVisible, setTreeTypeVisible] = useState(0);
 
   const [batchLoading, setBatchLoading] = useState(false);
   const [fullType, setFullType] = useState("small");
@@ -137,8 +138,8 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
     "链接",
     "电子书",
   ];
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+
   useMount(() => {
     // setHelpVisible(true);
     window.addEventListener("message", handlerIframeEvent);
@@ -325,6 +326,9 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                 newNodeObj[taskItem._key].icon = taskItem.extraData?.icon
                   ? taskItem.extraData.icon
                   : iconArray[taskItem.type - 10];
+              }
+              if (taskItem?.extraData?.pack) {
+                newNodeObj[taskItem._key].icon = packSvg;
               }
               if (taskItem.children) {
                 newNodeObj[taskItem._key].sortList =
@@ -545,6 +549,7 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
       chooseNode(newNodeObj[newNode._key], 1);
       setAvatarDialogShow(false);
       setStatusDialogShow(false);
+      setTreeTypeVisible(0);
       setItemDialogShow(false);
     } else {
       dispatch(setMessage(true, addTaskRes.msg, "error"));
@@ -623,6 +628,41 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
     } else {
       setEditable(false);
       dispatch(setMessage(true, "频道节点不允许修改频道类型", "error"));
+    }
+  };
+  const editPack = async () => {
+    let newNodeObj = { ...nodeObj };
+    let newGridList = [...gridList];
+    let newTargetNode = { ...targetNode };
+    let nodeId = newTargetNode._key;
+    if (nodeId === groupInfo.taskTreeRootCardKey) {
+      dispatch(setMessage(true, "根节点不允许打包", "error"));
+      return;
+    }
+    if (newNodeObj[nodeId].type !== 30) {
+      let nodeIndex = _.findIndex(newGridList, { _key: nodeId });
+      if (!newGridList[nodeIndex].extraData) {
+        newGridList[nodeIndex].extraData = {};
+        if (newGridList[nodeIndex].extraData.pack) {
+          newGridList[nodeIndex].extraData.pack = false;
+        }
+      }
+      newGridList[nodeIndex].extraData.pack =
+        !newGridList[nodeIndex].extraData.pack;
+      let editTaskRes: any = await api.task.editTask({
+        key: nodeId,
+        extraData: newGridList[nodeIndex].extraData,
+        content: "",
+      });
+      if (editTaskRes.msg === "OK") {
+        dispatch(setMessage(true, "打包成功", "success"));
+        getData(targetNode.father);
+      } else {
+        dispatch(setMessage(true, editTaskRes.msg, "error"));
+      }
+    } else {
+      setEditable(false);
+      dispatch(setMessage(true, "频道节点不允许打包", "error"));
     }
   };
   const editFinishPercent = async (node: any) => {
@@ -1440,7 +1480,7 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                   />
                 </DropMenu>
                 <DropMenu
-                  visible={treeTypeVisible}
+                  visible={treeTypeVisible !== 0}
                   dropStyle={{
                     width: "200px",
                     // height: '70px',
@@ -1451,13 +1491,13 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                   }}
                   onClose={() => {
                     // setItemDialogShow(false);
-                    setTreeTypeVisible(false);
+                    setTreeTypeVisible(0);
                   }}
                 >
                   <GroupTableTreeType
                     targetNodeKey={targetNode && targetNode._key}
                     addChildrenTask={addChildrenTask}
-                    typeshow={1}
+                    typeshow={treeTypeVisible}
                     setTreeTypeVisible={setTreeTypeVisible}
                     // typeshow={1}
                   />
@@ -1482,13 +1522,13 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
               onClose={() => {
                 setItemDialogShow(false);
                 setTypeDialogShow(0);
-                setTreeTypeVisible(false);
+                setTreeTypeVisible(0);
               }}
               onOK={() => {
                 editType(1);
                 setItemDialogShow(false);
                 setTypeDialogShow(0);
-                setTreeTypeVisible(false);
+                setTreeTypeVisible(0);
               }}
               title={"还原节点"}
               dialogStyle={{ width: "400px", height: "200px" }}
@@ -1496,11 +1536,36 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
               <div className="dialog-onlyTitle">是否还原成普通节点</div>
             </Dialog>
             <Dialog
+              visible={typeDialogShow === 3}
+              onClose={() => {
+                setItemDialogShow(false);
+                setTypeDialogShow(0);
+                setTreeTypeVisible(0);
+              }}
+              onOK={() => {
+                editPack();
+                setItemDialogShow(false);
+                setTypeDialogShow(0);
+                setTreeTypeVisible(0);
+              }}
+              title={
+                targetNode?.extraData?.icon === packSvg
+                  ? "取消打包"
+                  : "打包节点"
+              }
+              dialogStyle={{ width: "400px", height: "200px" }}
+            >
+              <div className="dialog-onlyTitle">
+                是否将节点
+                {targetNode?.extraData?.icon === packSvg ? "取消打包" : "打包"}
+              </div>
+            </Dialog>
+            <Dialog
               visible={typeDialogShow === 1}
               onClose={() => {
                 setItemDialogShow(false);
                 setTypeDialogShow(0);
-                setTreeTypeVisible(false);
+                setTreeTypeVisible(0);
               }}
               onOK={() => {
                 batchAddTask();

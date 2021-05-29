@@ -56,6 +56,7 @@
   padding: 11px 14px;
   box-sizing: border-box;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 .search-input {
   width: 90%;
@@ -95,7 +96,8 @@
 .personMember {
   /* height: 100%; */
   width: 100%;
-  /* overflow: auto; */
+  /* overflow: auto;
+-webkit-overflow-scrolling:touch; */
   position: relative;
   padding: 20px 0px 10px 0px;
   box-sizing: border-box;
@@ -108,7 +110,8 @@
 .personMember-container {
   width: 100%;
   /* height: calc(100% - 50px); */
-  /* overflow: auto; */
+  /* overflow: auto;
+-webkit-overflow-scrolling:touch; */
 }
 .personMember-item {
   width: 100%;

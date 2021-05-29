@@ -44,8 +44,8 @@ const Vitality: React.FC<VitalityProps> = (props) => {
   const monthArr = ["S", "M", "T", "W", "T", "F", "S"];
   const limit = 50;
   const chartRef = useRef<HTMLDivElement>(null);
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(() => {
     return () => {
       unDistory.current = false;

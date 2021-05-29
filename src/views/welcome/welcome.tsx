@@ -3,7 +3,6 @@ import "./welcome.css";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import api from "../../services/api";
-import { is_mobile } from "../../services/util";
 import { useMount } from "../../hook/common";
 
 import { setMessage } from "../../redux/actions/commonActions";
@@ -11,16 +10,17 @@ import { setMessage } from "../../redux/actions/commonActions";
 import HtmlWelcome from "./htmlWelcome";
 import PhoneWelcome from "./phoneWelcome";
 import bgWSvg from "../../assets/svg/bg-white.svg";
+import { useAuth } from "../../context/auth";
 
 export default function Welcome() {
   const history = useHistory();
+  const { deviceState } = useAuth();
   const dispatch = useDispatch();
   const [clientHeight, setClientHeight] = useState(0);
   const [clientWidth, setClientWidth] = useState(0);
   const [version, setVersion] = useState("");
-  let unDistory = useRef<any>(null);
-  let deviceStateRef = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+
   useMount(() => {
     function handle(e: any) {
       if (
@@ -59,7 +59,6 @@ export default function Welcome() {
   }, [dispatch]);
   useEffect(() => {
     let url = window.location.href;
-    deviceStateRef.current = is_mobile();
     // 自动切换为https
     if (
       url.indexOf("http://localhost") === -1 &&
@@ -93,9 +92,9 @@ export default function Welcome() {
         redirect = `${window.location.protocol}//${window.location.host}/home/basic`;
       }
       let href: string = `https://account.qingtime.cn?apphigh=27&redirect=${redirect}&logo=https://cdn-icare.qingtime.cn/1605251458500_workingVip`;
-      if (deviceStateRef.current) {
-        window.open(href, "_self");
-      } else {
+      // if (deviceState !== "xxl" && deviceState !== "xl") {
+      //   window.open(href, "_self");
+      // } else {
         window.open(
           href,
           "new",
@@ -103,7 +102,7 @@ export default function Welcome() {
             (clientHeight - 420) / 2
           }, left=${(clientWidth - 360) / 2}`
         );
-      }
+      // }
     }
   };
 
@@ -115,7 +114,7 @@ export default function Welcome() {
         backgroundImage: `url(${bgWSvg})`,
       }}
     >
-      {deviceStateRef.current ? (
+      {deviceState !== "xxl" && deviceState !== "xl" ? (
         <PhoneWelcome
           toLogin={toLogin}
           version={version}

@@ -87,7 +87,8 @@
   height: 100%;
   padding: 8px 0px 0px 6px;
   box-sizing: border-box;
-  /* overflow: auto; */
+  /* overflow: auto;
+-webkit-overflow-scrolling:touch; */
   position: relative;
 }
 .bg-title {
@@ -171,6 +172,7 @@
   width: 100%;
   height: calc(100% - 80px);
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 .addTask-container {
   width: 100%;
@@ -255,6 +257,7 @@
   width: 260px;
   height: 100%;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 .contentHeader-set-item-radio {
   width: 130px;

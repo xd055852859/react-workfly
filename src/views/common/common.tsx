@@ -12,6 +12,7 @@ import {
   changeTaskInfoVisible,
 } from "../../redux/actions/taskActions";
 
+import ClickOutSide from "../../components/common/clickOutside";
 import TimeSet from "../../components/common/timeSet";
 import TaskMember from "../../components/task/taskMember";
 import TaskInfo from "../../components/taskInfo/taskInfo";
@@ -135,7 +136,7 @@ const Common: React.FC<CommonProps> = (props) => {
           title={"任务详情"}
           width={430}
           bodyStyle={{
-            padding: "10px 15px",
+            padding: "10px 8px",
             boxSizing: "border-box",
           }}
           headerStyle={{
@@ -157,26 +158,38 @@ const Common: React.FC<CommonProps> = (props) => {
         您的浏览器不支持 audio 标签。
       </audio>
       {timeSetVisible && timeSetX && timeSetY ? (
-        <div
-          className="timeSet-container"
-          style={timesetObj}
-          onMouseLeave={() => {
+        <ClickOutSide
+          onClickOutside={() => {
             dispatch(changeTimeSetVisible(false, 0, 0));
           }}
         >
-          <TimeSet type="new" />
-        </div>
+          <div
+            className="timeSet-container"
+            style={timesetObj}
+            // onMouseLeave={() => {
+            //   dispatch(changeTimeSetVisible(false, 0, 0));
+            // }}
+          >
+            <TimeSet type="new" />
+          </div>
+        </ClickOutSide>
       ) : null}
       {taskMemberVisible && taskMemberX && taskMemberY ? (
-        <div
-          className="taskMember-container"
-          style={taskMemberObj}
-          onMouseLeave={() => {
+        <ClickOutSide
+          onClickOutside={() => {
             dispatch(changeTaskMemberVisible(false, 0, 0));
           }}
         >
-          <TaskMember />
-        </div>
+          <div
+            className="taskMember-container"
+            style={taskMemberObj}
+            // onMouseLeave={() => {
+            //   dispatch(changeTaskMemberVisible(false, 0, 0));
+            // }}
+          >
+            <TaskMember />
+          </div>
+        </ClickOutSide>
       ) : null}
     </React.Fragment>
   );

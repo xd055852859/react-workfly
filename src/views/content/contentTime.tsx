@@ -33,6 +33,7 @@ const ContentTime: React.FC<ContentTimeProps> = (props) => {
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
   });

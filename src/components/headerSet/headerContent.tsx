@@ -38,8 +38,8 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
   const [moveType, setMoveType] = useState(0);
   const [showVitality, setShowVitality] = useState(false);
   const [targetInfo, setTargetInfo] = useState<any>(null);
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   const getVitalityInfo = useCallback(async () => {
     let res: any = await api.auth.getTargetUserInfo(userKey);
     if (unDistory.current) {
@@ -191,7 +191,7 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
           }}
         />
       </div> */}
-      <div className="contentHeader-set-item">
+      {/* <div className="contentHeader-set-item">
         <div className="contentHeader-set-item-title">
           <img
             src={set4Png}
@@ -212,7 +212,7 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
             }}
           />
         </div>
-      </div>
+      </div> */}
       <div className="contentHeader-set-item">
         <div className="contentHeader-set-item-title">
           <img

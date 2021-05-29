@@ -8,6 +8,7 @@
   width: 100%;
   height: calc(100vh - 68px);
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   box-sizing: border-box;
 }
 

@@ -32,6 +32,7 @@
   /* background-image: url('https://cdn-icare.qingtime.cn/1596679987203_画板备份10.jpg'); */
   background-size: cover;
   background-attachment: fixed;
+  background-position: center 0;
 }
 .home-b {
   content: "";

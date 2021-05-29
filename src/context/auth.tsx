@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     deviceWidth = (document.documentElement.clientWidth - 350) * 0.33;
   } else if (clientWidth >= 992) {
     deviceState = "lg";
-    deviceWidth = (document.documentElement.clientWidth - 300) * 0.33;
+    deviceWidth = (document.documentElement.clientWidth - 300) * 0.5;
   } else if (clientWidth > 768) {
     deviceState = "sm";
     deviceWidth = (document.documentElement.clientWidth - 300) * 0.5;

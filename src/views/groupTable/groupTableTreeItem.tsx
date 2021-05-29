@@ -13,7 +13,17 @@ const GroupTableTreeItem: React.FC<GroupTableTreeItemProps> = (props) => {
         <div
           className="groupTableTreeItem-title"
           onMouseEnter={() => {
-            setTreeTypeVisible(true);
+            setTreeTypeVisible(2);
+          }}
+        >
+          新建节点
+        </div>
+      </div>
+      <div className="groupTableTreeItem-item">
+        <div
+          className="groupTableTreeItem-title"
+          onMouseEnter={() => {
+            setTreeTypeVisible(1);
           }}
         >
           新建子节点
@@ -34,6 +44,14 @@ const GroupTableTreeItem: React.FC<GroupTableTreeItemProps> = (props) => {
         }}
       >
         <div className="groupTableTreeItem-title">还原节点</div>
+      </div>
+      <div
+        className="groupTableTreeItem-item"
+        onClick={() => {
+          setTypeDialogShow(3);
+        }}
+      >
+        <div className="groupTableTreeItem-title">打包节点</div>
       </div>
       {/* <div
         className="groupTableTreeItem-item"

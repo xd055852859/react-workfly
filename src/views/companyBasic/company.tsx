@@ -37,7 +37,7 @@ const Company: React.FC<CompanyProps> = () => {
   const [companyListData, setCompanyListData] = useState<any>(null);
   const [tabIndex, setTabIndex] = useState(0);
   const [careType, setCareType] = useState(2);
-  const groupTabArray = [
+  const groupTabArray = useRef<string[]>([
     "项目图标",
     "项目名",
     "总任务",
@@ -47,8 +47,8 @@ const Company: React.FC<CompanyProps> = () => {
     "活力排名",
     "7天活力趋势",
     "关注",
-  ];
-  const MemberTabArray = [
+  ]);
+  const MemberTabArray = useRef<string[]>([
     "头像",
     "姓名",
     "总活力值",
@@ -58,9 +58,8 @@ const Company: React.FC<CompanyProps> = () => {
     "活力排名",
     "7天活力趋势",
     "关注",
-  ];
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  ]);
+  // let unDistory = useRef<any>(true);
 
   const getListData = useCallback(
     async (companyKey: string, careType: number, tabIndex: number) => {
@@ -204,7 +203,7 @@ const Company: React.FC<CompanyProps> = () => {
                 <img src={companyTab4Svg} alt="" />
                 <div>
                   {companyData ? (
-                    deviceState === "xl"||deviceState === "xxl" ? (
+                    deviceState === "xl" || deviceState === "xxl" ? (
                       <LiquidChart
                         percent={parseFloat(
                           (
@@ -246,7 +245,7 @@ const Company: React.FC<CompanyProps> = () => {
                 我的今日完成度
               </div>
               <div className="companyBasic-tab-bottomItem-chart">
-                {deviceState === "xl"||deviceState === "xxl" ? (
+                {deviceState === "xl" || deviceState === "xxl" ? (
                   <LiquidChart
                     percent={
                       allTask[0] > 0
@@ -445,10 +444,10 @@ const Company: React.FC<CompanyProps> = () => {
           </div>
           <div className="company-group-th">
             {tabIndex
-              ? MemberTabArray.map((memberItem, memberIndex) => {
+              ? MemberTabArray.current.map((memberItem, memberIndex) => {
                   return <div key={"memberTh" + memberIndex}>{memberItem}</div>;
                 })
-              : groupTabArray.map((groupItem, groupIndex) => {
+              : groupTabArray.current.map((groupItem, groupIndex) => {
                   return <div key={"groupTh" + groupIndex}>{groupItem}</div>;
                 })}
           </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import "./fileList.css";
 import "./../../views/groupTable/groupTableTree.css";
 import { useTypedSelector } from "../../redux/reducer/RootState";
@@ -31,34 +31,39 @@ const FileList: React.FC<FileListProps> = (props) => {
   const [total, setTotal] = useState(0);
   const [fileList, setFileList] = useState<any>([]);
 
-  const limit = 30;
-  const iconArray = [
+  const limit = useRef<any>(30);
+  const iconArray = useRef<any>([
     "https://cdn-icare.qingtime.cn/FpCB_dxjQGMt0lBUP-PwBXAVkNHN",
     "https://cdn-icare.qingtime.cn/FgKrqQB-8wqIouNRWzTzCe2A12FK",
     "https://cdn-icare.qingtime.cn/FjFqTs8ZmMtsL1X8LGZEVSV9WSRW",
     "https://cdn-icare.qingtime.cn/FjO6YNYHntTHrgS_3hR2kZiID8rd",
     linkIconSvg,
     "https://cdn-icare.qingtime.cn/Fl8r0nP1GTxNzPGc3LquP6AnUT6y",
-  ];
+  ]);
 
   const getFileList = useCallback(
-    async (page: number, type: string, fileList: any, groupKey: string) => {
-      let list: any = [];
+    async (page: number, type: string, groupKey: string) => {
       let fileRes: any = null;
-      if (page === 0) {
-        setFileList([]);
-      }
       if (type === "最近") {
-        fileRes = await api.task.getVisitCardTime(groupKey, page, limit);
+        fileRes = await api.task.getVisitCardTime(
+          groupKey,
+          page,
+          limit.current
+        );
       } else if (type === "收藏") {
-        fileRes = await api.task.getCreateCardTime(groupKey, page, limit);
+        fileRes = await api.task.getCreateCardTime(
+          groupKey,
+          page,
+          limit.current
+        );
       }
       if (fileRes.msg === "OK") {
-        list = fileRes.result.filter((item) => {
-          console.log(item);
-          return item.type !== 15;
+        setFileList((prevFileList) => {
+          if (page === 0) {
+            prevFileList = [];
+          }
+          return [...prevFileList, ...fileRes.result];
         });
-        setFileList([...fileList, ...list]);
         setTotal(fileRes.totalNumber);
       } else {
         dispatch(setMessage(true, fileRes.msg, "error"));
@@ -68,7 +73,7 @@ const FileList: React.FC<FileListProps> = (props) => {
   );
   useEffect(() => {
     if (user) {
-      getFileList(0, type, [], groupKey);
+      getFileList(0, type, groupKey);
     }
   }, [user, type, getFileList, groupKey]);
   useEffect(() => {
@@ -94,7 +99,7 @@ const FileList: React.FC<FileListProps> = (props) => {
     if (height + scrollTop >= scrollHeight && fileList.length < total) {
       page = page + 1;
       setFilePage(page);
-      getFileList(page, type, fileList, groupKey);
+      getFileList(page, type, groupKey);
     }
   };
 
@@ -110,19 +115,19 @@ const FileList: React.FC<FileListProps> = (props) => {
             className="file-container"
             key={"file" + index}
             onClick={(e) => {
-              if (deviceState === "lg"||deviceState === "xl"||deviceState === "xxl") {
+              if (deviceState === "xl" || deviceState === "xxl") {
                 dispatch(setFileInfo(item, true));
               } else {
                 e.stopPropagation();
                 window.open(
                   `http://workfly.cn/home/file?token=${token}&fileKey=${item._key}`,
-                  "self"
+                  "new"
                 );
               }
             }}
           >
             <div className="file-container-img">
-              <img src={iconArray[item.type - 10]} alt="" />
+              <img src={iconArray.current[item.type - 10]} alt="" />
             </div>
             <div className="file-container-title">
               <div>{item.title}</div>

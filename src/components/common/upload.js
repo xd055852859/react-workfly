@@ -1,13 +1,18 @@
 import * as qiniu from "qiniu-js";
 const uploadFile = {
   reloadNum: 0,
-  uploadImg: async (file, uptoken, mimeType, callback) => {
+  uploadImg: async (file, uptoken, mimeType, callback, fileType) => {
     //let res = await api.upload.getUptoken(window.localStorage.getItem("TOKEN"));
-    if (!uptoken || !file) {
+    if (!uptoken) {
+      alert("uptoken不存在");
+      return;
+    }
+    if (!file) {
+      alert("无文件");
       return;
     }
     const domain = "https://cdn-icare.qingtime.cn/";
-    console.log(file.size);
+    console.log("进入");
     if (file.size > 20000000) {
       alert("文件不能大于20M,请重新选择");
       return;
@@ -30,7 +35,6 @@ const uploadFile = {
     let observer = {
       next(res) {},
       error(err) {
-        console.log(err);
         alert(err.message);
       },
       complete(res) {
@@ -43,7 +47,9 @@ const uploadFile = {
     // 上传
     let observable = qiniu.upload(
       file,
-      new Date().getTime() + "_workingVip",
+      fileType
+        ? new Date().getTime() + "_workingVip." + fileType
+        : new Date().getTime() + "_workingVip",
       uptoken,
       putExtra,
       config
@@ -162,9 +168,10 @@ const uploadFile = {
     observable.subscribe(observer);
   },
   guid(len, radix) {
-    var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split(
-      ""
-    );
+    var chars =
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split(
+        ""
+      );
     var uuid = [],
       i;
     radix = radix || chars.length;

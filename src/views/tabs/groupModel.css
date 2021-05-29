@@ -42,6 +42,7 @@
   background: #f0f0f0;
   border-radius: 0px 0px 0px 8px;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   padding: 20px 0px;
   box-sizing: border-box;
 }
@@ -74,6 +75,7 @@
   padding: 20px 2.5%;
   box-sizing: border-box;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   display: flex;
   flex-wrap: wrap;
 }
@@ -153,6 +155,7 @@
   width: 100%;
   height: calc(100% - 36px);
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 
 .groupModel-right-info-title {
@@ -193,6 +196,7 @@
   height: 80%;
   display: flex;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   background-size: cover;
   background-attachment: fixed;
   padding: 10px;
@@ -231,6 +235,7 @@
   width: 100%;
   height: calc(100% - 40px);
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 
 .groupModel-model-task {

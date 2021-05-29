@@ -220,6 +220,7 @@ const TimeSet: React.FC<timeSetProp> = (prop) => {
                   width: "100%",
                   height: "55px",
                   padding: "5px 10px",
+                  display: "flex",
                 }
               : { height: "42px" }
             : { height: "25px", marginTop: "15px" }
@@ -436,7 +437,7 @@ const TimeSet: React.FC<timeSetProp> = (prop) => {
                     // : '1px',
                   }}
                 >
-                  {timeItem}
+                  <span style={{ zoom: 0.8 }}>{timeItem}</span>
                   <div
                     className="timeSet-time-choose"
                     style={{

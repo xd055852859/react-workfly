@@ -39,8 +39,8 @@ const GroupModel: React.FC<GroupModelProps> = (props) => {
     "rgba(179,152,152,0.3)",
     "rgba(242,237,166,0.3)",
   ];
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(() => {
     return () => {
       unDistory.current = false;

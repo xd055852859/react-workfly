@@ -55,6 +55,7 @@
   height: 100%;
   width: 100%;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   padding: 10px 0px;
   box-sizing: border-box;
 }
@@ -387,6 +388,7 @@ input {
   text-align: left;
   resize: none;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   background-color: transparent;
   font-family: PingFangSC-Medium, PingFang SC;
   font-weight: 500;

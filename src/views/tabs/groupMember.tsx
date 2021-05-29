@@ -52,8 +52,8 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
   const [total, setTotal] = React.useState(0);
   const roleTypeArr = ["项目管理", "管理员", "编辑", "作者", "项目成员"];
   const limit = 15;
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(() => {
     return () => {
       unDistory.current = false;

@@ -49,8 +49,8 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
   const [departmentId, setDepartmentId] = useState<any>(null);
 
   const personRef: React.RefObject<any> = useRef();
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(() => {
     return () => {
       unDistory.current = false;

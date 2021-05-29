@@ -657,14 +657,14 @@ const GroupTableHeader: React.FC = (prop) => {
                       alt=""
                       style={{ width: "16px", height: "16px" }}
                     />
-                    {deviceState !== "xs"
+                    {deviceState === "xl"||deviceState === "xxl"
                       ? filterObject?.filterType.length > 0
                         ? filterObject.filterType.join(" / ")
                         : null
                       : null}
                   </div>
                 </Dropdown>
-                {deviceState !== "xs" ? (
+                {deviceState === "xl"||deviceState === "xxl" ? (
                   <React.Fragment>
                     {filterObject?.creatorKey ? (
                       <div

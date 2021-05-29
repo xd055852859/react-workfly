@@ -63,6 +63,7 @@
   width: 100%;
   height: calc(100% - 44px);
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 
 .group-member-container::-webkit-scrollbar {

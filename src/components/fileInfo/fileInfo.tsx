@@ -29,8 +29,8 @@ const FileInfo: React.FC<FileInfoProps> = (props) => {
   const [editable, setEditable] = useState<any>(false);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<any>("");
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useEffect(() => {
     setEditable(false);
     if (fileInfo) {

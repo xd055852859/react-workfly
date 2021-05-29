@@ -77,8 +77,8 @@ const Contact: React.FC<ContactProps> = (props) => {
   const [selectedPath, setSelectedPath] = useState<any>([]);
   const [targetNode, setTargetNode] = useState<any>(null);
 
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+
   useMount(() => {
     setLoading(true);
     dispatch(getGroup(3, null, 2));
@@ -597,7 +597,12 @@ const Contact: React.FC<ContactProps> = (props) => {
           })
         ) : null
       ) : companyData && startId ? (
-        <div style={{ marginTop: "40px" }}>
+        <div
+          style={{
+            marginTop: "0px",
+            marginLeft: "-78px",
+          }}
+        >
           <Tree
             // disabled
             itemHeight={32}
@@ -607,7 +612,7 @@ const Contact: React.FC<ContactProps> = (props) => {
             nodes={companyData}
             uncontrolled={false}
             showAvatar={true}
-            pathColor={'#fff'}
+            pathColor={"#fff"}
             // showMoreButton
             startId={startId}
             pathWidth={0.5}

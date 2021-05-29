@@ -36,6 +36,7 @@ import Editor from "../common/editor/editor";
 import Loading from "../common/loading";
 import CreateMoreTask from "../createMoreTask/createMoreTask";
 import Avatar from "../common/avatar";
+import Appendix from "../common/appendix";
 
 import hourSvg from "../../assets/svg/hour.svg";
 import unExecutorPng from "../../assets/img/unExecutor.png";
@@ -57,8 +58,10 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
   const dispatch = useDispatch();
   const headerIndex = useTypedSelector((state) => state.common.headerIndex);
   const targetUserInfo = useTypedSelector((state) => state.auth.targetUserInfo);
+  const theme = useTypedSelector((state) => state.auth.theme);
   const chooseKey = useTypedSelector((state) => state.task.chooseKey);
   const groupKey = useTypedSelector((state) => state.group.groupKey);
+
   const titleRef: React.RefObject<any> = useRef();
   const taskInfo = useTypedSelector((state) => state.task.taskInfo);
   const taskInfoVisible = useTypedSelector(
@@ -71,6 +74,7 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
   const [editRole, setEditRole] = useState(false);
   const [editState, setEditState] = useState(false);
   const [taskHistoryArray, setTaskHistoryArray] = useState<any>([]);
+
   const [taskHistoryTotal, setTaskHistoryTotal] = useState<any>(null);
   const [taskHistoryPage, setTaskHistoryPage] = useState(1);
   const [taskCommentArray, setTaskCommentArray] = useState<any>([]);
@@ -90,6 +94,7 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
   const [moveTaskType, setMoveTaskType] = useState("");
   const [urlInput, setUrlInput] = useState("");
   const [content, setContent] = useState<any>(null);
+  const [fileList, setFileList] = useState<any>([]);
   const color = [
     "#6FD29A",
     "#21ABE4",
@@ -119,7 +124,7 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
   const commentInputRef: React.RefObject<any> = useRef();
 
   let countRef = useRef<any>(null);
-  let unDistory = useRef<any>(null);
+  let unDistory = useRef<any>(true);
   unDistory.current = true;
   useMount(() => {
     dispatch(getUploadToken());
@@ -167,8 +172,13 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
       } else {
         setContent("<p>备注信息</p>");
       }
-      if (taskInfo.extraData && taskInfo.extraData.url) {
-        setUrlInput(taskInfo.extraData.url);
+      if (taskInfo.extraData) {
+        if (taskInfo.extraData.url) {
+          setUrlInput(taskInfo.extraData.url);
+        }
+        if (taskInfo.extraData.fileList) {
+          setFileList(taskInfo.extraData.fileList);
+        }
       }
       // if (!type) {
       //   setLoading(true);
@@ -208,7 +218,7 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
         }
       }
     },
-    [dispatch,changeTaskInfo]
+    [dispatch, changeTaskInfo]
   );
   useEffect(() => {
     if ((chooseKey || taskInfo) && taskInfoVisible) {
@@ -508,6 +518,15 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
     }
     dispatch(changeTaskInfoVisible(false));
   };
+  const changeFileList = (fileList: any) => {
+    let newTaskItem: any = _.cloneDeep(taskItem);
+    if (!newTaskItem.extraData) {
+      newTaskItem.extraData = {};
+    }
+    newTaskItem.extraData.fileList = fileList;
+    setFileList(fileList);
+    changeTaskItem("extraData", newTaskItem.extraData);
+  };
   return (
     // changeTaskInfoVisible
     <div
@@ -785,7 +804,12 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
                   ) : null}
                   <CreateMoreTask
                     visible={moveTaskVisible}
-                    createStyle={{ top: "129px", right: "158px" }}
+                    createStyle={{
+                      position: "fixed",
+                      top: "129px",
+                      right: "158px",
+                      zIndex: 20,
+                    }}
                     onClose={() => {
                       setMoveTaskVisible(false);
                       setDeleteDialogShow(false);
@@ -857,30 +881,32 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
                     style={{ width: "130px", marginRight: "10px" }}
                     allowClear={false}
                   />
-                  <div
-                    className="taskInfo-item-hour"
-                    onClick={() => {
-                      setHourVisible(true);
-                    }}
-                  >
-                    <img src={hourSvg} alt="" />
-                    {/* {taskItem.hour ? taskItem.hour + ' 小时' : '预计工时'} */}
-                    <DropMenu
-                      visible={hourVisible}
-                      dropStyle={{ top: "36px", left: "-200px" }}
-                      onClose={() => {
-                        setHourVisible(false);
+                  {theme.hourVisible ? (
+                    <div
+                      className="taskInfo-item-hour"
+                      onClick={() => {
+                        setHourVisible(true);
                       }}
-                      title="预计工时"
                     >
-                      <TimeSet
-                        timeSetClick={changeTimeSet}
-                        timestate={"hour"}
-                        dayNumber={0}
-                        timeNumber={taskItem.hour}
-                      />
-                    </DropMenu>
-                  </div>
+                      <img src={hourSvg} alt="" />
+                      {/* {taskItem.hour ? taskItem.hour + ' 小时' : '预计工时'} */}
+                      <DropMenu
+                        visible={hourVisible}
+                        dropStyle={{ top: "36px", left: "-200px" }}
+                        onClose={() => {
+                          setHourVisible(false);
+                        }}
+                        title="预计工时"
+                      >
+                        <TimeSet
+                          timeSetClick={changeTimeSet}
+                          timestate={"hour"}
+                          dayNumber={0}
+                          timeNumber={taskItem.hour}
+                        />
+                      </DropMenu>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             ) : null}
@@ -896,7 +922,12 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
                 placeholder="请输入链接地址"
               />
             </div>
-
+            <div className="taskInfo-auto-item">
+              <div className="taskInfo-item-title">附件</div>
+              <div className="taskInfo-item-info">
+                <Appendix fileList={fileList} changeFileList={changeFileList} />
+              </div>
+            </div>
             {content ? (
               <Editor
                 data={content}
@@ -913,9 +944,9 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
                 // }}
                 style={{
                   height:
-                    document.body.offsetHeight -
-                    titleRef.current.offsetHeight -
-                    218,
+                    "calc(100vh - " +
+                    (titleRef.current.offsetHeight + 208) +
+                    "px)",
                   top: titleRef.current.offsetHeight + 140,
                 }}
                 onClick={(e) => {

@@ -51,8 +51,8 @@ const GroupTableTreeInfo: React.FC<GroupTableTreeInfoProps> = (props) => {
   const [commentVisible, setCommentVisible] = useState(false);
   const containerRef: React.RefObject<any> = useRef();
   const iframeRef: React.RefObject<any> = useRef();
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(() => {
     return () => {
       unDistory.current = false;

@@ -4,6 +4,7 @@
   margin-right: 10px;
   position: relative;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 .task-container-taskName-container {
   display: flex;
@@ -35,6 +36,7 @@
 .task-container-calendar,
 .task-container-lineChart {
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 .task-container-task {
   display: flex;
@@ -93,6 +95,7 @@
 .task-container-calendar,
 .task-container-lineChart {
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 
 .task-container-lineChart {
@@ -165,6 +168,7 @@
   min-height: 300px;
   width: 350px;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   flex-shrink: 0;
   position: relative;
   z-index: 1;
@@ -182,6 +186,7 @@
   padding: 10px 0px;
   box-sizing: border-box;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   color: #333;
 }
 .defaultExecutor-info-item {
