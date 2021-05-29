@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./link.css";
 import { Input, Button } from "antd";
 
-import Webview from "../common/Webview";
+import Iframeview from "../common/iframeview";
 interface LinkProps {
   targetData: any;
   hideUrl?: boolean;
@@ -66,7 +66,7 @@ const Link: React.FC<LinkProps> = (props) => {
       {/* ) : null} */}
 
       <div className="iframeWrapper">
-        <Webview uri={linkUrl} />
+        <Iframeview uri={linkUrl} />
       </div>
     </div>
   );

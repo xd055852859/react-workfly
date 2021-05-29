@@ -12,10 +12,11 @@
 
 .tree-container {
   width: 100%;
-  height: calc(100% - 110px);
+  height: calc(100% - 55px);
   display: flex;
   /* justify-content: center; */
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   position: relative;
   z-index: 2;
 }
@@ -134,6 +135,7 @@
   width: 100%;
   height: calc(100% - 45px);
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 
 .tree-member-item {
@@ -224,6 +226,7 @@
 .groupTableTreeInfo-container {
   width: 100%;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   position: relative;
   z-index: 1;
   /* padding: 8px 8px 55px 8px;
@@ -264,7 +267,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0px 17px;
+  padding: 0px 37px 0px 17px;
   box-sizing: border-box;
   position: relative;
   z-index: 1;

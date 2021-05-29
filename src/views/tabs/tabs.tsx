@@ -445,9 +445,10 @@ const HomeTab: React.FC<HomeTabProps> = (props) => {
       ref={tabsRef}
       style={{
         height:
-          theme && theme.calendarVisible
-            ? "calc(100% - 260px)"
-            : "calc(100% - 210px)",
+          // theme && theme.calendarVisible
+          //   ? 
+            "calc(100% - 260px)"
+            // : "calc(100% - 210px)",
       }}
       id="tab"
     >

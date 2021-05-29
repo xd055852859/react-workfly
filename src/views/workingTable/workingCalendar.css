@@ -3,6 +3,7 @@
   width: 100%;
   justify-content: center;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   color:#fff;
 }
 .dayCanlendar-container {
@@ -46,6 +47,7 @@
   width: 100%;
   margin-top: 1px;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 .dayCanlendar-info-item:last-child > div {
   margin-bottom: 0px;

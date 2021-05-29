@@ -5,6 +5,7 @@
   top: 65px;
   right: 0px; */
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   /* z-index: 50; */
   /* background-color: #fff; */
   color: #333;
@@ -81,14 +82,17 @@
   padding: 5px;
   box-sizing: border-box;
 }
-.taskInfo-item {
+.taskInfo-item,
+.taskInfo-auto-item {
   width: 100%;
-  height: 48px;
-  line-height: 48px;
   margin-bottom: 5px;
   display: flex;
   align-items: center;
   position: relative;
+}
+.taskInfo-item {
+  height: 48px;
+  line-height: 48px;
 }
 /* .taskInfo-Editor {
   border: 1px solid #efefef;
@@ -120,6 +124,7 @@
   margin-right: 12px;
 }
 .taskInfo-item-info,
+.taskInfo-item-auto-info,
 .taskInfo-item-follow {
   width: calc(100% - 42px);
   height: 100%;
@@ -127,6 +132,9 @@
   align-items: center;
   justify-content: space-between;
   position: relative;
+}
+.taskInfo-item-auto-info > span {
+  width: 100%;
 }
 .taskInfo-item-suggest {
   /* width: 36px; */
@@ -200,9 +208,9 @@
 }
 .taskInfo-comment-tab {
   width: 100%;
-  max-height: 600px;
-  min-height: 60px;
+  /* height: calc(100% - 42px); */
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   padding-top: 15px;
   box-sizing: border-box;
   margin-bottom: 20px;
@@ -299,4 +307,12 @@
   left: 0px;
   background-color: #fff;
   z-index: 10;
+}
+.taskInfo::-webkit-scrollbar {
+  width: 0px !important;
+  height: 0px !important;
+}
+.taskInfo-container::-webkit-scrollbar {
+  width: 0px !important;
+  height: 0px !important;
 }

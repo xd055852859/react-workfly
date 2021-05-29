@@ -73,8 +73,8 @@ const CreateMoreTask: React.FC<CreateMoreTaskProps> = (props) => {
   const [searchLabelInput, setSearchLabelInput] = useState<any>("");
   const [loading, setLoading] = useState(false);
   const createRef: React.RefObject<any> = useRef();
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(() => {
     return () => {
       unDistory.current = false;

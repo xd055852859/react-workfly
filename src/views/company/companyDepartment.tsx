@@ -44,8 +44,8 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
   const departmentRef: React.RefObject<any> = useRef();
   const targetTreeRef: React.RefObject<any> = useRef();
   let moveRef: any = useRef();
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(()=>{
     return () => {
       unDistory.current = false;

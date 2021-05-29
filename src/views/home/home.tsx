@@ -220,7 +220,7 @@ const Home: React.FC<HomeProps> = (props) => {
             </Tooltip>
           </div>
         </div>
-        {theme && theme.calendarVisible ? (
+        {/* {theme && theme.calendarVisible ? ( */}
           <div
             style={
               headerIndex === 5
@@ -235,7 +235,7 @@ const Home: React.FC<HomeProps> = (props) => {
             <img src={calendarPng} alt="" className="home-header-item-logo" />
             我的日程
           </div>
-        ) : null}
+        {/* ) : null} */}
 
         <Dropdown
           overlay={

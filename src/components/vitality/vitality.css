@@ -108,11 +108,13 @@
   display: flex;
   flex-wrap: wrap;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 .vitality-log-container {
   align-content: flex-start;
   height: 100%;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 .vitality-month-info {
   width: 100%;

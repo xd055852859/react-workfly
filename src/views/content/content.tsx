@@ -35,8 +35,7 @@ const Content: React.FC<ContentProps> = (props) => {
     memberCheck: true,
     groupCheck: true,
   });
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
 
   const getPrompt = useCallback(async () => {
     let promptRes: any = await api.auth.getPrompt();
@@ -48,7 +47,6 @@ const Content: React.FC<ContentProps> = (props) => {
       }
     }
   }, [dispatch]);
-
   useMount(() => {
     if (localStorage.getItem("config")) {
       //@ts-ignore
@@ -151,7 +149,8 @@ const Content: React.FC<ContentProps> = (props) => {
             <FileInfo />
           </div>
         ) : null}
-        <Tabs tabBarStyle={{ color: "#fff" }} tabBarExtraContent={contentMenu}>
+        {/* tabBarExtraContent={contentMenu} */}
+        <Tabs tabBarStyle={{ color: "#fff" }} >
           {contentConfig.mainCheck ? (
             <TabPane tab="今日" key="1">
               <div className="content-tabPane">

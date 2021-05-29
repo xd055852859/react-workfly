@@ -65,8 +65,8 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
   const [clearState, setClearState] = useState<any>(false);
   const [isQuit, setIsQuit] = useState<any>(false);
   const personRef: React.RefObject<any> = useRef();
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(() => {
     return () => {
       unDistory.current = false;

@@ -30,8 +30,8 @@ const Chat: React.FC<ChatProps> = () => {
   const [url, setUrl] = useState("");
   const [clickType, setClickType] = useState(true);
 
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+
   useMount(() => {
     document.addEventListener("message", handlerIframeEvent);
     return () => {
@@ -142,13 +142,9 @@ const Chat: React.FC<ChatProps> = () => {
         className="chat-iframe  animate__animated animate__slideInRight"
         style={
           chatState
-            ? !clickType
-              ? {
-                  width: "420px",
-                }
-              : {
-                  width: "600px",
-                }
+            ? {
+                width: "700px",
+              }
             : { opacity: 0, width: "0px", height: "0px" }
         }
       >
@@ -157,31 +153,25 @@ const Chat: React.FC<ChatProps> = () => {
           src={url}
           className="chat"
           title=" "
-          style={
-            !clickType
-              ? {
-                  left: "-180px",
-                }
-              : {
-                  left: "0px",
-                }
-          }
-        ></iframe>
-        <div
-          className="chat-more"
-          onClick={() => {
-            setClickType(!clickType);
+          style={{
+            left: "0px",
           }}
-          style={
-            !clickType
-              ? {
-                  left: "10px",
-                }
-              : {
-                  left: "192px",
-                }
-          }
-        ></div>
+        ></iframe>
+        {/* <div
+           className="chat-more"
+           onClick={() => {
+             setClickType(!clickType);
+           }}
+           style={
+             !clickType
+               ? {
+                   left: "10px",
+                 }
+               : {
+                  left: "215px",
+                 }
+           }
+         ></div>  */}
         {chatState ? (
           <img
             src={closePng}

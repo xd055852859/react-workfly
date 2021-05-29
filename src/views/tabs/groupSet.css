@@ -67,6 +67,7 @@
   align-content: space-between;
   box-sizing: border-box;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 
 .contact-name-title {

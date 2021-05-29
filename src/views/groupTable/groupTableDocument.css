@@ -22,6 +22,7 @@
   top: 0px;
   left: 0px;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
   color: #333;
   background-color: #fff;
 }

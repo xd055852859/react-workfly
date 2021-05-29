@@ -45,8 +45,8 @@ const Grid: React.FC<GridProps> = (prop) => {
   const labelRef: React.RefObject<any> = useRef();
   const avatarRef: React.RefObject<any> = useRef();
 
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useEffect(() => {
     return () => {
       unDistory.current = false;

@@ -19,6 +19,7 @@
   background-color: #fff;
   border: 1px solid #ececec;
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 .companySearch-info-title {
   width: 100%;

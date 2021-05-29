@@ -36,8 +36,8 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const departmentRef: React.RefObject<any> = useRef();
   const targetTreeRef: React.RefObject<any> = useRef();
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+
   useMount(() => {
     return () => {
       unDistory.current = false;
@@ -478,7 +478,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
                 role: item.role,
                 staffKey: item.userId,
                 groupKey: node.groupKey,
-                targetRole:item.role
+                targetRole: item.role,
               });
               newRow[newRow.length - 1]["targetRole" + item.role] = item.role;
               newRow[newRow.length - 1].checkIndex = item.role;
@@ -515,7 +515,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
                 staffKey: data[key].staffKey,
                 groupKey: data[key].groupKey,
                 role: data[key].role,
-                targetRole:data[key].role,
+                targetRole: data[key].role,
                 ["targetRole" + data[key].role]: data[key].role,
                 checkIndex: data[key].role,
                 orgType: data[key].orgType,
@@ -720,7 +720,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
                       : {}
                   }
                 >
-                  树
+                  {departmentType === 7 ? "项目" : "组织"}树
                 </span>
               </div>
               <div
@@ -736,7 +736,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
                       : {}
                   }
                 >
-                  列表
+                  {departmentType === 7 ? "项目" : "组织"}列表
                 </span>
               </div>
             </div>

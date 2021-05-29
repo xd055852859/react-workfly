@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react';
 import Loading from './loading';
 
-interface Props {
+interface IframeviewProps {
   uri: string;
 }
-
-export default function Webview({ uri }: Props) {
+const Iframeview: React.FC<IframeviewProps> = (props) => {
+  const {uri} = props
   const [loading, setloading] = useState(true);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -30,3 +30,6 @@ export default function Webview({ uri }: Props) {
     </div>
   );
 }
+Iframeview.defaultProps = {
+};
+export default Iframeview;

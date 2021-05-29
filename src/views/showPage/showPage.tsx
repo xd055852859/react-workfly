@@ -81,8 +81,8 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
 
   const searchImgArr = [search2Svg, search1Svg, search3Svg, search4Svg];
 
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+
   useMount(() => {
     let index: any = localStorage.getItem("searchIndex")
       ? localStorage.getItem("searchIndex")
@@ -236,10 +236,13 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
     if (urlRes.msg === "OK") {
       let index = _.findIndex(newTheme.urlArr, { url: linkUrl });
       if (index !== -1) {
+        console.log(newTheme.urlArr[index].icon);
+        console.log(urlRes.icon);
         newTheme.urlArr[index].icon = urlRes.icon;
       }
       // dispatch(setMessage(true, '添加快捷方式成功', 'success'));
-      dispatch(setTheme(newTheme));
+
+      dispatch(setTheme(_.cloneDeep(newTheme)));
     } else {
       dispatch(setMessage(true, urlRes.msg, "error"));
     }
@@ -550,10 +553,12 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
             boxSizing: "border-box",
           }}
           headerStyle={{
-            display: "none",
+            padding: "10px",
+            boxSizing: "border-box",
           }}
           destroyOnClose={true}
           getContainer={() => showPageRef.current}
+          title={"新建任务"}
         >
           <HeaderCreate
             visible={addVisible}

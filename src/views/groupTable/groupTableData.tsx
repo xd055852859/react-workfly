@@ -33,8 +33,8 @@ const GroupTableData: React.FC<GroupTableDataProps> = (prop) => {
   const taskTitleArr = ["昨日", "今日", "计划中", "已完成"];
   const dataRef: React.RefObject<any> = useRef();
   const chartRef = useRef<HTMLDivElement>(null);
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(() => {
     setClientHeight(document.body.clientHeight - 68);
     return () => {

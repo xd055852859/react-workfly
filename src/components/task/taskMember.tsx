@@ -34,8 +34,8 @@ const TaskMember: React.FC<TaskMemberProps> = (props) => {
   const [followIndex, setFollowIndex] = useState<any>(null);
   const [searchInput, setSearchInput] = useState<any>("");
 
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(() => {
     return () => {
       unDistory.current = false;

@@ -162,6 +162,9 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
               onClick={() => {
                 setAddVisible(true);
               }}
+              onTouchStart={() => {
+                setAddVisible(true);
+              }}
             />
           </Tooltip>
           <Tooltip title="搜索中心" getPopupContainer={() => setRef.current}>
@@ -175,6 +178,9 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
                 cursor: "pointer",
               }}
               onClick={() => {
+                setSearchVisible(true);
+              }}
+              onTouchStart={() => {
                 setSearchVisible(true);
               }}
             />
@@ -196,6 +202,10 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
                   dispatch(setUnMessageNum(0));
                   // dispatch(setSocketObj(null));
                 }}
+                onTouchStart={() => {
+                  setMessageVisible(true);
+                  dispatch(setUnMessageNum(0));
+                }}
               />
             </Badge>
           </Tooltip>
@@ -211,6 +221,9 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
                   cursor: "pointer",
                 }}
                 onClick={() => {
+                  dispatch(setChatState(!chatState));
+                }}
+                onTouchStart={() => {
                   dispatch(setChatState(!chatState));
                 }}
               />
@@ -229,6 +242,9 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
               onClick={() => {
                 setClockVisible(true);
               }}
+              onTouchStart={() => {
+                setClockVisible(true);
+              }}
             />
           </Tooltip>
         </React.Fragment>
@@ -236,6 +252,10 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
         <div
           className="contentHeader-avatar-info"
           onClick={() => {
+            setContentSetVisilble(true);
+            setAvatarShow(true);
+          }}
+          onTouchStart={() => {
             setContentSetVisilble(true);
             setAvatarShow(true);
           }}

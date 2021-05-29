@@ -92,20 +92,16 @@ const MessageBoard: React.FC<MessageBoardProps> = (prop) => {
     { type: 21, title: "修改标题", img: messageType21Svg, filter: true },
     { type: 22, title: "预定日程", img: messageType22Svg, filter: false },
   ];
-  let unDistory = useRef<any>(null);
+  let unDistory = useRef<any>(true);
   const messageRef: React.RefObject<any> = useRef();
-  unDistory.current = true;
+
   useMount(() => {
     return () => {
       unDistory.current = false;
     };
   });
   const getMessage = useCallback(
-    async (
-      page: number,
-      check: boolean,
-      filterType: number,
-    ) => {
+    async (page: number, check: boolean, filterType: number) => {
       setLoading(true);
       let messageRes: any = await api.auth.getMessageList(
         page,
@@ -115,13 +111,13 @@ const MessageBoard: React.FC<MessageBoardProps> = (prop) => {
       );
       if (unDistory.current) {
         if (messageRes.msg === "OK") {
-          setLoading(false);     
+          setLoading(false);
           setMessageArray((prevMessage) => {
             if (page === 1) {
               prevMessage = [];
             }
             prevMessage.push(...messageRes.result);
-            return [...prevMessage]
+            return [...prevMessage];
           });
           setMessageTotal(messageRes.totalNumber);
           setMessageNum(messageRes.allNotDealNotice35);
@@ -247,7 +243,10 @@ const MessageBoard: React.FC<MessageBoardProps> = (prop) => {
     }
   };
   const downMenu = (
-    <div className="dropDown-box messageBoard-filter-container">
+    <div
+      className="dropDown-box messageBoard-filter-container"
+      style={{ height: "236px" }}
+    >
       {messageTypeArray.map((filterItem, filterIndex) => {
         return (
           <React.Fragment key={"filter" + filterIndex}>

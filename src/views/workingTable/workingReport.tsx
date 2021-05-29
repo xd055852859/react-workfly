@@ -51,8 +51,8 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
   const [moveState, setMoveState] = useState<any>(null);
 
   const commentLimit = 10;
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(() => {
     return () => {
       unDistory.current = false;

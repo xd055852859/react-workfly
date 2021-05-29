@@ -156,6 +156,7 @@
   width: 100%;
   height: calc(100% - 80px);
   overflow: auto;
+-webkit-overflow-scrolling:touch;
 }
 .contentHeader-set-container {
   width: 528px;
@@ -198,10 +199,10 @@
   z-index: 5;
 }
 .showPage-button {
-  width: 500px;
+  width: 340px;
   position: absolute;
-  top: calc(50% + 70px);
-  left: calc(50% - 250px);
+  top: 55px;
+  left: 10px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -290,12 +291,13 @@
   height: 100%;
   padding: 8px 0px 0px 6px;
   box-sizing: border-box;
-  /* overflow: auto; */
+  /* overflow: auto;
+-webkit-overflow-scrolling:touch; */
   position: relative;
 }
 .showPage-button-item {
-  width: 80px;
-  height: 90px;
+  width: 70px;
+  height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;

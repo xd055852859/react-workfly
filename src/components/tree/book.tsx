@@ -32,8 +32,8 @@ const Book: React.FC<BookProps> = (props) => {
   const [nodeObj, setNodeObj] = useState<any>(null);
   const [editable, setEditable] = useState<any>(false);
   const [selectId, setSelectId] = useState<any>(null);
-  let unDistory = useRef<any>(null);
-  unDistory.current = true;
+  let unDistory = useRef<any>(true);
+  
   useMount(() => {
     return () => {
       unDistory.current = false;
