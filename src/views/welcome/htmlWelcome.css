@@ -1,0 +1,354 @@
+@import '../../assets/css/button.css';
+.pages {
+  width: 100%;
+  /* height: 100%; */
+  /* overflow: hidden; */
+  /* background-color: #fff; */
+
+  position: relative;
+  z-index: 1;
+}
+.pages-header {
+  width: 100%;
+  height: 70px;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+  background-color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 30px;
+  box-sizing: border-box;
+}
+.pages-container {
+  width: 70%;
+  height: 60%;
+}
+
+.pages-title {
+  width: 100%;
+  height: 42px;
+  font-size: 38px;
+  font-weight: 500;
+  color: #4b5c6e;
+  line-height: 42px;
+  margin: 26px 0px 28px 0px;
+  text-align: center;
+}
+.pages-link {
+  width: 40%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.pages-link-item {
+  width: 80px;
+  height: 22px;
+  font-size: 16px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #000000;
+  line-height: 22px;
+  cursor: pointer;
+  text-align: center;
+}
+.pageDot {
+  width: 50px !important;
+  height: 300px !important;
+}
+.pageDot > li > button {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: #364d79 !important;
+}
+.welcomePage-logo {
+  background-position: center;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: cover;
+  left: calc(50% - 341px);
+  top: calc(45vh - 50px);
+  width: 640px;
+  height: 148px;
+}
+.welcomePage-cloud {
+  width: 800px;
+  height: 300px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  position: absolute;
+  top: calc(45vh - 150px);
+  right: 0px;
+  animation: 58s linear 1s infinite running slidein;
+}
+.welcomePage-ICPLicensing {
+  color: #80807e;
+  font-size: 16px;
+  position: absolute;
+  bottom: 39px;
+  width: 100%;
+  text-align: center;
+}
+.welcomePage-button {
+  /* background: rgb(245, 148, 173); */
+  /* background-color: rgb(255, 101, 143); */
+  width: 154px;
+  height: 50px;
+  color: #fff !important;
+  background-color: #1890ff !important;
+  border-radius: 24px;
+}
+.downloadPage,
+.personPage,
+.workPage {
+  /* background-color: #fff; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.downloadPage-title {
+  width: 100%;
+  height: 22px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #6f8397;
+  line-height: 22px;
+  text-align: center;
+}
+.downloadPage-container,
+.cooperationPage-container {
+  display: flex;
+  /* align-items: center; */
+  justify-content: space-between;
+}
+.downloadPage-item,
+.cooperationPage-item {
+  /* width: 160px; */
+  /* height: 550px; */
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.downloadPage-item:nth-child(1) {
+  width: 160px;
+}
+.downloadPage-item:nth-child(2) {
+  width: 356px;
+}
+.downloadPage-item:nth-child(3) {
+  width: 396px;
+}
+.downloadPage-phone {
+  width: 120px;
+  height: 237px;
+  margin: 48px 0px 70px 0px;
+}
+.downloadPage-computer {
+  width: 356px;
+  height: 295px;
+  margin: 19px 0px 41px 0px;
+}
+.downloadPage-google {
+  width: 396px;
+  height: 231px;
+  margin: 51px 0px 73px 0px;
+}
+.downloadPage-icon {
+  width: 160px;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+}
+.questionPage,
+.cooperationPage {
+  /* background: #f9f9f9; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+}
+
+.questionPage-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.questionPage-item {
+  width: 30%;
+  height: 84px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+  justify-content: center;
+}
+.questionPage-item-title {
+  width: 100%;
+  height: 28px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #4b5c6e;
+  line-height: 28px;
+  text-align: center;
+  margin-top: 15px;
+}
+.personPage {
+  flex-wrap: wrap;
+}
+.personPage-container {
+  width: 100%;
+  height: 60%;
+  display: flex;
+  justify-content: center;
+}
+.personPage-icon {
+  width: 78px;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  margin: 0px 35px;
+}
+.personPage-icon img {
+  margin-top: 110px;
+}
+.personPage-item {
+  width: 396px;
+  height: 361px;
+  background-color: #fff;
+  box-shadow: 0px 0px 7px 5px rgba(124, 121, 121, 0.07);
+  position: relative;
+  z-index: 1;
+  padding: 40px;
+  box-sizing: border-box;
+  border-radius: 12px;
+}
+.personPage-item-img {
+  width: 110px;
+  height: 110px;
+  overflow: hidden;
+  border-radius: 50%;
+  position: absolute;
+  left: calc(50% - 55px);
+  top: -55px;
+  z-index: 2;
+}
+.personPage-item-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.personPage-item-content {
+  width: 100%;
+  height: 112px;
+  font-size: 16px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #515869;
+  line-height: 29px;
+  text-align: justify;
+  margin: 80px 0px 30px 0px;
+}
+.personPage-item-nickName {
+  width: 100%;
+  height: 28px;
+  font-size: 22px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #4b5c6e;
+  line-height: 29px;
+  text-align: center;
+  margin: 5px 0px;
+}
+.personPage-item-post {
+  width: 100%;
+  height: 28px;
+  font-size: 17px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #9399a0;
+  line-height: 29px;
+  text-align: center;
+}
+.cooperationPage-item {
+  width: 310px;
+  display: flex;
+  align-content: flex-start;
+}
+/* .cooperationPage-container:nth-child(1) {
+  margin: 0px 150px;
+} */
+.cooperationPage-img:nth-child(1) {
+  width: 99px;
+  height: 114px;
+}
+.cooperationPage-img:nth-child(2) {
+  width: 113px;
+  height: 111px;
+}
+.cooperationPage-img:nth-child(3) {
+  width: 104px;
+  height: 109px;
+}
+.cooperationPage-title {
+  width: 100%;
+  height: 28px;
+  font-size: 22px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #4b5c6e;
+  line-height: 29px;
+  text-align: center;
+  margin: 33px 0px 30px 0px;
+}
+.cooperationPage-content {
+  width: 100%;
+  font-size: 16px;
+  font-weight: 400;
+  color: #515869;
+  line-height: 29px;
+}
+.workPage {
+  flex-wrap: wrap;
+}
+.workPage-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.workPage-item {
+  width: 20%;
+  height: 84px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+  justify-content: center;
+}
+.workPage-item img {
+  width: 100%;
+  height: 50px;
+  object-fit: contain;
+}
+.workPage-item-title {
+  width: 100%;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #515869;
+  line-height: 20px;
+  text-align: center;
+  margin-top: 15px;
+}
+@keyframes slidein {
+  from {
+    right: 0px;
+  }
+  to {
+    right: 100%;
+  }
+}

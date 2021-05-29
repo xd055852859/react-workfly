@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="23px" height="22px" viewBox="0 0 23 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>洽洽@1x</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="55.3724518%" y1="11.3480546%" x2="55.3724518%" y2="88.3527793%" id="linearGradient-1">
+            <stop stop-color="#1CAC7B" offset="0%"></stop>
+            <stop stop-color="#3CBE92" offset="100%"></stop>
+        </linearGradient>
+        <path d="M22.5368769,10.1954176 C22.3071426,15.3212284 17.4517986,19.4398574 11.4814885,19.523698 L11.2957645,19.5250012 L11.2953487,19.5250012 L11.2953487,10.1957059 L22.5368769,10.1954176 Z" id="path-2"></path>
+        <linearGradient x1="55.3724518%" y1="6.48855205%" x2="55.3724518%" y2="88.3527793%" id="linearGradient-4">
+            <stop stop-color="#149F70" offset="0%"></stop>
+            <stop stop-color="#19BE85" offset="100%"></stop>
+        </linearGradient>
+        <path d="M11.2961802,10.1957059 L11.2961802,19.5250012 L11.2957645,19.5250012 L11.0234214,19.5230275 C9.66248519,19.498536 8.31438175,19.2549158 7.03080409,18.8018771 L6.77496422,18.70848 L2.59548979,21.2066857 L2.53010041,21.24243 C2.42356716,21.2954901 2.30826504,21.3285828 2.18995804,21.3396975 L2.10075443,21.3438812 L2.02411952,21.3408535 C1.84577447,21.3267376 1.67173286,21.2633558 1.52331624,21.1526641 L1.46134016,21.102334 L1.40779778,21.0515082 C1.15122162,20.7888989 1.06250009,20.4026454 1.17847515,20.0529673 L1.20441037,19.9835668 L2.79338394,16.1761833 L2.65475152,16.0358854 C1.05904649,14.3899342 0.15048621,12.354413 0.0549564229,10.1953324 L11.2961802,10.1957059 Z" id="path-5"></path>
+        <linearGradient x1="0%" y1="66.4164224%" x2="100%" y2="66.4164224%" id="linearGradient-7">
+            <stop stop-color="#18BA83" offset="0%"></stop>
+            <stop stop-color="#17B680" offset="100%"></stop>
+        </linearGradient>
+        <path d="M11.2957645,0.105183232 L11.4814885,0.1064866 C17.5375152,0.191538977 22.4463304,4.42845883 22.5439011,9.65657228 L22.5449656,9.77538867 L22.5449656,9.85521152 L22.5438711,9.97562804 C22.5424863,10.04909 22.5401515,10.1223561 22.5368769,10.1954176 L11.2953487,10.1957059 L11.2953487,0.105183232 L11.2957645,0.105183232 Z" id="path-8"></path>
+        <linearGradient x1="0%" y1="66.4164224%" x2="100%" y2="66.4164224%" id="linearGradient-10">
+            <stop stop-color="#17B27D" offset="0%"></stop>
+            <stop stop-color="#11A976" offset="100%"></stop>
+        </linearGradient>
+        <path d="M11.2957645,0.105183232 L11.2961802,0.105183232 L11.2961802,10.1957059 L0.0549564229,10.1953324 C0.0493694204,10.0690598 0.046563328,9.94236467 0.046563328,9.8153001 C0.046563328,4.46093312 5.092864,0.105183232 11.2957645,0.105183232 Z" id="path-11"></path>
+    </defs>
+    <g id="新版定稿（20202-8-22）" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="画板" transform="translate(-454.000000, -1952.000000)">
+            <g id="洽洽" transform="translate(454.000000, 1952.000000)">
+                <g id="icon">
+                    <g id="编组">
+                        <mask id="mask-3" fill="white">
+                            <use xlink:href="#path-2"></use>
+                        </mask>
+                        <use id="4" fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+                        <mask id="mask-6" fill="white">
+                            <use xlink:href="#path-5"></use>
+                        </mask>
+                        <use id="3" fill="url(#linearGradient-4)" xlink:href="#path-5"></use>
+                        <mask id="mask-9" fill="white">
+                            <use xlink:href="#path-8"></use>
+                        </mask>
+                        <use id="2" fill="url(#linearGradient-7)" xlink:href="#path-8"></use>
+                        <mask id="mask-12" fill="white">
+                            <use xlink:href="#path-11"></use>
+                        </mask>
+                        <use id="1" fill="url(#linearGradient-10)" xlink:href="#path-11"></use>
+                    </g>
+                    <g id="编组-9" transform="translate(6.236160, 6.651904)">
+                        <path d="M0.119167146,5.88662275 C1.14478687,7.2191894 2.97983272,8.107008 5.072928,8.107008 C7.13944977,8.107008 8.95443281,7.24158941 9.98723542,5.93716075" id="路径" stroke="#FFFFFF" stroke-width="0.9856" stroke-linecap="round"></path>
+                        <circle id="椭圆形" fill="#FFFFFF" cx="8.294944" cy="0.935424" r="1"></circle>
+                        <circle id="椭圆形" fill="#FFFFFF" cx="1.64304" cy="0.935424" r="1"></circle>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

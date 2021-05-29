@@ -1,0 +1,92 @@
+.memberBoard {
+  width: 360px;
+  height: 100%;
+  margin-right: 2%;
+  color: #fff;
+}
+.memberBoard-maintitle {
+  width: 100%;
+  height: 45px;
+  /* padding-bottom: 20px;
+  box-sizing: border-box; */
+  border-bottom: 1px solid rgba(216, 216, 216, 0.4);
+  margin-bottom: 5px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+.memberBoard-maintitle-board {
+  width: 100%;
+  height: 38px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  padding: 0px 22px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.memberBoard-maintitle-board:hover {
+  background-color: #f0f0f0;
+}
+.memberBoard-title {
+  width: 100%;
+  height: 35px;
+  display: flex;
+  align-items: center;
+}
+.memberBoard-item {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0px 5px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-content: flex-start;
+  flex-wrap: wrap;
+}
+.memberBoard-item-img {
+  width: 133px;
+  height: 51px;
+  margin: 50px 0px 20px 0px;
+}
+.memberBoard-item-title {
+  width: 100%;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.memberBoard-group {
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+  margin: 14px 0px 10px 0px;
+}
+
+.memberBoard-group-item {
+  width: 100%;
+  height: 35px;
+  display: flex;
+  align-items: center;
+}
+.memberBoard-group-avatar {
+  width: 22px;
+  height: 22px;
+  overflow: hidden;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.memberBoard-group-item-label {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  margin: 14px 0px 10px 0px;
+}

@@ -1,0 +1,75 @@
+.filter {
+  width: 100%;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  align-content: flex-start;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.filter-title {
+  width: 52px;
+  height: 100%;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+}
+.filter-menu {
+  width: calc(100% - 64px);
+  height: 100%;
+  background: rgba(240, 240, 240, 1);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.filter-info,
+.filter-menu-info {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0px 18px;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+/* .filter-info:hover{
+  background:#f0f0f0;
+} */
+.filter-menu-item {
+  width: 100%;
+  height: 36px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  padding: 0px 12px;
+}
+.filter-menu-info {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.filter-menu-info:hover {
+  background: #f0f0f0;
+}
+.filter-menu-icon {
+  position: absolute;
+  width: 14px;
+  height: 8.4px;
+  top: 14px;
+  right: 18px;
+}
+.filter-menu-name {
+  width: calc(100% - 60px);
+  height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 40px;
+  margin-left: 8px;
+}

@@ -1,0 +1,155 @@
+.home {
+  height: 100%;
+  width: 100%;
+  /* background: rgba(0, 0, 0, 0.24); */
+  color: #fff;
+  position: relative;
+  z-index: 5;
+  /* position: fixed;
+  z-index: 5;
+  flex-shrink: 0; */
+  /* overflow: hidden; */
+}
+.home-bg1 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+}
+.home-bg2 {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  -webkit-filter: blur(8px);
+  filter: blur(8px);
+  z-index: -2;
+  /* background-color: rgba(0, 0, 0); */
+  /* background-image: url('https://cdn-icare.qingtime.cn/1596679987203_画板备份10.jpg'); */
+  background-size: cover;
+  background-attachment: fixed;
+}
+.home-b {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* -webkit-filter: grayscale(40%) blur(8px);
+  filter: grayscale(40%) blur(8px); */
+  z-index: -1;
+  background-color: rgba(0, 0, 0, 0.2);
+  /* background-image: url('https://cdn-icare.qingtime.cn/1596679987203_画板备份10.jpg'); */
+}
+.home-header {
+  padding: 8px 0px 10px 0px;
+  box-sizing: border-box;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  flex-wrap: wrap;
+}
+.home-header-logo {
+  width: 100%;
+  height: 41px;
+  margin: 11px 0px;
+  padding: 0px 9px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.home-header-logo img {
+  width: 50%;
+  /* height: 100%; */
+}
+.home-header-item-groupLogo {
+  width: 25px;
+  height: 25px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-right: 10px;
+}
+.home-header-item-groupName {
+  width: 44%;
+}
+.home-header-item-groupLogo > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.home-header-item {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  padding: 0px 9px;
+  box-sizing: border-box;
+  cursor: pointer;
+  margin-bottom: 5px;
+  position: relative;
+  z-index: 1;
+}
+.home-header-item-logo {
+  width: 26px;
+  height: 23px;
+  margin-right: 14px;
+}
+.home-header-item:hover {
+  background: rgba(255, 255, 255, 0.34);
+}
+.home-space {
+  justify-content: space-between;
+  position: relative;
+  z-index: 7;
+}
+.home-header-item-left {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.home-item-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-item {
+  height: 38px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.home-item:hover {
+  background-color: #f0f0f0;
+}
+.home-item-logo {
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+  border-radius: 5px;
+  margin: 0px 10px;
+  flex-shrink: 0;
+}
+
+.home-item-name {
+  width: calc(100% - 34px);
+  height: 38px;
+  white-space: nowrap;
+  line-height: 38px;
+}
+.home-header-icon {
+  position: absolute;
+  right: 0px;
+}
+.home-header-icon .ant-progress-text {
+  color: #fff !important;
+}

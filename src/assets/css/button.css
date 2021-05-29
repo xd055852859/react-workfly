@@ -1,0 +1,59 @@
+.btn {
+  /* --hue: 190; */
+  position: relative;
+  /* padding: 1rem 3rem; */
+  /* font-size: 1rem; */
+  line-height: 1.5;
+  text-decoration: none;
+  text-transform: uppercase;
+  /* background-color: hsl(var(--hue), 100%, 41%); */
+  background-color: #1890ff;
+  border: 1px solid hsl(var(--hue), 100%, 41%);
+  outline: transparent;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: 0.25s;
+}
+
+/* .btn-primary {
+  --hue: 187;
+} */
+.btn,
+.btn-ghost,
+.btn-shine {
+  color: white;
+}
+.btn-ghost {
+  color: hsl(var(--hue), 100%, 41%);
+  background-color: transparent;
+  /* border-color: hsl(var(--hue), 100%, 41%); */
+  border-color: #3EB5FF ;
+}
+.btn-shine::before {
+  position: absolute;
+  content: '';
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    /* hsla(var(--hue), 100%, 41%, 0.5), */ #3EB5FF,
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: 0.6s;
+}
+
+.btn-shine:hover {
+  background: #1890ff;
+  /* box-shadow: 0 0 20px 10px hsla(var(--hue), 100%, 41%, 0.5); */
+  /* box-shadow: 0 0 10px 5px #3EB5FF; */
+}
+
+.btn-shine:hover::before {
+  transform: translateX(100%);
+}

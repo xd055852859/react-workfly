@@ -1,0 +1,81 @@
+.user-close {
+  position: absolute;
+  top: 10%;
+  right: 18%;
+  font-size: 20px;
+}
+.user-home-content {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  padding-top: 9px;
+  box-sizing: border-box;
+}
+.user-home-avatar {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(51, 51, 51, 1);
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+  position: relative;
+}
+.user-home-avatar-img,
+.upload-img {
+  width: 86px;
+  height: 86px;
+  overflow: hidden;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.upload-img {
+  width: 100%;
+}
+.user-home-avatar-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.user-title {
+  width: 50px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+.user-input,
+.user-textarea {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(51, 51, 51, 1);
+}
+.user-input {
+  margin-bottom: 20px;
+}
+.user-button-info {
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  left: 0px;
+  bottom: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 27px;
+  box-sizing: border-box;
+}
+.user-button {
+  width: 114px;
+  height: 39px;
+  background: #86b93f;
+  border: 1px solid #86b93f;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+.user-button:hover {
+  background: #86b93f;
+}

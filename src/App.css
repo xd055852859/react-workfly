@@ -1,0 +1,408 @@
+.App {
+  display: flex;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.App-bg2 {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: -2;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center 0;
+  overflow: hidden;
+}
+
+.App-bg1 {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  z-index: -1;
+}
+
+.home-chat {
+  height: 100%;
+  width: calc(100% - 320px);
+  position: absolute;
+  left: 320px;
+  top: 0px;
+}
+.toLong {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+}
+*::-webkit-scrollbar {
+  width: 1.5px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #1890ff;
+  border-radius: 100px;
+}
+.animate__animated.animate__slideInRight {
+  --animate-duration: 600ms;
+  --animate-delay: 0.9s;
+}
+.upload-img {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 3;
+  opacity: 0;
+}
+
+.icon-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+input {
+  color: #666;
+}
+
+/* body > div[style] {
+  display: none;
+} */
+img {
+  vertical-align: initial;
+}
+
+body > div[role] {
+  display: block;
+}
+
+.action {
+  width: 289px;
+  position: fixed;
+  top: 10px;
+  right: 0px;
+  color: #333;
+  z-index: 100;
+  background-color: #fff;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  padding: 12px 15px;
+  box-sizing: border-box;
+}
+
+.action-title {
+  width: 100%;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  line-height: 20px;
+  margin-bottom: 10px;
+}
+
+.action-container {
+  width: 100%;
+  height: 30px;
+  background: #f5f5f5;
+  font-size: 12px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #333;
+  line-height: 30px;
+  padding-left: 8px;
+  box-sizing: border-box;
+}
+
+.action-close {
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.MuiAlert-filledSuccess {
+  background-color: #1890ff !important;
+}
+
+textarea {
+  padding: 5px;
+  border-radius: 6px;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 18px;
+  resize: none;
+}
+
+textarea:focus {
+  border: 1px solid #1890ff;
+  outline: 0px;
+}
+
+[contenteditable]:focus {
+  outline: 1px solid #1890ff;
+}
+
+.appCanvas {
+  position: absolute;
+  width: 0px;
+  height: 0px;
+  z-index: -10;
+  opacity: 0;
+}
+
+/* 定义球的初始值，位置是绝对定位； */
+
+
+.timeSet-container {
+  width: 274px;
+  height: 205px;
+  position: fixed;
+  z-index: 1700;
+  background-color: #fff;
+  overflow: auto;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  box-sizing: border-box;
+  color: #333;
+  display: none;
+}
+
+.taskMember-container {
+  width: 260px;
+  height: 50%;
+  position: fixed;
+  z-index: 1700;
+  background-color: #fff;
+  overflow: auto;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  box-sizing: border-box;
+  color: #333;
+  display: none;
+}
+
+/* 向上走的动画初始及结尾值 */
+/* @keyframes run-right-top {
+  0% {
+    bottom: 40px;
+  }
+
+  100% {
+    bottom: 800px;
+  }
+} */
+/* 向上右的动画初始及结尾值 */
+/* @keyframes run-right-right {
+  0% {
+    left: 40px;
+    transform: scale(0.7);
+  }
+
+  100% {
+    left: 600px;
+    transform: scale(0.45);
+  }
+} */
+
+/* markdown */
+.preview-container pre {
+  border: 1px solid #ccc;
+}
+
+.preview-container blockquote {
+  color: #666;
+  margin: 0;
+  padding-left: 3em;
+  border-left: 0.5em #eee solid;
+}
+
+.preview-container tr {
+  border-top: 1px solid #c6cbd1;
+  background: #fff;
+}
+
+.preview-container th,
+.preview-container td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+.preview-container table tr:nth-child(2n) {
+  background: #f6f8fa;
+}
+
+.react-codemirror2 {
+  height: 100% !important;
+}
+
+.CodeMirror {
+  height: 100% !important;
+}
+.box-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@keyframes moveIn {
+  from {
+    left: 0px;
+    opacity: 1;
+  }
+
+  to {
+    left: -320px;
+    opacity: 0;
+  }
+}
+
+@keyframes moveOut {
+  from {
+    width: -320px;
+    opacity: 0;
+  }
+
+  to {
+    width: 0px;
+    opacity: 1;
+  }
+}
+
+@keyframes moveRight {
+  from {
+    left: 0px;
+  }
+
+  to {
+    left: -260px;
+  }
+}
+
+@keyframes moveLeft {
+  from {
+    left: -260px;
+  }
+
+  to {
+    left: 0px;
+  }
+}
+
+@keyframes searchInputIn {
+  from {
+    width: 100%;
+    opacity: 1;
+    right: 0px;
+  }
+
+  to {
+    width: 20px;
+    opacity: 0;
+    right: 40px;
+  }
+}
+
+@keyframes searchInputOut {
+  from {
+    width: 20px;
+    opacity: 0;
+    right: 10px;
+    height: 18px;
+  }
+
+  to {
+    width: 100%;
+    opacity: 1;
+    right: 0px;
+    height: 100%;
+  }
+}
+
+@keyframes addLabelInputIn {
+  from {
+    width: 250px;
+    opacity: 1;
+  }
+
+  to {
+    width: 0px;
+    opacity: 0;
+  }
+}
+
+@keyframes addLabelInputOut {
+  from {
+    width: 0px;
+    opacity: 0;
+  }
+
+  to {
+    width: 250px;
+    opacity: 1;
+  }
+}
+
+/* @keyframes contentmoveIn {
+  from {
+    width: calc(100% - 320px);
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes contentmoveOut {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: calc(100% - 320px);
+  }
+} */
+
+@keyframes navOut {
+  from {
+    width: 0px;
+    height: 0px;
+    right: 0px;
+    top: 30px;
+  }
+
+  to {
+    width: 22px;
+    height: 22px;
+    right: -3px;
+    top: 20px;
+  }
+}
+
+@keyframes navIn {
+  from {
+    width: 22px;
+    height: 22px;
+    right: -3px;
+    top: 20px;
+  }
+
+  to {
+    width: 0px;
+    height: 0px;
+    right: 0px;
+    top: 30px;
+  }
+}

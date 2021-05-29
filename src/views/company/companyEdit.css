@@ -1,0 +1,92 @@
+.companyEdit-close {
+  position: absolute;
+  top: 10%;
+  right: 18%;
+  font-size: 20px;
+}
+.companyEdit-home-content {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  padding-top: 9px;
+  box-sizing: border-box;
+}
+.companyEdit-home-avatar {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(51, 51, 51, 1);
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+  position: relative;
+}
+.companyEdit-home-avatar-img,
+.upload-img {
+  width: 86px;
+  height: 86px;
+  overflow: hidden;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.upload-img {
+  width: 100%;
+}
+.companyEdit-home-avatar-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.companyEdit-title {
+  width: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  font-size: 12px;
+}
+.companyEdit-input,
+.companyEdit-textarea {
+  width: 100%;
+  height: 35px;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(51, 51, 51, 1);
+  margin-bottom: 15px;
+}
+.companyEdit-input-title {
+  width: 70px;
+  height: 35px;
+  line-height: 35px;
+  margin-right: 5px;
+}
+
+.companyEdit-button-info {
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  left: 0px;
+  bottom: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 27px;
+  box-sizing: border-box;
+}
+.companyEdit-button {
+  width: 114px;
+  height: 39px;
+  background: #86b93f;
+  border: 1px solid #86b93f;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+.companyEdit-button:hover {
+  background: #86b93f;
+}
+.companyEdit-delete-button {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+}

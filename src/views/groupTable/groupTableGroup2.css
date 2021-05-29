@@ -1,0 +1,239 @@
+.task {
+  width: 100%;
+  height: 100%;
+  margin-right: 10px;
+  position: relative;
+}
+.task-container-taskName-container {
+  display: flex;
+}
+.task-container-taskName {
+  /* height: 60px; */
+  display: flex;
+  /* padding: 0px 0.5%; */
+}
+.task-container-taskName-item {
+  position: relative;
+}
+.task-container-taskName-logo {
+  position: absolute;
+  z-index: 3;
+}
+.task-container-profile,
+.task-container-calendar,
+.task-container-lineChart {
+  width: 100%;
+  height: calc(100% - 5px);
+  padding: 0px 0.5%;
+}
+.task-container-calendar,
+.task-container-lineChart {
+  overflow: auto;
+}
+.task-container-task {
+  display: flex;
+  /* padding: 0px 0.5%; */
+  height: calc(100% - 60px);
+}
+.task-container-info {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  width: 350px;
+  margin-right: 10px;
+}
+.task-item-item {
+  /* height:46px; */
+  position: relative;
+}
+
+.taskMark {
+  height: 100%;
+  width: 7px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.task-tag-container {
+  width: 100%;
+  height: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+  display: flex;
+}
+
+.task-tag-container::-webkit-scrollbar,
+.task-container-profile::-webkit-scrollbar,
+.task-item-info::-webkit-scrollbar {
+  width: 3px;
+  height: 8px;
+}
+
+.task-tag-container::-webkit-scrollbar-thumb,
+.task-container-profile::-webkit-scrollbar-thumb,
+.task-item-info::-webkit-scrollbar-thumb {
+  background: #dedede;
+  border-radius: 100px;
+}
+
+.task-tag-container > div {
+  display: inline-block;
+}
+
+.task-container-calendar,
+.task-container-lineChart {
+  overflow: auto;
+}
+
+.task-container-lineChart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0e204a;
+}
+
+.addTask {
+  width: 350px;
+  height: 38px;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.task-item-container {
+  width: 350px;
+  height: 100%;
+  margin-right: 5px;
+  white-space: nowrap;
+}
+
+.task-item-executor {
+  display: flex;
+  align-items: center;
+}
+
+.task-item-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 15px;
+  object-fit: cover;
+}
+
+.task-item-person {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.task-container-profile .task-item-title,
+.task-container-profile .task-item-deftitle {
+  width: 100%;
+  height: 40px;
+  font-size: 14px;
+  /* color: #23384b; */
+  text-align: center;
+  position: relative;
+  margin: 3px 0px 1px 0px;
+  display: flex;
+}
+
+.task-container-profile .task-add-icon,
+.task-container-profile .task-item-title-icon {
+  font-size: 18px;
+}
+
+.task-container-profile .task-add-icon {
+  right: 35px;
+}
+
+.task-container-profile .task-item-info {
+  height: 100%;
+  min-height: 300px;
+  width: 350px;
+  overflow: auto;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.task-container-profile .task-item-info > span {
+  /* min-height: 80px; */
+  height: calc(100% - 10px);
+  width: 100%;
+  /* display: inline-block; */
+}
+.defaultExecutor-info {
+  width: 100%;
+  height: 100%;
+  padding: 10px 0px;
+  box-sizing: border-box;
+  overflow: auto;
+  color: #333;
+}
+.defaultExecutor-info-item {
+  width: 100%;
+  height: 38px;
+  padding: 0px 10px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.defaultExecutor-info-item:hover {
+  background-color: #f0f0f0;
+}
+.defaultExecutor-info-avatar {
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.defaultExecutor-info-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.taskNav-addLabel {
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  position: absolute;
+  top: 17px;
+  right: 55px;
+  z-index: 2;
+}
+.taskNav-url {
+  width: 280px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+}
+.taskNav-url-input {
+  width: 0px;
+  height: 30px;
+  margin-left: 5px;
+  border: 1px solid #cecece;
+  border-radius: 6px;
+  box-sizing: border-box;
+  opacity: 0;
+}
+@keyframes urlOut {
+  from {
+    width: 0px;
+    opacity: 0;
+  }
+  to {
+    width: 140px;
+    opacity: 1;
+  }
+}

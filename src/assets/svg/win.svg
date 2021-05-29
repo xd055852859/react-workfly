@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60px" height="60px" viewBox="0 0 60 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>win@1x</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页" transform="translate(-938.000000, -1201.000000)">
+            <g id="编组-15备份" transform="translate(780.000000, 1201.000000)">
+                <g id="win" transform="translate(158.000000, 0.000000)">
+                    <circle id="椭圆形备份" stroke="#6F8397" stroke-width="1.6" cx="29.6" cy="29.6" r="28.8"></circle>
+                    <path d="M28.5562011,29.3074454 L28.5562011,19.177792 L17,20.9189131 L17,29.3074454 L28.5562011,29.3074454 Z M30,30.6925546 L30,41.0391528 L43,43 L43,30.6925546 L30,30.6925546 Z M30,29.3074454 L43,29.3074454 L43,17 L30,18.9580659 L30,29.3074454 Z M28.5562011,30.6925546 L17,30.6925546 L17,39.0810869 L28.5562011,40.822208 L28.5562011,30.6925546 Z" id="形状" fill="#6F8397" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

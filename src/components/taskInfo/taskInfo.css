@@ -1,0 +1,302 @@
+.taskInfo {
+  width: 100%;
+  height: 100%;
+  /* position: fixed;
+  top: 65px;
+  right: 0px; */
+  overflow: auto;
+  /* z-index: 50; */
+  /* background-color: #fff; */
+  color: #333;
+  /* box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5); */
+  /* border-radius: 12px; */
+}
+.taskInfo-mainTitle {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.taskInfo-mainTitle-left,
+.taskInfo-mainTitle-left-info {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(51, 51, 51, 1);
+  position: relative;
+}
+
+.taskInfo-mainTitle-left-icon,
+.taskInfo-mainTitle-left-avatar {
+  width: 33px;
+  height: 33px;
+  margin-right: 9px;
+  cursor: pointer;
+}
+.taskInfo-mainTitle-left-icon {
+  width: 27px;
+  height: 27px;
+}
+.taskInfo-mainTitle-left-avatar {
+  border-radius: 50%;
+  overflow: hidden;
+}
+.taskInfo-mainTitle-left-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.taskInfo-mainTitle-right {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.taskInfo-mainTitle-right-icon {
+  width: 20px;
+  height: 100%;
+  margin-left: 11px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.taskInfo-container {
+  width: 100%;
+  height: calc(100vh - 68px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 1;
+}
+.taskInfo-title {
+  width: calc(100% - 5px);
+  margin: 15px 0px 20px 2.5px;
+  border: 0px;
+  font-size: 18px;
+  padding: 5px;
+  box-sizing: border-box;
+}
+.taskInfo-item {
+  width: 100%;
+  height: 48px;
+  line-height: 48px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+/* .taskInfo-Editor {
+  border: 1px solid #efefef;
+  padding: 2px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+} */
+.taskInfo-Editor-mask {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 2;
+}
+.taskInfo-Editor-img {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 16px;
+  right: 13px;
+  z-index: 5;
+  cursor: pointer;
+}
+.taskInfo-item-title {
+  width: 30px;
+  height: 100%;
+  margin-right: 12px;
+}
+.taskInfo-item-info,
+.taskInfo-item-follow {
+  width: calc(100% - 42px);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+.taskInfo-item-suggest {
+  /* width: 36px; */
+  height: 36px;
+  border-radius: 18px;
+  padding: 0px 8px;
+  display: flex;
+  line-height: 36px;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  position: relative;
+  z-index: 10;
+  margin-left: 7px;
+}
+.taskInfo-item-suggest-item {
+  width: 100%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.taskInfo-item-hour,
+.taskInfo-item-countdown {
+  width: 20px;
+  height: 100%;
+  /* background: #999;
+  border-radius: 4px;
+  color: #fff;*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* font-size: 14px;  */
+  position: relative;
+  cursor: pointer;
+}
+.taskInfo-item-hour img,
+.taskInfo-item-countdown img {
+  width: 17px;
+  height: 17px;
+  margin-right: 5px;
+}
+.taskInfo-item-follow {
+  width: calc(100% - 42px);
+  min-height: 48px;
+  background: #ebebeb;
+  border: 1px solid rgba(235, 235, 235, 1);
+  border-radius: 4px;
+}
+.taskInfo-comment {
+  margin: 15px 0px 65px 0px;
+}
+.taskInfo-comment-tabs {
+  width: 100%;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  line-height: 32px;
+  border-bottom: 1px solid #d3d3d3;
+  box-sizing: border-box;
+}
+.taskInfo-comment-tabs-item {
+  height: 32px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0px 8px;
+}
+.taskInfo-comment-tabs-item:nth-child(1) {
+  margin-right: 34px;
+}
+.taskInfo-comment-tab {
+  width: 100%;
+  max-height: 600px;
+  min-height: 60px;
+  overflow: auto;
+  padding-top: 15px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+.taskInfo-comment-tab::-webkit-scrollbar,
+.taskInfo-container::-webkit-scrollbar {
+  width: 0px;
+}
+.taskInfo-comment-tab::-webkit-scrollbar-thumb,
+.taskInfo-container::-webkit-scrollbar-thum {
+  background: #47475b;
+  border-radius: 100px;
+}
+.taskInfo-comment-historyLog {
+  width: 100%;
+  min-height: 50px;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+}
+.taskInfo-comment-avatar {
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.taskInfo-comment-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.taskInfo-comment-info {
+  width: calc(100% - 45px);
+  height: 100%;
+  min-height: 50px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.taskInfo-comment-input {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0px 10px;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  background-color: #fff;
+  z-index: 10;
+}
+.point {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #8091a0;
+  margin-right: 5px;
+}
+.editor-button {
+  background-color: #1890ff;
+  color: #fff;
+  position: absolute;
+  bottom: -105px;
+  right: 0px;
+  z-index: 30;
+}
+/* .taskInfo [contenteditable]:focus {
+  outline: none;
+} */
+.taskInfo .addTask-item {
+  width: 100%;
+  justify-content: space-between;
+}
+.taskInfo-item-input {
+  width: calc(100% - 42px);
+  height: 36px;
+  border: 1px solid #cecece;
+  border-radius: 6px;
+  padding: 0px 8px;
+  box-sizing: border-box;
+}
+.comment-button {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 5;
+}
+.comment-info {
+  width: 100%;
+  position: absolute;
+  left: 0px;
+  background-color: #fff;
+  z-index: 10;
+}

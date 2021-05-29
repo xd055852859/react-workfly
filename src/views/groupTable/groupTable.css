@@ -1,0 +1,14 @@
+.groupTable {
+  height: 100%;
+  width: 100%;
+  /* position: relative;
+  z-index:3 */
+}
+.groupTableContent {
+  width: 100%;
+  height: calc(100vh - 68px);
+  /* overflow: hidden; */
+  /* position: relative;
+  z-index: 6; */
+  box-sizing: border-box;
+}

@@ -1,0 +1,201 @@
+.calendarInfo {
+  width: 100%;
+  height: 100%;
+}
+
+.calendarInfo-title {
+  width: 100%;
+  height: 35px;
+  margin: 5px 0px;
+}
+
+.calendarInfo-item {
+  width: 100%;
+  height: 30px;
+  margin-bottom: 15px;
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  color: #666666;
+  font-size: 14px;
+}
+
+.calendarInfo-item-title {
+  width: 65px;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.calendarInfo-repeat-item {
+  width: 100%;
+  min-height: 30px;
+  margin: 10px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #666666;
+  font-size: 14px;
+}
+
+.calendarInfo-repeat {
+  width: calc(100% - 75px);
+  display: flex;
+  align-items: center;
+}
+
+.calendarInfo-week {
+  width: calc(100% - 75px);
+  display: flex;
+  align-items: center;
+  margin-left: 6px;
+}
+
+.calendarInfo-week-item {
+  width: 40px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-top: 1px solid #bfbfbf;
+  border-bottom: 1px solid #bfbfbf;
+  border-right: 1px solid #bfbfbf;
+  cursor: pointer;
+  color: #999;
+}
+
+.calendarInfo-week-item:nth-child(1) {
+  border-left: 1px solid #bfbfbf;
+}
+
+.calendarInfo-item-color,
+.calendarInfo-item-notice {
+  width: calc(100% - 75px);
+  display: flex;
+  /* flex-wrap: wrap; */
+  justify-content: flex-start;
+}
+
+.calendarItem-color-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendarItem-color-point {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #fff;
+}
+
+.calendarInfo-icon {
+  width: 100%;
+  margin: 10px 0px;
+}
+
+.calendarInfo-icon-title {
+  width: 100%;
+  height: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+  line-height: 20px;
+}
+
+.calendarInfo-icon-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.calendarInfo-group {
+  width: 42px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.calendarInfo-group-item {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.calendarInfo-group-item img,
+.calendarInfo-group-box-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.calendarInfo-group-add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ebebeb;
+  cursor: pointer;
+}
+
+.calendarInfo-group-add img {
+  width: 20px;
+  height: 20px;
+}
+
+.calendarInfo-group-title {
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.calendarInfo-group-box {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.calendarInfo-group-box-container {
+  width: 70px;
+  margin-bottom: 10px;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.calendarInfo-group-box-item {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+.calendarInfo-delete-icon {
+  width: 80px;
+  height: 30px;
+  position: absolute;
+  bottom: 15px;
+  left: 7px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.calendarInfo-color-title {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

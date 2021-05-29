@@ -1,0 +1,41 @@
+.book {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: relative;
+  z-index: 1;
+}
+
+.book-left {
+  width: 20%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(245, 245, 245);
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.book-left-title {
+  width: 100%;
+  height: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.book-right {
+  width: 80%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.book-editor-button {
+  position: absolute;
+  top: 40px;
+  right: 5px;
+  z-index: 10;
+  cursor: pointer;
+}

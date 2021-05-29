@@ -1,0 +1,38 @@
+.chat-iframe {
+  width: 100%;
+  position: fixed;
+  height: calc(100% - 70px);
+  opacity: 1;
+  right: 0px;
+  top: 65px;
+  z-index: 15;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: -0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+}
+.chat-close {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 20px;
+  right: 3px;
+  z-index: 15;
+}
+.chat {
+  position: absolute;
+  height: 100%;
+  width: 600px;
+  top: 0px;
+  left: -180px;
+  border: 0px;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+.chat-more {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  top: 15px;
+  z-index: 20;
+  background: transparent;
+}

@@ -1,0 +1,11 @@
+.tooltip-title {
+  position: absolute;
+  z-index: 20;
+  background-color: #333;
+  padding: 3px 5px;
+  border-radius: 10px;
+  color: #fff;
+  text-align: center;
+  box-sizing: border-box;
+  font-size: 12px;
+}

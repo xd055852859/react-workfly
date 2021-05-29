@@ -1,0 +1,18 @@
+.begin {
+  width: 100%;
+  height: 100%;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-color: #fff;
+}
+.pages-local {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 2;
+  opacity: 0;
+}

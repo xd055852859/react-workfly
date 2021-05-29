@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Web site created using create-react-app" />
+  <script src="./jquery-3.5.1.min.js"></script>
+  <link rel="stylesheet" href="./luckysheet/plugins/css/pluginsCss.css" />
+  <link rel="stylesheet" href="./luckysheet/plugins/plugins.css" />
+  <link rel="stylesheet" href="./luckysheet/css/luckysheet.css" />
+  <script src="./luckysheet/plugins/js/plugin.js"></script>
+  <script src="./luckysheet/luckysheet.umd.js"></script>
+  <title>时光表格</title>
+  <style>
+    button:hover {
+      cursor: pointer;
+    }
+
+    #luckysheet_info_detail_title {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="luckysheet"
+    style="margin: 0px; padding: 0px; position: absolute; width: 100%; height: 100%; left: 0px; top: 0px"></div>
+</body>
+<script type="module">
+  import api from './api.js';
+    import util from './util.js';
+    const key = util.getQueryString('key');
+    const bookid = util.getQueryString('bookid');
+
+    $(function () {
+      const token = localStorage.getItem('token');
+      if (token) {
+        api.loginByToken(token).then(function (res) {
+          if (res.statusCode === '200') {
+            var user = res.result;
+          } else {
+            window.location.href = window.location.origin;
+          }
+        });
+      }
+
+      api.getTaskInfo(token,key).then(function (res) {
+        if (res.msg==='OK') {
+          var docName = res.result.title || '请输入标题名';
+          var luckysheetfile = res.result.content;
+          //配置项
+          var options = {
+            container: 'luckysheet', //luckysheet为容器id
+            title: docName,
+            lang: 'zh',
+            myFolderUrl: '/',
+            allowEdit: true,
+            forceCalculation: false,
+            functionButton: res.result.readOnly ? '' : "<button id='save'>保存</button>",
+            // data: [sheetFormula, sheetFormula2],
+          };
+          if (luckysheetfile instanceof Array && luckysheetfile.length) {
+            options['data'] = luckysheetfile;
+          }
+          luckysheet.create(options);
+
+          // 事件
+          $('#save').on('click', function () {
+            var docName = $('#luckysheet_info_detail_input').val();
+            // data => celldata
+            var luckysheetfile = luckysheet.getluckysheetfile();
+            for (let index = 0; index < luckysheetfile.length; index++) {
+              var sheet = luckysheetfile[index];
+              if (sheet.data) {
+                sheet['celldata'] = luckysheet.getGridData(sheet.data);
+                // delete sheet["data"];
+              }
+            }
+            api.updateNode(token,key, docName, luckysheetfile).then(function (res) {
+              if (res.msg === 'OK') {
+                alert('保存成功！');
+                // window.parent.postMessage({ eventName: 'refresh-finder', data: { nodeKey: key, name: docName } }, '*');
+              } else {
+                alert('服务出错！');
+              }
+            });
+          });
+        } 
+        else {
+          alert('获取文档数据失败！');
+        }
+      });
+    });
+  </script>
+
+</html>

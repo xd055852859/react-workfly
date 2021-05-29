@@ -1,0 +1,64 @@
+.dayCanlendar {
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  overflow: auto;
+  color:#fff;
+}
+.dayCanlendar-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+.dayCanlendar-title {
+  width: 100%;
+  height: 30px;
+  display: flex;
+}
+.dayCanlendar-img {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.dayCanlendar-img > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.dayCanlendar-date {
+  width: 100%;
+  height: 39px;
+  line-height: 39px;
+  text-align: center;
+}
+.dayCanlendar-box {
+  flex-shrink: 0;
+  padding: 0px 5px;
+  box-sizing: border-box;
+}
+.dayCanlendar-info {
+  width: 100%;
+  height: calc(100% - 42px);
+}
+.dayCanlendar-info > div {
+  width: 100%;
+  margin-top: 1px;
+  overflow: auto;
+}
+.dayCanlendar-info-item:last-child > div {
+  margin-bottom: 0px;
+}
+/* .dayCanlendar::-webkit-scrollbar {
+  width: 3px;
+  height: 8px;
+} */
+
+.dayCanlendar::-webkit-scrollbar {
+  width: 3px;
+}
+.dayCanlendar::-webkit-scrollbar-thumb {
+  background: #dedede;
+  border-radius: 100px;
+}
