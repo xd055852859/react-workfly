@@ -83,10 +83,10 @@ const WorkingTableHeader: React.FC<WorkingTableHeaderProps> = (prop) => {
   const [fileInput, setFileInput] = useState("7");
   const [tabArray, setTabArray] = useState<any>([
     "任务",
+    "超级树",
     "日报",
     "活力",
     "日程",
-    "超级树",
   ]);
   const viewImgb: string[] = [labelbSvg, groupbSvg];
   const tabImg: string[] = [tab0Svg, tab1Svg, tab4Svg, tab6Svg, tab5Svg];
@@ -106,7 +106,7 @@ const WorkingTableHeader: React.FC<WorkingTableHeaderProps> = (prop) => {
   useEffect(() => {
     setTabArray(
       headerIndex === 1
-        ? ["任务", "日报", "活力", "日程", "超级树"]
+        ? ["任务", "超级树", "日报", "活力", "日程"]
         : clickType === "self"
         ? ["任务"]
         : ["任务", "日报", "活力"]

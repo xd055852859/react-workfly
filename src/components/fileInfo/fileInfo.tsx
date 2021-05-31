@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./../../views/groupTable/groupTableTree.css";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import { useDispatch } from "react-redux";
-import { Tooltip, Button } from "antd";
+import { Tooltip, Button, Modal } from "antd";
 import _ from "lodash";
 import api from "../../services/api";
 
@@ -25,12 +25,13 @@ const FileInfo: React.FC<FileInfoProps> = (props) => {
 
   const fileInfo = useTypedSelector((state) => state.common.fileInfo);
   const fileKey = useTypedSelector((state) => state.common.fileKey);
-  
+
   const [editable, setEditable] = useState<any>(false);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<any>("");
+  const [closeSaveVisible, setCloseSaveVisible] = useState(false);
   let unDistory = useRef<any>(true);
-  
+
   useEffect(() => {
     setEditable(false);
     if (fileInfo) {
@@ -182,31 +183,31 @@ const FileInfo: React.FC<FileInfoProps> = (props) => {
               <div>{fileInfo.title ? fileInfo.title : ""}</div>
               <div className="groupTableTree-full-img">
                 {fileInfo.type === 10 ||
-                (fileInfo.type === 11 && !editable) ||
-                fileInfo.type === 13 ? (
-                  <Tooltip title={editable ? "保存" : "编辑"}>
-                    <Button
-                      size="large"
-                      shape="circle"
-                      style={{ border: "0px" }}
-                      ghost
-                      icon={
-                        editable ? (
-                          <IconFont type="icon-baocun1" />
-                        ) : (
-                          <IconFont type="icon-edit" />
-                        )
-                      }
-                      onClick={() => {
-                        if (!editable) {
-                          setEditable(true);
-                        } else {
-                          changeContent();
+                  (fileInfo.type === 11 && !editable) ||
+                  fileInfo.type === 13 ? (
+                    <Tooltip title={editable ? "保存" : "编辑"}>
+                      <Button
+                        size="large"
+                        shape="circle"
+                        style={{ border: "0px" }}
+                        ghost
+                        icon={
+                          editable ? (
+                            <IconFont type="icon-baocun1" />
+                          ) : (
+                              <IconFont type="icon-edit" />
+                            )
                         }
-                      }}
-                    />
-                  </Tooltip>
-                ) : null}
+                        onClick={() => {
+                          if (!editable) {
+                            setEditable(true);
+                          } else {
+                            changeContent();
+                          }
+                        }}
+                      />
+                    </Tooltip>
+                  ) : null}
                 {fileInfo.type === 14 && fileInfo.extraData?.url ? (
                   <Tooltip title="跳转外部链接">
                     <Button
@@ -251,11 +252,31 @@ const FileInfo: React.FC<FileInfoProps> = (props) => {
               alt=""
               className="bigClose"
               onClick={() => {
-                dispatch(setFileInfo(null, false));
-                setEditable(false);
+                if (editable) {
+                  setCloseSaveVisible(true);
+                } else {
+                  dispatch(setFileInfo(null, false));
+                  setEditable(false);
+                }
+
               }}
             />
           ) : null}
+          <Modal
+            visible={closeSaveVisible}
+            title={"保存内容"}
+            onOk={() => {
+              changeContent();
+              setCloseSaveVisible(false);
+            }}
+            onCancel={() => {
+              dispatch(setFileInfo(null, false));
+              setEditable(false);
+              setCloseSaveVisible(false);
+            }}
+          >
+            是否保存内容
+          </Modal>
         </React.Fragment>
       ) : null}
     </React.Fragment>

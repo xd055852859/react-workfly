@@ -13,8 +13,12 @@ import {
   setChooseKey,
   changeTaskInfoVisible,
 } from "../../redux/actions/taskActions";
-import { setMessage, setSocketObj } from "../../redux/actions/commonActions";
+import { setMessage, setSocketObj, setCommonHeaderIndex } from "../../redux/actions/commonActions";
 import { changeMusic } from "../../redux/actions/authActions";
+import {
+  getGroup,
+  setGroupKey,
+} from "../../redux/actions/groupActions";
 
 import Loading from "../../components/common/loading";
 import IconFont from "../../components/common/iconFont";
@@ -242,6 +246,12 @@ const MessageBoard: React.FC<MessageBoardProps> = (prop) => {
       dispatch(setMessage(true, messageRes.msg, "error"));
     }
   };
+  const toTargetGroup = async (groupKey: string) => {
+    dispatch(setGroupKey(groupKey));
+    dispatch(setCommonHeaderIndex(3));
+    await api.group.visitGroupOrFriend(2, groupKey);
+    dispatch(getGroup(3, null, 2));
+  };
   const downMenu = (
     <div
       className="dropDown-box messageBoard-filter-container"
@@ -408,7 +418,10 @@ const MessageBoard: React.FC<MessageBoardProps> = (prop) => {
                               }}
                             />
                           </div>
-                          <div className="toLong" style={{ width: "190px" }}>
+                          <div className="toLong" style={{ width: "190px", cursor: 'pointer' }} onClick={(e) => {
+                            e.stopPropagation();
+                            toTargetGroup(messageItem.data.groupKey)
+                          }}>
                             <span style={{ marginRight: "5px" }}>
                               {messageItem.data.groupName}
                             </span>
@@ -429,7 +442,7 @@ const MessageBoard: React.FC<MessageBoardProps> = (prop) => {
                         <img
                           src={
                             messageItem.data.finishConfirm &&
-                            messageItem.data.type === 5
+                              messageItem.data.type === 5
                               ? messageHandSvg
                               : messageunHandSvg
                           }
@@ -449,7 +462,7 @@ const MessageBoard: React.FC<MessageBoardProps> = (prop) => {
                         <img
                           src={
                             messageItem.data.assignConfirm &&
-                            messageItem.data.type === 3
+                              messageItem.data.type === 3
                               ? messageHandSvg
                               : messageunHandSvg
                           }
@@ -481,11 +494,11 @@ const MessageBoard: React.FC<MessageBoardProps> = (prop) => {
                         >
                           <div className="messageBoard-item-day">
                             {messageItem &&
-                            messageItem.data &&
-                            messageItem.data.taskEndDate
+                              messageItem.data &&
+                              messageItem.data.taskEndDate
                               ? moment(messageItem.data.taskEndDate)
-                                  .endOf("day")
-                                  .diff(moment().endOf("day"), "days") < 0 &&
+                                .endOf("day")
+                                .diff(moment().endOf("day"), "days") < 0 &&
                                 !isNaN(
                                   Math.abs(
                                     moment(messageItem.data.taskEndDate)
@@ -494,15 +507,15 @@ const MessageBoard: React.FC<MessageBoardProps> = (prop) => {
                                   )
                                 )
                                 ? Math.abs(
-                                    moment(messageItem.data.taskEndDate)
-                                      .endOf("day")
-                                      .diff(moment().endOf("day"), "days")
-                                  )
+                                  moment(messageItem.data.taskEndDate)
+                                    .endOf("day")
+                                    .diff(moment().endOf("day"), "days")
+                                )
                                 : Math.abs(
-                                    moment(messageItem.data.taskEndDate)
-                                      .endOf("day")
-                                      .diff(moment().endOf("day"), "days")
-                                  ) + 1
+                                  moment(messageItem.data.taskEndDate)
+                                    .endOf("day")
+                                    .diff(moment().endOf("day"), "days")
+                                ) + 1
                               : ""}
                           </div>
                           <div className="messageBoard-item-hour">
@@ -511,22 +524,22 @@ const MessageBoard: React.FC<MessageBoardProps> = (prop) => {
                         </div>
 
                         {messageItem.data.extraData &&
-                        messageItem.data.extraData.url ? (
-                          <img
-                            src={urlSvg}
-                            alt=""
-                            style={{
-                              height: "18px",
-                              width: "18px",
-                              cursor: "pointer",
-                              marginLeft: "8px",
-                            }}
-                            onClick={(e: any) => {
-                              window.open(messageItem.data.extraData.url);
-                              e.stopPropagation();
-                            }}
-                          />
-                        ) : null}
+                          messageItem.data.extraData.url ? (
+                            <img
+                              src={urlSvg}
+                              alt=""
+                              style={{
+                                height: "18px",
+                                width: "18px",
+                                cursor: "pointer",
+                                marginLeft: "8px",
+                              }}
+                              onClick={(e: any) => {
+                                window.open(messageItem.data.extraData.url);
+                                e.stopPropagation();
+                              }}
+                            />
+                          ) : null}
                       </div>
                       {messageItem.data.type !== 21 ? (
                         <div className="messageBoard-item-task">
@@ -570,119 +583,119 @@ const MessageBoard: React.FC<MessageBoardProps> = (prop) => {
                       >
                         {messageItem.data.type !== 21
                           ? messageItem.data.name1 +
-                            " " +
-                            messageItem.data.action
+                          " " +
+                          messageItem.data.action
                           : messageItem.data.content}
                       </div>
 
                       {(messageItem.data.type === 3 &&
                         !messageItem.data.assignConfirm &&
                         messageItem.data.executorKey === user._key) ||
-                      (messageItem.data.type === 5 &&
-                        !messageItem.data.finishConfirm &&
-                        messageItem.data.creatorKey === user._key) ? (
-                        <div
-                          style={{
-                            animation:
-                              messageItem.data.applyStatus === 1
-                                ? "changeSmall 500ms"
-                                : "",
-                            animationFillMode:
-                              messageItem.data.applyStatus === 1
-                                ? "forwards"
-                                : "",
-                          }}
-                          className="messageBoard-item-task-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            checkMsg(messageItem._key, messageIndex);
-                          }}
-                        >
-                          <img
-                            src={messageButtonSvg}
-                            alt=""
-                            style={{ width: "12px", height: "13px" }}
-                          />
-                          <div style={{ marginLeft: "5px" }}>签收</div>
-                        </div>
-                      ) : null}
+                        (messageItem.data.type === 5 &&
+                          !messageItem.data.finishConfirm &&
+                          messageItem.data.creatorKey === user._key) ? (
+                          <div
+                            style={{
+                              animation:
+                                messageItem.data.applyStatus === 1
+                                  ? "changeSmall 500ms"
+                                  : "",
+                              animationFillMode:
+                                messageItem.data.applyStatus === 1
+                                  ? "forwards"
+                                  : "",
+                            }}
+                            className="messageBoard-item-task-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              checkMsg(messageItem._key, messageIndex);
+                            }}
+                          >
+                            <img
+                              src={messageButtonSvg}
+                              alt=""
+                              style={{ width: "12px", height: "13px" }}
+                            />
+                            <div style={{ marginLeft: "5px" }}>签收</div>
+                          </div>
+                        ) : null}
                     </div>
                   ) : (
-                    <div
-                      className="messageBoard-item-container"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
                       <div
+                        className="messageBoard-item-container"
                         style={{
-                          width: "75%",
+                          display: "flex",
+                          justifyContent: "space-between",
                         }}
                       >
-                        <div className="messageBoard-item-name1">
-                          {messageItem.data.name1 + " "}
-                          {messageItem.data.action}
+                        <div
+                          style={{
+                            width: "75%",
+                          }}
+                        >
+                          <div className="messageBoard-item-name1">
+                            {messageItem.data.name1 + " "}
+                            {messageItem.data.action}
+                          </div>
+                          {messageItem.data.name2 ? (
+                            <div className="messageBoard-item-name2">
+                              {messageItem.data.name2}
+                            </div>
+                          ) : null}
+                          {messageItem.data.commentContent ? (
+                            <div className="messageBoard-item-commentContent">
+                              {messageItem.data.commentContent}
+                            </div>
+                          ) : null}
+                          {messageItem.data.type === 11 ? (
+                            <div className="messageBoard-item-button">
+                              {messageItem.data.applyStatus === 0 ? (
+                                <React.Fragment>
+                                  <Button
+                                    type="primary"
+                                    onClick={() => {
+                                      changeAddMessage(
+                                        messageItem.data,
+                                        1,
+                                        messageIndex
+                                      );
+                                    }}
+                                    style={{ color: "#fff", marginRight: "5px" }}
+                                  >
+                                    同意
+                                </Button>
+                                  <Button
+                                    onClick={() => {
+                                      changeAddMessage(
+                                        messageItem.data,
+                                        2,
+                                        messageIndex
+                                      );
+                                    }}
+                                  >
+                                    拒绝
+                                </Button>
+                                </React.Fragment>
+                              ) : (
+                                  <Button disabled>
+                                    {messageItem.data.applyStatus === 2
+                                      ? "已拒绝"
+                                      : "已同意"}
+                                  </Button>
+                                )}
+                            </div>
+                          ) : null}
                         </div>
-                        {messageItem.data.name2 ? (
-                          <div className="messageBoard-item-name2">
-                            {messageItem.data.name2}
-                          </div>
-                        ) : null}
-                        {messageItem.data.commentContent ? (
-                          <div className="messageBoard-item-commentContent">
-                            {messageItem.data.commentContent}
-                          </div>
-                        ) : null}
-                        {messageItem.data.type === 11 ? (
-                          <div className="messageBoard-item-button">
-                            {messageItem.data.applyStatus === 0 ? (
-                              <React.Fragment>
-                                <Button
-                                  type="primary"
-                                  onClick={() => {
-                                    changeAddMessage(
-                                      messageItem.data,
-                                      1,
-                                      messageIndex
-                                    );
-                                  }}
-                                  style={{ color: "#fff", marginRight: "5px" }}
-                                >
-                                  同意
-                                </Button>
-                                <Button
-                                  onClick={() => {
-                                    changeAddMessage(
-                                      messageItem.data,
-                                      2,
-                                      messageIndex
-                                    );
-                                  }}
-                                >
-                                  拒绝
-                                </Button>
-                              </React.Fragment>
-                            ) : (
-                              <Button disabled>
-                                {messageItem.data.applyStatus === 2
-                                  ? "已拒绝"
-                                  : "已同意"}
-                              </Button>
-                            )}
-                          </div>
-                        ) : null}
+                        <div
+                          className="messageBoard-item-time"
+                          style={{
+                            height: "22px",
+                          }}
+                        >
+                          {moment(parseInt(messageItem.data.time)).fromNow()}
+                        </div>
                       </div>
-                      <div
-                        className="messageBoard-item-time"
-                        style={{
-                          height: "22px",
-                        }}
-                      >
-                        {moment(parseInt(messageItem.data.time)).fromNow()}
-                      </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               ) : null}
             </React.Fragment>

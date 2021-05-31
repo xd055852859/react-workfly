@@ -528,15 +528,15 @@ const Vitality: React.FC<VitalityProps> = (props) => {
                                   border: dayItem.date ? "1px solid #fff" : 0,
                                 }}
                                 onClick={() => {
-                                  if (
-                                    headerIndex !== 2 ||
-                                    (headerIndex === 2 &&
-                                      dayItem.startTime ===
-                                        moment().startOf("day").valueOf()) ||
-                                    vitalityKey === user._key
-                                  ) {
+                                  // if (
+                                  //   headerIndex !== 2 ||
+                                  //   (headerIndex === 2 &&
+                                  //     dayItem.startTime ===
+                                  //       moment().startOf("day").valueOf()) ||
+                                  //   vitalityKey === user._key
+                                  // ) {
                                     getTargetLog(dayItem.startTime);
-                                  }
+                                  // }
                                 }}
                               >
                                 {dayItem.value && dayItem.value !== "0.0" ? (
@@ -551,8 +551,8 @@ const Vitality: React.FC<VitalityProps> = (props) => {
                                       }}
                                     >
                                       {dayItem.value.indexOf("-") === -1
-                                        ? dayItem.value
-                                        : dayItem.value.split("-")[1]}
+                                        ? parseInt(dayItem.value)
+                                        : parseInt(dayItem.value.split("-")[1])}
                                     </div>
                                     <div className="vitality-changeNum"></div>
                                   </React.Fragment>

@@ -21,7 +21,7 @@ import Calendar from "../../views/calendar/calendar";
 import GroupTableTree from "../groupTable/groupTableTree";
 
 import taskAddPng from "../../assets/img/taskAdd.png";
-interface WorkingTableProps {}
+interface WorkingTableProps { }
 
 const WorkingTable: React.FC<WorkingTableProps> = (prop) => {
   const user = useTypedSelector((state) => state.auth.user);
@@ -77,9 +77,9 @@ const WorkingTable: React.FC<WorkingTableProps> = (prop) => {
   }, [headerIndex, dispatch, theme?.filterObject, clickType]);
 
   useEffect(() => {
-    dispatch(setHeaderIndex(headerIndex === 2 && clickType !== "self" ? 2 : 0));
+    dispatch(setHeaderIndex(headerIndex === 2 && clickType !== "self" ? 3 : 0));
   }, [headerIndex, dispatch, clickType]);
-  
+
   useMemo(() => {
     if (workingTaskArray) {
       setLoading(false);
@@ -134,27 +134,28 @@ const WorkingTable: React.FC<WorkingTableProps> = (prop) => {
       >
         {memberHeaderIndex === 0 ? <WorkingTableLabel /> : null}
         {memberHeaderIndex === 1 ? <WorkingTableGroup /> : null}
-        {memberHeaderIndex === 2 ? <WorkingReport /> : null}
-        {memberHeaderIndex === 3 ? (
+        {memberHeaderIndex === 2 ? (
+          <GroupTableTree groupKey={mainGroupKey} />
+        ) : null}
+        {memberHeaderIndex === 3 ? <WorkingReport /> : null}
+        {memberHeaderIndex === 4 ? (
           <Vitality
             vitalityType={2}
             vitalityKey={headerIndex === 1 ? userKey : targetUserKey}
           />
         ) : null}
-        {memberHeaderIndex === 4 ? (
+        {memberHeaderIndex === 5 ? (
           <Calendar
             targetGroupKey={
               headerIndex === 1
                 ? mainGroupKey
                 : headerIndex === 2
-                ? targetUserInfo?._key
-                : null
+                  ? targetUserInfo?._key
+                  : null
             }
           />
         ) : null}
-        {memberHeaderIndex === 5 ? (
-          <GroupTableTree groupKey={mainGroupKey} />
-        ) : null}
+
       </div>
 
       {(headerIndex === 1 ||
@@ -162,51 +163,51 @@ const WorkingTable: React.FC<WorkingTableProps> = (prop) => {
           targetUserKey &&
           userKey &&
           userKey === targetUserKey)) &&
-      (memberHeaderIndex === 0 ||
-        memberHeaderIndex === 4 ||
-        memberHeaderIndex === 1 ||
-        memberHeaderIndex === 5) ? (
-        <React.Fragment>
-          <input
-            className="workingTable-addLabel-input"
-            onChange={handleInputChange}
-            onBlur={() => {
-              handleInputConfirm();
-            }}
-            value={inputValue}
-            ref={addLabelRef}
-            placeholder="输入标签名"
-            style={
-              addLabelInputState === "in"
-                ? {
+        (memberHeaderIndex === 0 ||
+          memberHeaderIndex === 5 ||
+          memberHeaderIndex === 1 ||
+          memberHeaderIndex === 3) ? (
+          <React.Fragment>
+            <input
+              className="workingTable-addLabel-input"
+              onChange={handleInputChange}
+              onBlur={() => {
+                handleInputConfirm();
+              }}
+              value={inputValue}
+              ref={addLabelRef}
+              placeholder="输入标签名"
+              style={
+                addLabelInputState === "in"
+                  ? {
                     animation: "addLabelInputIn 500ms",
                     width: "0px",
                     padding: "0px",
                   }
-                : addLabelInputState === "out"
-                ? {
-                    animation: "addLabelInputOut 500ms",
-                    width: "250px",
-                    padding: "0px 8px",
-                  }
-                : { width: "0px", opacity: 0, padding: "0px" }
-            }
-          />
-          <div
-            className="workingTable-addLabel"
-            onClick={() => {
-              addLabelRef.current.focus();
-              setAddLabelInputState("out");
-            }}
-          >
-            <img
-              src={taskAddPng}
-              alt=""
-              style={{ height: "35px", color: "35px" }}
+                  : addLabelInputState === "out"
+                    ? {
+                      animation: "addLabelInputOut 500ms",
+                      width: "250px",
+                      padding: "0px 8px",
+                    }
+                    : { width: "0px", opacity: 0, padding: "0px" }
+              }
             />
-          </div>
-        </React.Fragment>
-      ) : null}
+            <div
+              className="workingTable-addLabel"
+              onClick={() => {
+                addLabelRef.current.focus();
+                setAddLabelInputState("out");
+              }}
+            >
+              <img
+                src={taskAddPng}
+                alt=""
+                style={{ height: "35px", color: "35px" }}
+              />
+            </div>
+          </React.Fragment>
+        ) : null}
     </div>
   );
 };

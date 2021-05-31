@@ -132,8 +132,9 @@ const ClockIn = forwardRef((prop, ref) => {
     if (res.msg === "OK") {
       dispatch(setMessage(true, "打卡成功", "success"));
       if (nowTime) {
+        // https://tts.baidu.com/text2audio?cuid=baike&lan=ZH&ctp=1&pdt=301&vol=9&rate=32&per=4&tex=试试这个。
         let url =
-          "http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&per=3&text=打卡成功,你已完成" +
+          "https://tts.baidu.com/text2audio?cuid=baike&lan=ZH&ctp=1&pdt=301&vol=9&rate=32&per=4&tex=打卡成功,你已完成" +
           (allTask[0] - allTask[1]) +
           "条任务";
         let n = new Audio(url);

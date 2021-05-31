@@ -15,7 +15,6 @@ import UserCenter from "../userCenter/userCenter";
 import Vitality from "../vitality/vitality";
 import HeaderBg from "./headerBg";
 
-import set4Png from "../../assets/img/set4.png";
 import set5Svg from "../../assets/svg/set5.svg";
 import set6Svg from "../../assets/svg/set6.svg";
 import set8Svg from "../../assets/svg/set8.svg";
@@ -26,7 +25,7 @@ import logoutPng from "../../assets/img/logout.png";
 import batterySvg from "../../assets/svg/battery.svg";
 import bgImg from "../../assets/img/bgImg.png";
 
-interface HeaderContentProps {}
+interface HeaderContentProps { }
 
 const HeaderContent: React.FC<HeaderContentProps> = () => {
   const dispatch = useDispatch();
@@ -39,7 +38,7 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
   const [showVitality, setShowVitality] = useState(false);
   const [targetInfo, setTargetInfo] = useState<any>(null);
   let unDistory = useRef<any>(true);
-  
+
   const getVitalityInfo = useCallback(async () => {
     let res: any = await api.auth.getTargetUserInfo(userKey);
     if (unDistory.current) {
@@ -140,8 +139,8 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
             style={{
               backgroundImage: theme.backgroundImg
                 ? "url(" +
-                  theme.backgroundImg +
-                  "?imageMogr2/auto-orient/thumbnail/80x)"
+                theme.backgroundImg +
+                "?imageMogr2/auto-orient/thumbnail/80x)"
                 : "",
               backgroundColor: !theme.backgroundImg
                 ? theme.backgroundColor
@@ -377,6 +376,9 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
         headerStyle={{
           padding: "10px",
           boxSizing: "border-box",
+        }}
+        maskStyle={{
+          backgroundColor: "rgba(255,255,255,0)",
         }}
         destroyOnClose={true}
         title={"壁纸设置"}

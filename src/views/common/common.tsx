@@ -112,7 +112,7 @@ const Common: React.FC<CommonProps> = (props) => {
   useEffect(() => {
     if (socketObj && localStorage.getItem("soundVisible")) {
       let url =
-        "http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&per=3&text=" +
+        "https://tts.baidu.com/text2audio?cuid=baike&lan=ZH&ctp=1&pdt=301&vol=9&rate=32&per=4&tex=" +
         socketObj.data.content;
       let n = new Audio(url);
       n.src = url;
@@ -166,9 +166,9 @@ const Common: React.FC<CommonProps> = (props) => {
           <div
             className="timeSet-container"
             style={timesetObj}
-            // onMouseLeave={() => {
-            //   dispatch(changeTimeSetVisible(false, 0, 0));
-            // }}
+          // onMouseLeave={() => {
+          //   dispatch(changeTimeSetVisible(false, 0, 0));
+          // }}
           >
             <TimeSet type="new" />
           </div>
@@ -183,9 +183,9 @@ const Common: React.FC<CommonProps> = (props) => {
           <div
             className="taskMember-container"
             style={taskMemberObj}
-            // onMouseLeave={() => {
-            //   dispatch(changeTaskMemberVisible(false, 0, 0));
-            // }}
+          // onMouseLeave={() => {
+          //   dispatch(changeTaskMemberVisible(false, 0, 0));
+          // }}
           >
             <TaskMember />
           </div>

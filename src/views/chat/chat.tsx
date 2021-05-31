@@ -28,7 +28,6 @@ const Chat: React.FC<ChatProps> = () => {
   const mainGroupKey = useTypedSelector((state) => state.auth.mainGroupKey);
 
   const [url, setUrl] = useState("");
-  const [clickType, setClickType] = useState(true);
 
   let unDistory = useRef<any>(true);
 
@@ -118,13 +117,6 @@ const Chat: React.FC<ChatProps> = () => {
     url,
     goChat,
   ]);
-  useEffect(() => {
-    if (headerIndex === 2 || headerIndex === 3) {
-      setClickType(false);
-    } else {
-      setClickType(true);
-    }
-  }, [headerIndex]);
   const handlerIframeEvent = (e: any) => {
     switch (e.data.eventName) {
       case "unread-changed":

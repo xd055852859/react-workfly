@@ -503,7 +503,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
       moment(time).format("dd"),
       moment(time).year() === moment().year()
         ? moment(time).format("MM.DD")
-        : moment(time).format("YYYY.MM.DD"),
+        : moment(time).format("YY.MM.DD"),
     ];
   };
   const addTask = async () => {

@@ -80,6 +80,21 @@ const HeaderBg: React.FC<HeaderBgProps> = (props) => {
       dispatch(setTheme(newTheme));
     }
   };
+  const scrollBgLoading = (e) => {
+    let page = bgPage;
+    //文档内容实际高度（包括超出视窗的溢出部分）
+    let scrollHeight = e.target.scrollHeight;
+    //滚动条滚动距离
+    let scrollTop = e.target.scrollTop;
+    //窗口可视范围高度
+    let height = e.target.clientHeight;
+    if (height + scrollTop >= scrollHeight && themeBg.length < themeBgTotal) {
+      setLoading(true);
+      page = page + 1;
+      dispatch(getThemeBg(page));
+      setBgPage(page);
+    }
+  }
   return (
     <React.Fragment>
       <div
@@ -121,94 +136,78 @@ const HeaderBg: React.FC<HeaderBgProps> = (props) => {
           </Radio.Group>
         </div>
       ) : (
-        <React.Fragment>
-          <div className="bg-title">颜色</div>
-          <div className="bg-container">
-            {color1.map((color1Item: any, color1Index: number) => {
-              return (
-                <div
-                  style={{
-                    backgroundColor: color1Item,
-                    border:
-                      theme.backgroundColor === color1Item
-                        ? "3px solid #87B940"
-                        : "transparent",
-                  }}
-                  key={"color1" + color1Index}
-                  className="bg-item"
-                  onClick={() => {
-                    changeBg("backgroundColor", color1Item);
-                  }}
-                >
-                  {theme.backgroundColor === color1Item ? (
-                    <div className="bg-point"></div>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-          <div className="bg-title">壁纸</div>
-          <div
-            className="bg-container"
-            style={{
-              height: theme.randomVisible
-                ? "calc(100% - 283px)"
-                : "calc(100% - 255px)",
-              overflow: "auto",
-            }}
-            // onScroll={scrollBgLoading}
-          >
-            {loading ? (
-              <Loading loadingWidth="60px" loadingHeight="60px" />
-            ) : null}
-            {themeBg.map((imgBigArr2Item: any, imgBigArr2Index: number) => {
-              return (
-                <React.Fragment key={"imgBigArr2" + imgBigArr2Index}>
-                  {imgBigArr2Item.url ? (
-                    <div
-                      style={{
-                        backgroundImage:
-                          "url(" +
-                          imgBigArr2Item.url +
-                          "?imageMogr2/auto-orient/thumbnail/90x)",
-                        border:
-                          theme.backgroundImg === imgBigArr2Item.url
-                            ? "2px solid #87B940"
-                            : "transparent",
-                      }}
-                      className="bg-item"
-                      onClick={() => {
-                        changeBg("backgroundImg", imgBigArr2Item);
-                        if (setChooseWallKey) {
-                          setChooseWallKey(imgBigArr2Item._key);
-                        }
-                      }}
-                    >
-                      {theme.backgroundImg === imgBigArr2Item.url ? (
-                        <div className="bg-point"></div>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </React.Fragment>
-              );
-            })}
-          </div>
-          {themeBg.length < themeBgTotal ? (
-            <div
-              className="bg-button"
-              onClick={() => {
-                let newPage = bgPage;
-                newPage = newPage + 1;
-                setLoading(true);
-                dispatch(getThemeBg(newPage));
-                setBgPage(newPage);
-              }}
-            >
-              加载更多
+          <React.Fragment>
+            <div className="bg-title">颜色</div>
+            <div className="bg-container">
+              {color1.map((color1Item: any, color1Index: number) => {
+                return (
+                  <div
+                    style={{
+                      backgroundColor: color1Item,
+                      border:
+                        theme.backgroundColor === color1Item
+                          ? "3px solid #87B940"
+                          : "transparent",
+                    }}
+                    key={"color1" + color1Index}
+                    className="bg-item"
+                    onClick={() => {
+                      changeBg("backgroundColor", color1Item);
+                    }}
+                  >
+                    {theme.backgroundColor === color1Item ? (
+                      <div className="bg-point"></div>
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
-          ) : null}
-        </React.Fragment>
-      )}
+            <div className="bg-title">壁纸</div>
+            <div
+              className="bg-container"
+              style={{
+                height: "calc(100% - 230px)",
+                overflow: "auto",
+              }}
+              onScroll={scrollBgLoading}
+            >
+              {loading ? (
+                <Loading loadingWidth="60px" loadingHeight="60px" />
+              ) : null}
+              {themeBg.map((imgBigArr2Item: any, imgBigArr2Index: number) => {
+                return (
+                  <React.Fragment key={"imgBigArr2" + imgBigArr2Index}>
+                    {imgBigArr2Item.url ? (
+                      <div
+                        style={{
+                          backgroundImage:
+                            "url(" +
+                            imgBigArr2Item.url +
+                            "?imageMogr2/auto-orient/thumbnail/90x)",
+                          border:
+                            theme.backgroundImg === imgBigArr2Item.url
+                              ? "2px solid #87B940"
+                              : "transparent",
+                        }}
+                        className="bg-item"
+                        onClick={() => {
+                          changeBg("backgroundImg", imgBigArr2Item);
+                          if (setChooseWallKey) {
+                            setChooseWallKey(imgBigArr2Item._key);
+                          }
+                        }}
+                      >
+                        {theme.backgroundImg === imgBigArr2Item.url ? (
+                          <div className="bg-point"></div>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          </React.Fragment>
+        )}
     </React.Fragment>
   );
 };

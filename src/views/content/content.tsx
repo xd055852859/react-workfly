@@ -3,14 +3,13 @@ import "./content.css";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import { useDispatch } from "react-redux";
 import api from "../../services/api";
-import { Tabs, Checkbox } from "antd";
-import _ from "lodash";
+import { Tabs } from "antd";
 import { useMount } from "../../hook/common";
 
 import { setMessage } from "../../redux/actions/commonActions";
 
-import IconFont from "../../components/common/iconFont";
-import DropMenu from "../../components/common/dropMenu";
+// import IconFont from "../../components/common/iconFont";
+// import DropMenu from "../../components/common/dropMenu";
 import MemberBoard from "../board/memberBoard";
 import MainBoard from "../board/mainBoard";
 import FileList from "../../components/fileList/fileList";
@@ -20,14 +19,14 @@ import ContentTime from "./contentTime";
 
 const { TabPane } = Tabs;
 
-export interface ContentProps {}
+export interface ContentProps { }
 const Content: React.FC<ContentProps> = (props) => {
   const dispatch = useDispatch();
   const fileInfo = useTypedSelector((state) => state.common.fileInfo);
   const fileVisible = useTypedSelector((state) => state.common.fileVisible);
   const mainGroupKey = useTypedSelector((state) => state.auth.mainGroupKey);
   const [prompt, setPrompt] = useState();
-  const [tabsetVisible, setTabsetVisible] = useState(false);
+  // const [tabsetVisible, setTabsetVisible] = useState(false);
   const [contentConfig, setContentConfig] = useState<any>({
     mainCheck: true,
     lastCheck: true,
@@ -58,84 +57,84 @@ const Content: React.FC<ContentProps> = (props) => {
     };
   });
 
-  const changeConfig = (configType: string, checked: boolean) => {
-    let newContentConfig = _.cloneDeep(contentConfig);
-    newContentConfig[configType] = checked;
-    setContentConfig(newContentConfig);
-    localStorage.setItem("config", JSON.stringify(newContentConfig));
-  };
-  const contentMenu = (
-    <div className="content-dot">
-      <IconFont
-        type="icon-dot"
-        onClick={() => {
-          setTabsetVisible(true);
-        }}
-      />
-      <DropMenu
-        visible={tabsetVisible}
-        dropStyle={{
-          width: "120px",
-          height: "170px",
-          top: "48px",
-          left: "240px",
-          padding: "10px 0px 10px 15px",
-          boxSizing: "border-box",
-          overflow: "hidden",
-        }}
-        onClose={() => {
-          setTabsetVisible(false);
-        }}
-        // title={'分配任务'}
-      >
-        <div className="content-dot-item">
-          <Checkbox checked={contentConfig.mainCheck} disabled>
-            今日
-          </Checkbox>
-        </div>
-        <div className="content-dot-item">
-          <Checkbox
-            checked={contentConfig.lastCheck}
-            onChange={(e: any) => {
-              changeConfig("lastCheck", e.target.checked);
-            }}
-          >
-            最近
-          </Checkbox>
-        </div>
-        <div className="content-dot-item">
-          <Checkbox
-            checked={contentConfig.fileCheck}
-            onChange={(e: any) => {
-              changeConfig("fileCheck", e.target.checked);
-            }}
-          >
-            收藏
-          </Checkbox>
-        </div>
-        <div className="content-dot-item">
-          <Checkbox
-            checked={contentConfig.memberCheck}
-            onChange={(e: any) => {
-              changeConfig("memberCheck", e.target.checked);
-            }}
-          >
-            队友
-          </Checkbox>
-        </div>
-        <div className="content-dot-item">
-          <Checkbox
-            checked={contentConfig.groupCheck}
-            onChange={(e: any) => {
-              changeConfig("groupCheck", e.target.checked);
-            }}
-          >
-            项目
-          </Checkbox>
-        </div>
-      </DropMenu>
-    </div>
-  );
+  // const changeConfig = (configType: string, checked: boolean) => {
+  //   let newContentConfig = _.cloneDeep(contentConfig);
+  //   newContentConfig[configType] = checked;
+  //   setContentConfig(newContentConfig);
+  //   localStorage.setItem("config", JSON.stringify(newContentConfig));
+  // };
+  // const contentMenu = (
+  //   <div className="content-dot">
+  //     <IconFont
+  //       type="icon-dot"
+  //       onClick={() => {
+  //         setTabsetVisible(true);
+  //       }}
+  //     />
+  //     <DropMenu
+  //       visible={tabsetVisible}
+  //       dropStyle={{
+  //         width: "120px",
+  //         height: "170px",
+  //         top: "48px",
+  //         left: "240px",
+  //         padding: "10px 0px 10px 15px",
+  //         boxSizing: "border-box",
+  //         overflow: "hidden",
+  //       }}
+  //       onClose={() => {
+  //         setTabsetVisible(false);
+  //       }}
+  //       // title={'分配任务'}
+  //     >
+  //       <div className="content-dot-item">
+  //         <Checkbox checked={contentConfig.mainCheck} disabled>
+  //           今日
+  //         </Checkbox>
+  //       </div>
+  //       <div className="content-dot-item">
+  //         <Checkbox
+  //           checked={contentConfig.lastCheck}
+  //           onChange={(e: any) => {
+  //             changeConfig("lastCheck", e.target.checked);
+  //           }}
+  //         >
+  //           最近
+  //         </Checkbox>
+  //       </div>
+  //       <div className="content-dot-item">
+  //         <Checkbox
+  //           checked={contentConfig.fileCheck}
+  //           onChange={(e: any) => {
+  //             changeConfig("fileCheck", e.target.checked);
+  //           }}
+  //         >
+  //           收藏
+  //         </Checkbox>
+  //       </div>
+  //       <div className="content-dot-item">
+  //         <Checkbox
+  //           checked={contentConfig.memberCheck}
+  //           onChange={(e: any) => {
+  //             changeConfig("memberCheck", e.target.checked);
+  //           }}
+  //         >
+  //           队友
+  //         </Checkbox>
+  //       </div>
+  //       <div className="content-dot-item">
+  //         <Checkbox
+  //           checked={contentConfig.groupCheck}
+  //           onChange={(e: any) => {
+  //             changeConfig("groupCheck", e.target.checked);
+  //           }}
+  //         >
+  //           项目
+  //         </Checkbox>
+  //       </div>
+  //     </DropMenu>
+  //   </div>
+  // );
   return (
     <div className="content">
       <ContentHeader />
@@ -150,7 +149,7 @@ const Content: React.FC<ContentProps> = (props) => {
           </div>
         ) : null}
         {/* tabBarExtraContent={contentMenu} */}
-        <Tabs tabBarStyle={{ color: "#fff" }} >
+        <Tabs tabBarStyle={{ color: '#fff'}}>
           {contentConfig.mainCheck ? (
             <TabPane tab="今日" key="1">
               <div className="content-tabPane">

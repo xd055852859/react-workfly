@@ -26,7 +26,7 @@ import chatPng from "../../assets/img/headerChat.png";
 import clockInPng from "../../assets/img/clockIn.png";
 const { Search } = Input;
 const { Option } = Select;
-interface HeaderSetProps {}
+interface HeaderSetProps { }
 
 const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
   const dispatch = useDispatch();
@@ -265,17 +265,17 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
             style={
               avatarShow
                 ? {
-                    animation: "avatarSmall 500ms",
-                    // animationFillMode: 'forwards',
-                    width: "25px",
-                    height: "25px",
-                  }
+                  animation: "avatarSmall 500ms",
+                  // animationFillMode: 'forwards',
+                  width: "25px",
+                  height: "25px",
+                }
                 : {
-                    animation: "avatarBig 500ms",
-                    // animationFillMode: 'forwards',
-                    width: "35px",
-                    height: "35px",
-                  }
+                  animation: "avatarBig 500ms",
+                  // animationFillMode: 'forwards',
+                  width: "35px",
+                  height: "35px",
+                }
             }
           >
             <img src={avatar} alt="" />
@@ -302,6 +302,9 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
         destroyOnClose={true}
         // getContainer={() => setRef.current}
         title={"新建任务"}
+        maskStyle={{
+          backgroundColor: "rgba(255,255,255,0)",
+        }}
       >
         <HeaderCreate
           createType={"local"}
@@ -328,6 +331,9 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
           boxSizing: "border-box",
         }}
         destroyOnClose={true}
+        maskStyle={{
+          backgroundColor: "rgba(255,255,255,0)",
+        }}
         // getContainer={() => setRef.current}
         title={"搜索任务"}
         push={false}
@@ -342,11 +348,8 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
             }}
             onSearch={() => searchTask()}
             allowClear
-            style={{ width: "100%", height: "32px" }}
+            style={{ width: headerIndex === 3 ? "calc(100% - 290px)" : "calc(100% - 200px)", height: "32px" }}
           />
-        </div>
-
-        <div style={{ margin: "5px 0px" }}>
           <Select
             mode="multiple"
             allowClear
@@ -398,6 +401,9 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
           padding: "10px",
           boxSizing: "border-box",
         }}
+        maskStyle={{
+          backgroundColor: "rgba(255,255,255,0)",
+        }}
         destroyOnClose={true}
         // getContainer={() => setRef.current}
         title={"消息中心"}
@@ -424,6 +430,9 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
           padding: "10px",
           boxSizing: "border-box",
         }}
+        maskStyle={{
+          backgroundColor: "rgba(255,255,255,0)",
+        }}
         title={"打卡"}
       >
         <ClockIn ref={childRef} />
@@ -445,6 +454,9 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
         }}
         headerStyle={{
           display: "none",
+        }}
+        maskStyle={{
+          backgroundColor: "rgba(255,255,255,0)",
         }}
         destroyOnClose={true}
         // getContainer={() => setRef.current}

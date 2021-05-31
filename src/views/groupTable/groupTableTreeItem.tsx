@@ -68,18 +68,18 @@ const GroupTableTreeItem: React.FC<GroupTableTreeItemProps> = (props) => {
         >
           节点重命名
         </div>
-      </div>
+      </div> */}
       <div className="groupTableTreeItem-item">
-        <DeleteOutline />
+        {/* <DeleteOutline /> */}
         <div
           className="groupTableTreeItem-title"
-          onMouseEnter={() => {
-            setTypeDialogShow(0);
+          onClick={() => {
+            setTypeDialogShow(4);
           }}
         >
           删除节点
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

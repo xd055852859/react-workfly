@@ -1,6 +1,6 @@
 .companyHeader {
   width: 100%;
-  height: 108px;
+  height: 68px;
   padding: 0px 26px;
   box-sizing: border-box;
   display: flex;
@@ -9,8 +9,8 @@
   cursor: pointer;
 }
 .companyHeader-logo {
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
   overflow: hidden;
   border-radius: 5px;
   margin-right: 10px;
@@ -22,5 +22,5 @@
   object-fit: cover;
 }
 .companyHeader-name {
-  font-size: 16px;
+  font-size: 14px;
 }
