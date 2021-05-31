@@ -43,6 +43,9 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
   const [rows, setRows] = useState<any>([]);
   const [nodeRows, setNodeRows] = useState<any>([]);
   const [page, setPage] = React.useState(0);
+  const [postStr, setPostStr] = React.useState("");
+  const [postIndex, setPostIndex] = React.useState<any>(null);
+
   const [pageSize, setPageSize] = React.useState(80);
 
   const [deleteDialogShow, setDeleteDialogShow] = useState(false);
@@ -50,7 +53,7 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
 
   const personRef: React.RefObject<any> = useRef();
   let unDistory = useRef<any>(true);
-  
+
   useMount(() => {
     return () => {
       unDistory.current = false;
@@ -199,6 +202,31 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
       width: 15,
       align: "center" as "center",
       editable: true,
+      render: (post, item, index) => (
+        <React.Fragment>
+          {index !== postIndex ? (
+            <span
+              onClick={() => {
+                setPostIndex(index);
+                setPostStr(post === "无职位" ? "" : post);
+              }}
+            >
+              {post}
+            </span>
+          ) : (
+            <Input
+              value={postStr}
+              onChange={(e: any) => {
+                setPostStr(e.target.value);
+              }}
+              onBlur={() => {
+                changePost(index, postStr);
+                setPostIndex(null);
+              }}
+            />
+          )}
+        </React.Fragment>
+      ),
     },
     {
       title: "领导",
@@ -458,6 +486,20 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
     );
     if (updateCompanyRes.msg === "OK") {
       newNodeRows[index].isLeader = !newNodeRows[index].isLeader;
+      setNodeRows(newNodeRows);
+    } else {
+      dispatch(setMessage(true, updateCompanyRes.msg, "error"));
+    }
+  };
+  const changePost = async (index: number, post: string) => {
+    let newNodeRows = _.cloneDeep(nodeRows);
+    let updateCompanyRes: any = await api.company.updateOrgOrStaffProperty(
+      2,
+      newNodeRows[index].staffKey,
+      { post: post }
+    );
+    if (updateCompanyRes.msg === "OK") {
+      newNodeRows[index].post = post;
       setNodeRows(newNodeRows);
     } else {
       dispatch(setMessage(true, updateCompanyRes.msg, "error"));

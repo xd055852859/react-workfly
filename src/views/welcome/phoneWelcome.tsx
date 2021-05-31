@@ -9,6 +9,7 @@ import iosSvg from "../../assets/svg/ios.svg";
 import androidSvg from "../../assets/svg/android.svg";
 import welcomeLogoSvg from "../../assets/svg/welcomeLogo.svg";
 import welcomeSmallSvg from "../../assets/svg/welcomeSmall.svg";
+import cloudSvg from "../../assets/svg/clouds.svg";
 import question1Svg from "../../assets/svg/question1.svg";
 import question2Svg from "../../assets/svg/question2.svg";
 import question3Svg from "../../assets/svg/question3.svg";
@@ -90,6 +91,10 @@ const PhoneWelcome: React.FC<PhoneWelcomeProps> = (props) => {
   return (
     <React.Fragment>
       <div className="phonewelcome">
+        <div
+          className="welcomePage-cloud"
+          style={{ backgroundImage: `url(${cloudSvg})` }}
+        ></div>
         <div className="phonewelcome-header">
           <img src={welcomeLogoSvg} alt="" />
         </div>
