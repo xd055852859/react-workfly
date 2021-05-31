@@ -67,7 +67,7 @@
   align-content: space-between;
   box-sizing: border-box;
   overflow: auto;
--webkit-overflow-scrolling:touch;
+  -webkit-overflow-scrolling: touch;
 }
 
 .contact-name-title {
@@ -126,6 +126,7 @@
   flex-wrap: wrap;
   padding: 10px;
   box-sizing: border-box;
+  overflow: auto;
 }
 
 .defaultPng-container-item {
@@ -135,10 +136,9 @@
   margin-bottom: 5px;
   border-radius: 10px;
   cursor: pointer;
-  overflow: hidden;
 }
 
-.defaultPng-container-item:nth-child(6n + 6) {
+.defaultPng-container-item:nth-child(5n + 5) {
   margin-right: 0px;
 }
 .defaultPng-container-item img {

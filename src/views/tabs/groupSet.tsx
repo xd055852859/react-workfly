@@ -38,9 +38,8 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
   );
   const [groupName, setGroupName] = useState("");
   const [enterprise, setEnterprise] = useState(false);
-  const [statisticsSonGroupEnergy, setStatisticsSonGroupEnergy] = useState(
-    false
-  );
+  const [statisticsSonGroupEnergy, setStatisticsSonGroupEnergy] =
+    useState(false);
   const [groupDesc, setGroupDesc] = useState("");
   const [groupLogo, setGroupLogo] = useState("");
   const [modelUrl, setModelUrl] = useState("");
@@ -55,7 +54,10 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
   const [defaultPngVisible, setDefaultPngVisible] = useState(false);
   const [photoVisible, setPhotoVisible] = useState<any>(false);
   const [upImg, setUpImg] = useState<any>(null);
-  const [thirdPngList, setThirdPngList] = useState<any>(null);
+  const [thirdPngList, setThirdPngList] = useState<any>([]);
+  const [thirdPngPage, setThirdPngPage] = useState<number>(1);
+  const [thirdPngTotal, setThirdPngTotal] = useState<number>(0);
+
   const setRef: React.RefObject<any> = useRef();
   const cropperRef = useRef<HTMLImageElement>(null);
   const roleArray = [
@@ -268,15 +270,38 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
     obj[type] = value;
     saveGroupSet(obj);
   };
-  const getDefaultPng = async () => {
-    let res: any = await api.thirdApi.getThirdRandomPng(1);
+  const getDefaultPng = async (page) => {
+    let res: any = await api.thirdApi.getThirdRandomPng(page);
     // if (isArray(res)) {
     //   setThirdPngList(res);
     // }
     if (res.msg === "OK") {
-      setThirdPngList(res.data);
+      setThirdPngList((prevThirdPngList) => {
+        return [...prevThirdPngList, ...res.data];
+      });
+      setThirdPngTotal(res.totalNum);
     } else {
       dispatch(setMessage(true, "获取图片失败", "error"));
+    }
+  };
+  const scrollDefaultPng = (e: any) => {
+    console.log(e);
+    let page = thirdPngPage;
+    //文档内容实际高度（包括超出视窗的溢出部分）
+    let scrollHeight = e.target.scrollHeight;
+    //滚动条滚动距离
+    let scrollTop = e.target.scrollTop;
+    //窗口可视范围高度
+    let height = e.target.clientHeight;
+    console.log(height + scrollTop);
+    console.log(scrollHeight);
+    if (
+      height + scrollTop >= scrollHeight &&
+      thirdPngList.length < thirdPngTotal
+    ) {
+      page = page + 1;
+      setThirdPngPage(page);
+      getDefaultPng(page);
     }
   };
   return (
@@ -290,7 +315,7 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
               onClick={() => {
                 if ((groupRole === 1 && type === "设置") || type === "创建") {
                   setDefaultPngVisible(true);
-                  getDefaultPng();
+                  getDefaultPng(1);
                 }
               }}
               style={{ border: groupLogo ? 0 : "1px solid #d9d9d9" }}
@@ -317,8 +342,8 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
               <DropMenu
                 visible={defaultPngVisible}
                 dropStyle={{
-                  width: "300px",
-                  height: "350px",
+                  width: "315px",
+                  height: "280px",
                   top: "132px",
                   left: "0px",
                 }}
@@ -326,7 +351,10 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
                   setDefaultPngVisible(false);
                 }}
               >
-                <div className="defaultPng-container">
+                <div
+                  className="defaultPng-container"
+                  onScroll={scrollDefaultPng}
+                >
                   {thirdPngList
                     ? thirdPngList.map(
                         (thirdPngItem: any, thirdPngIndex: number) => {
@@ -340,7 +368,7 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
                                 alt=""
                                 onClick={() => {
                                   setGroupLogo(thirdPngItem.url);
-                                  setGroupSet("groupLogo", thirdPngItem.urls);
+                                  setGroupSet("groupLogo", thirdPngItem.url);
                                 }}
                               />
                             </div>

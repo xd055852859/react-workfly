@@ -5,7 +5,7 @@ import "./companyGroup.css";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { Table, Modal, Button, Checkbox } from "antd";
+import { Table, Modal, Button, Checkbox, Input } from "antd";
 import _ from "lodash";
 import api from "../../services/api";
 
@@ -15,6 +15,7 @@ import { CloseOutlined } from "@ant-design/icons";
 import { setMessage } from "../../redux/actions/commonActions";
 import defaultGroupPng from "../../assets/img/defaultGroup.png";
 import { useMount } from "../../hook/common";
+const { Search } = Input;
 interface CompanyGroupProps {}
 
 const CompanyGroup: React.FC<CompanyGroupProps> = () => {
@@ -24,6 +25,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
   const groupInfo = useTypedSelector((state) => state.group.groupInfo);
   const groupKey = useTypedSelector((state) => state.group.groupKey);
   const [rows, setRows] = useState<any>([]);
+  const [searchRows, setSearchRows] = useState<any>([]);
   const [companyData, setCompanyData] = useState<any>(null);
   const [companyObj, setCompanyObj] = useState<any>(null);
   const [targetGroupKey, setTargetGroupKey] = useState<any>("");
@@ -34,6 +36,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
   const [deleteVisible, setDeleteVisible] = useState(false);
   const [departmentType, setDepartmentType] = useState(2);
   const [tabIndex, setTabIndex] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
   const departmentRef: React.RefObject<any> = useRef();
   const targetTreeRef: React.RefObject<any> = useRef();
   let unDistory = useRef<any>(true);
@@ -392,6 +395,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
       setDepartmentType(newDepartmentType);
       setCompanyObj(null);
       setRows([]);
+      setSearchRows([]);
       setTabIndex(0);
       getGroupTree("", newDepartmentType, groupInfo);
     }
@@ -453,6 +457,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
             });
             console.log(node);
             setRows(newRow);
+            setSearchRows(newRow);
           } else {
             dispatch(setMessage(true, companyPersonRes.msg, "error"));
           }
@@ -485,6 +490,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
             });
             console.log(newRow);
             setRows(newRow);
+            setSearchRows(newRow);
             // setRows(newRow);
           } else {
             dispatch(setMessage(true, chooseCompanyRes.msg, "error"));
@@ -523,6 +529,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
             }
             newRow = formatData(newRowData, nodeId);
             setRows([newRow]);
+            setSearchRows([newRow]);
           } else {
             dispatch(setMessage(true, companyPersonRes.msg, "error"));
           }
@@ -670,6 +677,13 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
       dispatch(setMessage(true, memberRes.msg, "error"));
     }
   };
+  const searchDepartment = (value) => {
+    let newRows = _.cloneDeep(rows);
+      newRows = newRows.filter((item) => {
+        return item.name.indexOf(value) !== -1;
+      });
+      setSearchRows(newRows);
+  };
   return (
     <div className="company-info">
       <div className="company-header">
@@ -677,6 +691,21 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
           {departmentType === 7 ? "人员授权" : "项目授权"}
           <span style={{ fontSize: "14px", marginLeft: "10px" }}></span>
         </div>
+        {tabIndex === 1 ? (
+          <Search
+            placeholder={"请输入名称"}
+            value={searchInput}
+            onChange={(e) => {
+              setSearchInput(e.target.value);
+              if (e.target.value!=="") {
+                searchDepartment(e.target.value);
+              }else{
+                setSearchRows(rows);
+              }
+            }}
+            style={{ width: 200 }}
+          />
+        ) : null}
       </div>
       <div
         className="company-info-container companyGroup-container"
@@ -744,7 +773,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
             <Table
               columns={memberColumns}
               scroll={{ y: document.body.offsetHeight - 180 }}
-              dataSource={rows}
+              dataSource={searchRows}
               size="small"
               pagination={false}
               expandable={{ defaultExpandAllRows: true }}

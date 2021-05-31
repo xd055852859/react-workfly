@@ -1316,7 +1316,7 @@ const thirdApi = {
   getThirdRandomPng(page: number) {
     return request.get("https://icondata.qingtime.cn/icon", {
       page: page,
-      limit: 20,
+      limit: 30,
     });
   },
   searchThirdPng(page: number) {

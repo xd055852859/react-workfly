@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./vitality.css";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import { useDispatch } from "react-redux";
+import { Dropdown } from "antd";
 import api from "../../services/api";
 import moment from "moment";
 import _ from "lodash";
@@ -15,6 +16,7 @@ import defaultGroupPng from "../../assets/img/defaultGroup.png";
 import defaultPersonPng from "../../assets/img/defaultPerson.png";
 import PieChart from "../../components/common/chart/pieChart";
 import emptyData from "../../assets/svg/emptyData.svg";
+import helpPng from "../../assets/img/help.png";
 
 interface VitalityProps {
   vitalityType: number;
@@ -45,7 +47,7 @@ const Vitality: React.FC<VitalityProps> = (props) => {
   const limit = 50;
   const chartRef = useRef<HTMLDivElement>(null);
   let unDistory = useRef<any>(true);
-  
+
   useMount(() => {
     return () => {
       unDistory.current = false;
@@ -414,14 +416,19 @@ const Vitality: React.FC<VitalityProps> = (props) => {
     <React.Fragment>
       {vitalityInfo ? (
         <div className="vitality-container">
-          <div
-            className="vitality-doc"
-            onClick={() => {
-              window.open("https://workfly.cn/help/2");
-            }}
+          <Dropdown
+            overlay={
+              <div
+                className="dropDown-box"
+                style={{ width: "650px", height: "450px", overflow: "auto" }}
+              >
+                <img src={helpPng} alt="" style={{ width: "100%" }} />
+              </div>
+            }
           >
-            帮助/说明
-          </div>
+            <div className="vitality-doc">帮助/说明</div>
+          </Dropdown>
+
           <div className="vitality-top">
             {vitalityType === 3 ? (
               <div className="vitality-img" style={{ borderRadius: "5px" }}>
