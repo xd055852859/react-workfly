@@ -76,7 +76,7 @@ const Calendar: React.FC<CalendarProps> = (props) => {
   ];
   const calendarRef: React.RefObject<any> = useRef();
   let unDistory = useRef<any>(true);
-  
+
   useMount(() => {
     return () => {
       unDistory.current = false;
@@ -139,13 +139,15 @@ const Calendar: React.FC<CalendarProps> = (props) => {
       // 1. 当前月的上一个月
       if (i < curWeek) {
         // 返回的索引值刚好是上月在当月显示的天数
-        let momentDate = moment(new Date(
-          targetDate.year() +
-            "/" +
-            (targetDate.clone().subtract(1, "month").month() + 1) +
-            "/" +
-            upDays
-        ).getTime());
+        let momentDate = moment(
+          new Date(
+            targetDate.year() +
+              "/" +
+              (targetDate.clone().subtract(1, "month").month() + 1) +
+              "/" +
+              upDays
+          ).getTime()
+        );
         strDate.unshift({
           month: "last",
           day: upDays,
@@ -161,13 +163,15 @@ const Calendar: React.FC<CalendarProps> = (props) => {
         // 2. 当前月的下一个月：除去当月最后一天+上月的几天剩余的是下月开始计算
         // curWeek 返回值刚好是上月占用的天数
         nextFirstDate++;
-        let momentDate = moment(new Date(
-          targetDate.year() +
-            "/" +
-            (targetDate.clone().add(1, "month").month() + 1) +
-            "/" +
-            nextFirstDate
-        ).getTime());
+        let momentDate = moment(
+          new Date(
+            targetDate.year() +
+              "/" +
+              (targetDate.clone().add(1, "month").month() + 1) +
+              "/" +
+              nextFirstDate
+          ).getTime()
+        );
         strDate.push({
           month: "next",
           day: nextFirstDate,
@@ -182,13 +186,15 @@ const Calendar: React.FC<CalendarProps> = (props) => {
         // i-curWeek+1 为当前月的天数
         // date()获取日期号
         // m.date() == i - curWeek + 1说明这一天是当月当天，添加样式
-        let momentDate = moment(new Date(
-          targetDate.year() +
-            "/" +
-            (targetDate.clone().month() + 1) +
-            "/" +
-            (i - curWeek + 1)
-        ).getTime());
+        let momentDate = moment(
+          new Date(
+            targetDate.year() +
+              "/" +
+              (targetDate.clone().month() + 1) +
+              "/" +
+              (i - curWeek + 1)
+          ).getTime()
+        );
         let obj: any = {
           month: "target",
           day: i - curWeek + 1,
@@ -335,11 +341,12 @@ const Calendar: React.FC<CalendarProps> = (props) => {
         dispatch(setMessage(true, "请输入日程标题", "error"));
         return;
       }
-
-      if (newCalendar.groupKeyArray && newCalendar.groupKeyArray.length === 0) {
-        newCalendar.groupKeyArray = [mainGroupKey];
-      } else if (newCalendar.groupKeyArray.indexOf(mainGroupKey) === -1) {
-        newCalendar.groupKeyArray.push(mainGroupKey);
+      if (newCalendar.groupKeyArray) {
+        if (newCalendar.groupKeyArray.length === 0) {
+          newCalendar.groupKeyArray = [mainGroupKey];
+        } else if (newCalendar.groupKeyArray.indexOf(mainGroupKey) === -1) {
+          newCalendar.groupKeyArray.push(mainGroupKey);
+        }
       }
       if (calendarType === "新建") {
         if (

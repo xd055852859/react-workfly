@@ -16,19 +16,20 @@ import {
   changeTaskInfoVisible,
 } from "../redux/actions/taskActions";
 
-const AuthContext = React.createContext<
-  | {
-      paramsToken: string | null;
-      paramsgroupKey: string | null;
-      paramsShareKey: string | null;
-      paramsFileKey: string | null;
-      paramsShowType: string | null;
-      paramsCreateType: string | null;
-      deviceState: string;
-      deviceWidth: number;
-    }
-  | undefined
->(undefined);
+const AuthContext =
+  React.createContext<
+    | {
+        paramsToken: string | null;
+        paramsgroupKey: string | null;
+        paramsShareKey: string | null;
+        paramsFileKey: string | null;
+        paramsShowType: string | null;
+        paramsCreateType: string | null;
+        deviceState: string;
+        deviceWidth: number;
+      }
+    | undefined
+  >(undefined);
 
 AuthContext.displayName = "AuthContext";
 
@@ -75,6 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.getItem("fileKey");
   if (paramsFileKey) {
     dispatch(setFileKey(paramsFileKey));
+    localStorage.removeItem("fileKey");
   }
 
   const paramsShowType =

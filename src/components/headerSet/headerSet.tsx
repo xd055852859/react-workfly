@@ -300,7 +300,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
           boxSizing: "border-box",
         }}
         destroyOnClose={true}
-        // getContainer={() => setRef.current}
+        getContainer={() => setRef.current}
         title={"新建任务"}
         maskStyle={{
           backgroundColor: "rgba(255,255,255,0)",
@@ -334,7 +334,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
         maskStyle={{
           backgroundColor: "rgba(255,255,255,0)",
         }}
-        // getContainer={() => setRef.current}
+        getContainer={() => setRef.current}
         title={"搜索任务"}
         push={false}
       >
@@ -405,7 +405,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
           backgroundColor: "rgba(255,255,255,0)",
         }}
         destroyOnClose={true}
-        // getContainer={() => setRef.current}
+        getContainer={() => setRef.current}
         title={"消息中心"}
         push={false}
       >

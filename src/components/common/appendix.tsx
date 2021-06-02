@@ -157,7 +157,21 @@ const Appendix: React.FC<AppendixProps> = (props) => {
         break;
       default:
         dom = (
-          <img alt="example" style={{ width: "100%" }} src={appendixFile.url} />
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              alt="example"
+              style={{ height: "100%" }}
+              src={appendixFile.url}
+            />
+          </div>
         );
         break;
     }

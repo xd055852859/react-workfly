@@ -6,6 +6,7 @@ import api from "../../services/api";
 import _ from "lodash";
 import { useMount } from "../../hook/common";
 
+import { changeTaskMemberVisible } from "../../redux/actions/commonActions";
 import { editTask, setTaskInfo } from "../../redux/actions/taskActions";
 
 import checkPersonPng from "../../assets/img/checkPerson.png";
@@ -35,7 +36,7 @@ const TaskMember: React.FC<TaskMemberProps> = (props) => {
   const [searchInput, setSearchInput] = useState<any>("");
 
   let unDistory = useRef<any>(true);
-  
+
   useMount(() => {
     return () => {
       unDistory.current = false;
@@ -182,6 +183,7 @@ const TaskMember: React.FC<TaskMemberProps> = (props) => {
                   taskMemberItem.avatar,
                   taskMemberIndex
                 );
+                dispatch(changeTaskMemberVisible(false, 0, 0));
               }
             }}
             onMouseEnter={() => {

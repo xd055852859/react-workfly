@@ -17,7 +17,7 @@ import Dialog from "../../components/common/dialog";
 
 import plusPng from "../../assets/img/contact-plus.png";
 import editImgPng from "../../assets/img/editImg.png";
-
+import bigCloseSvg from "../../assets/svg/bigClose.svg";
 const { TextArea } = Input;
 const { Option } = Select;
 interface GroupSetProps {
@@ -277,6 +277,9 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
     // }
     if (res.msg === "OK") {
       setThirdPngList((prevThirdPngList) => {
+        if (page === 1) {
+          prevThirdPngList = [];
+        }
         return [...prevThirdPngList, ...res.data];
       });
       setThirdPngTotal(res.totalNum);
@@ -342,10 +345,12 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
               <DropMenu
                 visible={defaultPngVisible}
                 dropStyle={{
-                  width: "315px",
-                  height: "280px",
-                  top: "132px",
+                  position: "fixed",
+                  width: "100vw",
+                  height: "100vh",
+                  top: "0px",
                   left: "0px",
+                  zIndex: "10",
                 }}
                 onClose={() => {
                   setDefaultPngVisible(false);
@@ -366,9 +371,11 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
                               <img
                                 src={thirdPngItem.url}
                                 alt=""
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   setGroupLogo(thirdPngItem.url);
                                   setGroupSet("groupLogo", thirdPngItem.url);
+                                  setDefaultPngVisible(false);
                                 }}
                               />
                             </div>
@@ -384,6 +391,15 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
                       )
                     : null}
                 </div>
+                <img
+                  src={bigCloseSvg}
+                  alt=""
+                  className="defaultPng-bigClose"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDefaultPngVisible(false);
+                  }}
+                />
               </DropMenu>
             </div>
           </div>

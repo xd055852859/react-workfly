@@ -14,13 +14,14 @@ import { setMessage } from "../../redux/actions/commonActions";
 import WorkingTableHeader from "./workingTableHeader";
 import WorkingTableLabel from "./workingTableLabel";
 import WorkingTableGroup from "./workingTableGroup";
-import WorkingReport from "./workingReport";
+
 import Loading from "../../components/common/loading";
 import Vitality from "../../components/vitality/vitality";
 import Calendar from "../../views/calendar/calendar";
 import GroupTableTree from "../groupTable/groupTableTree";
 
 import taskAddPng from "../../assets/img/taskAdd.png";
+import WorkingReport from "./workingReport";
 interface WorkingTableProps { }
 
 const WorkingTable: React.FC<WorkingTableProps> = (prop) => {

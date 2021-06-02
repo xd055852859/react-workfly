@@ -9,7 +9,7 @@ import React, {
 import "./taskInfo.css";
 import { useDispatch } from "react-redux";
 import { useTypedSelector } from "../../redux/reducer/RootState";
-import { Input, Button, DatePicker, Modal, Badge, Tabs } from "antd";
+import { Input, Button, DatePicker, Modal, Badge, Tabs, Dropdown } from "antd";
 import _ from "lodash";
 import api from "../../services/api";
 import moment from "moment";
@@ -527,6 +527,29 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
     setFileList(fileList);
     changeTaskItem("extraData", newTaskItem.extraData);
   };
+  const suggestMenu = (
+    <div className="dropDown-box" style={{padding:'0px',width:'80px'}}>
+      {taskTypeArr.map((taskTypeItem, taskTypeIndex) => {
+        return (
+          <div
+            key={"taskType" + taskTypeIndex}
+            className="taskInfo-item-suggest-item"
+            style={{
+              color: color[taskTypeIndex],
+              backgroundColor: backgroundColor[taskTypeIndex],
+            }}
+            onClick={() => {
+              setTaskTypeIndex(taskTypeIndex);
+              changeTaskItem("taskType", taskTypeItem.id);
+              setSuggestVisible(false);
+            }}
+          >
+            {taskTypeItem.name}
+          </div>
+        );
+      })}
+    </div>
+  );
   return (
     // changeTaskInfoVisible
     <div
@@ -681,45 +704,17 @@ const TaskInfo: React.FC<TaskInfoProps> = React.forwardRef((prop, ref) => {
                   ) : null}
                 </React.Fragment>
               ) : null}
-              <div
-                className="taskInfo-item-suggest"
-                onClick={() => {
-                  setSuggestVisible(true);
-                }}
-                style={{
-                  color: color[taskTypeIndex],
-                  backgroundColor: backgroundColor[taskTypeIndex],
-                }}
-              >
-                {taskTypeArr[taskTypeIndex].name}
-                <DropMenu
-                  visible={suggestVisible}
-                  dropStyle={{ width: "100px", top: "36px", left: "-60px" }}
-                  onClose={() => {
-                    setSuggestVisible(false);
+              <Dropdown overlay={suggestMenu}>
+                <div
+                  className="taskInfo-item-suggest"
+                  style={{
+                    color: color[taskTypeIndex],
+                    backgroundColor: backgroundColor[taskTypeIndex],
                   }}
                 >
-                  {taskTypeArr.map((taskTypeItem, taskTypeIndex) => {
-                    return (
-                      <div
-                        key={"taskType" + taskTypeIndex}
-                        className="taskInfo-item-suggest-item"
-                        style={{
-                          color: color[taskTypeIndex],
-                          backgroundColor: backgroundColor[taskTypeIndex],
-                        }}
-                        onClick={() => {
-                          setTaskTypeIndex(taskTypeIndex);
-                          changeTaskItem("taskType", taskTypeItem.id);
-                          setSuggestVisible(false);
-                        }}
-                      >
-                        {taskTypeItem.name}
-                      </div>
-                    );
-                  })}
-                </DropMenu>
-              </div>
+                  {taskTypeArr[taskTypeIndex].name}
+                </div>
+              </Dropdown>
               <div
                 className="taskInfo-mainTitle-right-icon"
                 onClick={() => {

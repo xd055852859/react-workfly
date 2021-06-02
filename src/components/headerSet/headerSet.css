@@ -170,9 +170,10 @@
 }
 .headerSet-search-info {
   width: 100%;
-  height: calc(100% - 80px);
+  height: calc(100% - 40px);
   overflow: auto;
--webkit-overflow-scrolling:touch;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 10px;
 }
 .addTask-container {
   width: 100%;
@@ -257,7 +258,7 @@
   width: 260px;
   height: 100%;
   overflow: auto;
--webkit-overflow-scrolling:touch;
+  -webkit-overflow-scrolling: touch;
 }
 .contentHeader-set-item-radio {
   width: 130px;

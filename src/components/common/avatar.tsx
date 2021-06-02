@@ -27,7 +27,11 @@ const Avatar: React.FC<AvatarProps> = (props) => {
       {avatar ? (
         <img
           alt={name}
-          src={avatar + "?imageMogr2/auto-orient/thumbnail/80x"}
+          src={
+            avatar.indexOf("imageMogr2") !== -1 && avatar.indexOf(".svg") !== -1
+              ? avatar + "?imageMogr2/auto-orient/thumbnail/80x"
+              : avatar
+          }
           onError={(e: any) => {
             e.target.onerror = null;
             e.target.src =

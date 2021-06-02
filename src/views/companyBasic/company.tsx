@@ -8,7 +8,10 @@ import _ from "lodash";
 import api from "../../services/api";
 import { useAuth } from "../../context/auth";
 
-import { setMessage, setCommonHeaderIndex, } from "../../redux/actions/commonActions";
+import {
+  setMessage,
+  setCommonHeaderIndex,
+} from "../../redux/actions/commonActions";
 import {
   getGroup,
   setGroupKey,
@@ -32,7 +35,7 @@ import companyTab2Svg from "../../assets/svg/companyTab2.svg";
 import companyTab3Svg from "../../assets/svg/companyTab3.svg";
 import companyTab4Svg from "../../assets/svg/companyTab4.svg";
 const { Option } = Select;
-interface CompanyProps { }
+interface CompanyProps {}
 
 const Company: React.FC<CompanyProps> = () => {
   const { deviceState } = useAuth();
@@ -243,23 +246,23 @@ const Company: React.FC<CompanyProps> = () => {
                         fillColor={"#1890ff"}
                       />
                     ) : (
-                        <Progress
-                          percent={
-                            allTask[0] > 0
-                              ? parseFloat(
+                      <Progress
+                        percent={
+                          allTask[0] > 0
+                            ? parseFloat(
                                 (
                                   (allTask[0] - allTask[1]) /
                                   allTask[0]
                                 ).toFixed(1)
                               ) * 100
-                              : 0
-                          }
-                          type="circle"
-                          size="small"
-                          status="active"
-                          width={50}
-                        />
-                      )
+                            : 0
+                        }
+                        type="circle"
+                        size="small"
+                        status="active"
+                        width={50}
+                      />
+                    )
                   ) : null}
                 </div>
               </div>
@@ -277,8 +280,8 @@ const Company: React.FC<CompanyProps> = () => {
                     percent={
                       allTask[0] > 0
                         ? parseFloat(
-                          ((allTask[0] - allTask[1]) / allTask[0]).toFixed(1)
-                        )
+                            ((allTask[0] - allTask[1]) / allTask[0]).toFixed(1)
+                          )
                         : 0
                     }
                     zoom={0.3}
@@ -286,20 +289,20 @@ const Company: React.FC<CompanyProps> = () => {
                     fillColor={"#1890ff"}
                   />
                 ) : (
-                    <Progress
-                      percent={
-                        allTask[0] > 0
-                          ? parseFloat(
+                  <Progress
+                    percent={
+                      allTask[0] > 0
+                        ? parseFloat(
                             ((allTask[0] - allTask[1]) / allTask[0]).toFixed(1)
                           ) * 100
-                          : 0
-                      }
-                      type="circle"
-                      size="small"
-                      status="active"
-                      width={120}
-                    />
-                  )}
+                        : 0
+                    }
+                    type="circle"
+                    size="small"
+                    status="active"
+                    width={120}
+                  />
+                )}
               </div>
 
               <div
@@ -324,38 +327,42 @@ const Company: React.FC<CompanyProps> = () => {
               <div className="companyBasic-tab-bottomItem-title">
                 昨日·项目活力榜
               </div>
-              {companyData?.getYestodayGroupEnergyRankingList.map(
-                (item, index) => {
-                  return (
-                    <div
-                      className="companyBasic-tab-bottomItem-item"
-                      key={"yestodayGroupEnergy" + index}
-                      onClick={() => {
-                        toTargetGroup(item.groupKey)
-                      }}
-                    >
-                      <div className="companyBasic-tab-bottomItem-left">
-                        <div>{index + 1}</div>
-                        <div
-                          className="companyBasic-tab-bottomItem-img"
-                          style={{ borderRadius: "5px" }}
-                        >
-                          <img
-                            src={
-                              item.groupLogo ? item.groupLogo : defaultGroupPng
-                            }
-                            alt=""
-                          />
+              <div className="companyBasic-tab-bottomItem-content">
+                {companyData?.getYestodayGroupEnergyRankingList.map(
+                  (item, index) => {
+                    return (
+                      <div
+                        className="companyBasic-tab-bottomItem-item"
+                        key={"yestodayGroupEnergy" + index}
+                        onClick={() => {
+                          toTargetGroup(item.groupKey);
+                        }}
+                      >
+                        <div className="companyBasic-tab-bottomItem-left">
+                          <div>{index + 1}</div>
+                          <div
+                            className="companyBasic-tab-bottomItem-img"
+                            style={{ borderRadius: "5px" }}
+                          >
+                            <img
+                              src={
+                                item.groupLogo
+                                  ? item.groupLogo
+                                  : defaultGroupPng
+                              }
+                              alt=""
+                            />
+                          </div>
+                          <div>{item.groupName}</div>
                         </div>
-                        <div>{item.groupName}</div>
+                        <div>
+                          {item.energyValue ? parseInt(item.energyValue) : 0}
+                        </div>
                       </div>
-                      <div>
-                        {item.energyValue ? parseInt(item.energyValue) : 0}
-                      </div>
-                    </div>
-                  );
-                }
-              )}
+                    );
+                  }
+                )}
+              </div>
             </div>
           </Col>
           <Col xl={6} lg={12} xs={24}>
@@ -363,37 +370,41 @@ const Company: React.FC<CompanyProps> = () => {
               <div className="companyBasic-tab-bottomItem-title">
                 昨日·创造之星
               </div>
-              {companyData?.getYestodayCreatorRankingList.map((item, index) => {
-                return (
-                  <div
-                    className="companyBasic-tab-bottomItem-item"
-                    key={"yestodayCreator" + index}
-                    onClick={() => {
-                      toTargetUser(item.userKey)
-                    }}
-                  >
-                    <div className="companyBasic-tab-bottomItem-left">
-                      <div>{index + 1}</div>
+              <div className="companyBasic-tab-bottomItem-content">
+                {companyData?.getYestodayCreatorRankingList.map(
+                  (item, index) => {
+                    return (
                       <div
-                        className="companyBasic-tab-bottomItem-img"
-                        style={{ borderRadius: "50%" }}
+                        className="companyBasic-tab-bottomItem-item"
+                        key={"yestodayCreator" + index}
+                        onClick={() => {
+                          toTargetUser(item.userKey);
+                        }}
                       >
-                        <img
-                          src={
-                            item.avatar
-                              ? item.avatar +
-                              "?imageMogr2/auto-orient/thumbnail/80x"
-                              : defaultPersonPng
-                          }
-                          alt=""
-                        />
+                        <div className="companyBasic-tab-bottomItem-left">
+                          <div>{index + 1}</div>
+                          <div
+                            className="companyBasic-tab-bottomItem-img"
+                            style={{ borderRadius: "50%" }}
+                          >
+                            <img
+                              src={
+                                item.avatar
+                                  ? item.avatar +
+                                    "?imageMogr2/auto-orient/thumbnail/80x"
+                                  : defaultPersonPng
+                              }
+                              alt=""
+                            />
+                          </div>
+                          <div>{item.nickName}</div>
+                        </div>
+                        <div>{item.createNumber ? item.createNumber : 0}</div>
                       </div>
-                      <div>{item.nickName}</div>
-                    </div>
-                    <div>{item.createNumber ? item.createNumber : 0}</div>
-                  </div>
-                );
-              })}
+                    );
+                  }
+                )}
+              </div>
             </div>
           </Col>
           <Col xl={6} lg={12} xs={24}>
@@ -401,39 +412,41 @@ const Company: React.FC<CompanyProps> = () => {
               <div className="companyBasic-tab-bottomItem-title">
                 昨日·执行之王
               </div>
-              {companyData?.getYestodayExecutorRankingList.map(
-                (item, index) => {
-                  return (
-                    <div
-                      className="companyBasic-tab-bottomItem-item"
-                      key={"yestodayExecutor" + index}
-                      onClick={() => {
-                        toTargetUser(item.userKey)
-                      }}
-                    >
-                      <div className="companyBasic-tab-bottomItem-left">
-                        <div>{index + 1}</div>
-                        <div
-                          className="companyBasic-tab-bottomItem-img"
-                          style={{ borderRadius: "50%" }}
-                        >
-                          <img
-                            src={
-                              item.avatar
-                                ? item.avatar +
-                                "?imageMogr2/auto-orient/thumbnail/80x"
-                                : defaultPersonPng
-                            }
-                            alt=""
-                          />
+              <div className="companyBasic-tab-bottomItem-content">
+                {companyData?.getYestodayExecutorRankingList.map(
+                  (item, index) => {
+                    return (
+                      <div
+                        className="companyBasic-tab-bottomItem-item"
+                        key={"yestodayExecutor" + index}
+                        onClick={() => {
+                          toTargetUser(item.userKey);
+                        }}
+                      >
+                        <div className="companyBasic-tab-bottomItem-left">
+                          <div>{index + 1}</div>
+                          <div
+                            className="companyBasic-tab-bottomItem-img"
+                            style={{ borderRadius: "50%" }}
+                          >
+                            <img
+                              src={
+                                item.avatar
+                                  ? item.avatar +
+                                    "?imageMogr2/auto-orient/thumbnail/80x"
+                                  : defaultPersonPng
+                              }
+                              alt=""
+                            />
+                          </div>
+                          <div>{item.nickName}</div>
                         </div>
-                        <div>{item.nickName}</div>
+                        <div>{item.executeNumber ? item.executeNumber : 0}</div>
                       </div>
-                      <div>{item.executeNumber ? item.executeNumber : 0}</div>
-                    </div>
-                  );
-                }
-              )}
+                    );
+                  }
+                )}
+              </div>
             </div>
           </Col>
         </Row>
@@ -481,136 +494,143 @@ const Company: React.FC<CompanyProps> = () => {
           <div className="company-group-th">
             {tabIndex
               ? MemberTabArray.current.map((memberItem, memberIndex) => {
-                return <div key={"memberTh" + memberIndex}>{memberItem}</div>;
-              })
+                  return <div key={"memberTh" + memberIndex}>{memberItem}</div>;
+                })
               : groupTabArray.current.map((groupItem, groupIndex) => {
-                return <div key={"groupTh" + groupIndex}>{groupItem}</div>;
-              })}
+                  return <div key={"groupTh" + groupIndex}>{groupItem}</div>;
+                })}
           </div>
 
-          <div className="company-group-body">{companyListData
-            ? tabIndex
-              ? companyListData.map((companyGroupItem, companyGroupIndex) => {
-                return (
-                  <div
-                    className="company-group-tr"
-                    key={"companyGroup" + companyGroupIndex}
-                    onClick={() => {
-                      toTargetUser(companyGroupItem.userKey)
-                    }}
-                  >
-                    <div>
-                      <div style={{ borderRadius: "50%" }}>
-                        <img
-                          src={
-                            companyGroupItem.avatar
-                              ? companyGroupItem.avatar +
-                              "?imageMogr2/auto-orient/thumbnail/80x"
-                              : defaultPersonPng
-                          }
-                          alt=""
-                        />
+          <div className="company-group-body">
+            {companyListData
+              ? tabIndex
+                ? companyListData.map((companyGroupItem, companyGroupIndex) => {
+                    return (
+                      <div
+                        className="company-group-tr"
+                        key={"companyGroup" + companyGroupIndex}
+                        onClick={() => {
+                          toTargetUser(companyGroupItem.userKey);
+                        }}
+                      >
+                        <div>
+                          <div style={{ borderRadius: "50%" }}>
+                            <img
+                              src={
+                                companyGroupItem.avatar
+                                  ? companyGroupItem.avatar +
+                                    "?imageMogr2/auto-orient/thumbnail/80x"
+                                  : defaultPersonPng
+                              }
+                              alt=""
+                            />
+                          </div>
+                        </div>
+                        <div className="toLong">
+                          {companyGroupItem.nickName}
+                        </div>
+                        <div>{parseInt(companyGroupItem.energyValueTotal)}</div>
+                        <div>{companyGroupItem.notFinishTaskNumber}</div>
+                        <div>{companyGroupItem.overTimeTaskNumber}</div>
+                        <div>{parseInt(companyGroupItem.energyValue)}</div>
+                        <div>{companyGroupItem.ranking}</div>
+                        <div>
+                          <LineChart
+                            data={companyGroupItem.energyValueArray}
+                            chartHeight={60}
+                            lineId={
+                              "groupLine" +
+                              (careType === 1 ? "join" : "care") +
+                              companyGroupIndex
+                            }
+                            zoom={0.5}
+                          />
+                        </div>
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            changeCare(
+                              1,
+                              companyGroupItem.userKey,
+                              companyGroupIndex
+                            );
+                          }}
+                        >
+                          <img
+                            src={companyGroupItem.isCare ? carePng : uncarePng}
+                            alt=""
+                            style={{ width: "28px", height: "26px" }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="toLong">{companyGroupItem.nickName}</div>
-                    <div>{parseInt(companyGroupItem.energyValueTotal)}</div>
-                    <div>{companyGroupItem.notFinishTaskNumber}</div>
-                    <div>{companyGroupItem.overTimeTaskNumber}</div>
-                    <div>{parseInt(companyGroupItem.energyValue)}</div>
-                    <div>{companyGroupItem.ranking}</div>
-                    <div>
-                      <LineChart
-                        data={companyGroupItem.energyValueArray}
-                        chartHeight={60}
-                        lineId={
-                          "groupLine" +
-                          (careType === 1 ? "join" : "care") +
-                          companyGroupIndex
-                        }
-                        zoom={0.5}
-                      />
-                    </div>
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        changeCare(
-                          1,
-                          companyGroupItem.userKey,
-                          companyGroupIndex
-                        );
-                      }}
-                    >
-                      <img
-                        src={companyGroupItem.isCare ? carePng : uncarePng}
-                        alt=""
-                        style={{ width: "28px", height: "26px" }}
-                      />
-                    </div>
-                  </div>
-                );
-              })
-              : companyListData.map((companyMemberItem, companyMemberIndex) => {
-                return (
-                  <div
-                    className="company-group-tr"
-                    key={"companyMember" + companyMemberIndex}
-                    onClick={() => {
-                      toTargetGroup(companyMemberItem.groupKey)
-                    }}
-                  >
-                    <div>
-                      <div>
-                        <img
-                          src={
-                            companyMemberItem.groupLogo
-                              ? companyMemberItem.groupLogo +
-                              "?imageMogr2/auto-orient/thumbnail/80x"
-                              : defaultGroupPng
-                          }
-                          alt=""
-                        />
-                      </div>
-                    </div>
-                    <div className="toLong">
-                      {companyMemberItem.groupName}
-                    </div>
-                    <div> {companyMemberItem.serialNumber}</div>
-                    <div>{companyMemberItem.notFinishTaskNumber} </div>
-                    <div>{companyMemberItem.overTimeTaskNumber}</div>
-                    <div>{parseInt(companyMemberItem.energyValue)} </div>
-                    <div>{companyMemberItem.ranking}</div>
-                    <div>
-                      <LineChart
-                        data={companyMemberItem.energyValueArray}
-                        chartHeight={60}
-                        lineId={
-                          "groupMember" +
-                          (careType === 1 ? "join" : "care") +
-                          companyMemberIndex
-                        }
-                        zoom={0.5}
-                      />
-                    </div>
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        changeCare(
-                          2,
-                          companyMemberItem.groupKey,
-                          companyMemberIndex
-                        );
-                      }}
-                    >
-                      <img
-                        src={companyMemberItem.isCare ? carePng : uncarePng}
-                        alt=""
-                        style={{ width: "28px", height: "26px" }}
-                      />
-                    </div>
-                  </div>
-                );
-              })
-            : null}
+                    );
+                  })
+                : companyListData.map(
+                    (companyMemberItem, companyMemberIndex) => {
+                      return (
+                        <div
+                          className="company-group-tr"
+                          key={"companyMember" + companyMemberIndex}
+                          onClick={() => {
+                            toTargetGroup(companyMemberItem.groupKey);
+                          }}
+                        >
+                          <div>
+                            <div>
+                              <img
+                                src={
+                                  companyMemberItem.groupLogo
+                                    ? companyMemberItem.groupLogo +
+                                      "?imageMogr2/auto-orient/thumbnail/80x"
+                                    : defaultGroupPng
+                                }
+                                alt=""
+                              />
+                            </div>
+                          </div>
+                          <div className="toLong">
+                            {companyMemberItem.groupName}
+                          </div>
+                          <div> {companyMemberItem.serialNumber}</div>
+                          <div>{companyMemberItem.notFinishTaskNumber} </div>
+                          <div>{companyMemberItem.overTimeTaskNumber}</div>
+                          <div>{parseInt(companyMemberItem.energyValue)} </div>
+                          <div>{companyMemberItem.ranking}</div>
+                          <div>
+                            <LineChart
+                              data={companyMemberItem.energyValueArray}
+                              chartHeight={60}
+                              lineId={
+                                "groupMember" +
+                                (careType === 1 ? "join" : "care") +
+                                companyMemberIndex
+                              }
+                              zoom={0.5}
+                            />
+                          </div>
+                          <div
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              changeCare(
+                                2,
+                                companyMemberItem.groupKey,
+                                companyMemberIndex
+                              );
+                            }}
+                          >
+                            <img
+                              src={
+                                companyMemberItem.isCare ? carePng : uncarePng
+                              }
+                              alt=""
+                              style={{ width: "28px", height: "26px" }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    }
+                  )
+              : null}
           </div>
         </div>
       </div>

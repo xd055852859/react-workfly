@@ -330,49 +330,6 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
               }}
             />
           </div>
-          <div className="showPage-button">
-            <React.Fragment>
-              {theme?.urlArr.map((item: any, index: number) => {
-                return (
-                  <Tooltip title={item.urlName} key={"url" + index}>
-                    <div className="showPage-button-item">
-                      <div
-                        className="showPage-button-close"
-                        onClick={() => {
-                          delUrl(index);
-                        }}
-                      >
-                        <CloseOutlined color="primary" />
-                      </div>
-                      <Button
-                        ghost
-                        icon={<Avatar alt={item.urlName} src={item.icon} />}
-                        onClick={() => {
-                          window.open(item.url);
-                        }}
-                        style={{ border: "0px" }}
-                      />
-                    </div>
-                  </Tooltip>
-                );
-              })}
-            </React.Fragment>
-            <Tooltip title="快捷方式">
-              <Button
-                ghost
-                icon={
-                  <PlusOutlined
-                    style={{ width: "30px", height: "30px" }}
-                    color="primary"
-                  />
-                }
-                onClick={() => {
-                  setUrlVisible(true);
-                }}
-                style={{ border: "0px" }}
-              />
-            </Tooltip>
-          </div>
         </React.Fragment>
       ) : null}
       {theme.weatherShow !== false &&
@@ -439,7 +396,52 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
         </div>
       ) : null}
       <div className="showPage-clock">
-        <TimePoint />
+        <div className="showPage-timepoint" >
+          <TimePoint />
+        </div>
+        <div className="showPage-button">
+          <React.Fragment>
+            {theme?.urlArr.map((item: any, index: number) => {
+              return (
+                <Tooltip title={item.urlName} key={"url" + index}>
+                  <div className="showPage-button-item">
+                    <div
+                      className="showPage-button-close"
+                      onClick={() => {
+                        delUrl(index);
+                      }}
+                    >
+                      <CloseOutlined color="primary" />
+                    </div>
+                    <Button
+                      ghost
+                      icon={<Avatar alt={item.urlName} src={item.icon} />}
+                      onClick={() => {
+                        window.open(item.url);
+                      }}
+                      style={{ border: "0px" }}
+                    />
+                  </div>
+                </Tooltip>
+              );
+            })}
+          </React.Fragment>
+          <Tooltip title="快捷方式">
+            <Button
+              ghost
+              icon={
+                <PlusOutlined
+                  style={{ width: "30px", height: "30px" }}
+                  color="primary"
+                />
+              }
+              onClick={() => {
+                setUrlVisible(true);
+              }}
+              style={{ border: "0px" }}
+            />
+          </Tooltip>
+        </div>
         <div className="showPage-time-prompt">{prompt}</div>
       </div>
       <div className="showPage">

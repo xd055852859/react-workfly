@@ -1,4 +1,4 @@
-@import '../../components/common/filter.css';
+@import "../../components/common/filter.css";
 
 .workingTableHeader {
   /* width: calc(100% - 315px); */
@@ -41,7 +41,9 @@
   align-items: center;
   cursor: pointer;
 }
-
+.workingTableHeader-logo {
+  border-radius: 50%;
+}
 .workingTableHeader-vitalityNum {
   padding: 5px 13px;
   box-sizing: border-box;
@@ -53,7 +55,6 @@
   cursor: pointer;
 }
 
-.workingTableHeader-logo > img,
 .viewTableHeader-logo img {
   width: 25px;
   height: 22px;

@@ -343,8 +343,71 @@ const auth = {
     });
   },
   getUrlIcon(linkUrl: string) {
-    return request.get("http://nodeserver.qingtime.cn/urlIcon", {
+    return request.get("https://nodeserver.qingtime.cn/urlIcon", {
       linkUrl: linkUrl,
+    });
+  },
+  //获取日报列表
+  //单人所有群统计数据
+  getReportList(targetUKey: string, startTime: number, endTime: number) {
+    return request.post(HOME_URL + "/card/singleUserAllGroupStatistics", {
+      token: auth_token,
+      targetUKey: targetUKey,
+      startTime: startTime,
+      endTime: endTime,
+    });
+  },
+  //单个群所有人统计数据
+  getGroupReportList(targetGKey: string, startTime: number, endTime: number) {
+    return request.post(HOME_URL + "/card/singleGroupAllUserStatistics", {
+      token: auth_token,
+      targetGKey: targetGKey,
+      startTime: startTime,
+      endTime: endTime,
+    });
+  },
+  //单个群单人统计数据
+  getMemberReportList(
+    targetUKey: string,
+    targetGKey: string,
+    startTime: number,
+    endTime: number
+  ) {
+    return request.post(HOME_URL + "/card/singleGroupSingleUserStatistics", {
+      token: auth_token,
+      targetUKey: targetUKey,
+      targetGKey: targetGKey,
+      startTime: startTime,
+      endTime: endTime,
+    });
+  },
+  //单人所有群数据
+  getReportInfo(targetUKey: string, startTime: number) {
+    return request.post(HOME_URL + "/card/singleUserList", {
+      token: auth_token,
+      targetUKey: targetUKey,
+      startTime: startTime,
+    });
+  },
+  //单群所有人数据
+  getGroupReportInfo(targetGKey: string, startTime: number) {
+    return request.post(HOME_URL + "/card/singleGroupList", {
+      token: auth_token,
+      targetGKey: targetGKey,
+      startTime: startTime,
+    });
+  },
+  //单个群单人数据
+  getMemberReportInfo(
+    targetUKey: string,
+    targetGKey: string,
+    startTime: number
+  ) {
+    return request.post(HOME_URL + "/card/singleUserSingleGroupList", {
+      token: auth_token,
+      targetUKey: targetUKey,
+      targetGKey: targetGKey,
+      startTime: startTime,
     });
   },
 };
@@ -1316,7 +1379,7 @@ const thirdApi = {
   getThirdRandomPng(page: number) {
     return request.get("https://icondata.qingtime.cn/icon", {
       page: page,
-      limit: 30,
+      limit: 200,
     });
   },
   searchThirdPng(page: number) {

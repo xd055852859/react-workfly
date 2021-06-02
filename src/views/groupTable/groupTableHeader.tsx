@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef,useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import "../workingTable/workingTableHeader.css";
 import "./groupTableHeader.css";
 import { Button, Tooltip, Checkbox, Dropdown, Modal, Menu } from "antd";
@@ -60,6 +60,7 @@ import defaultPersonPng from "../../assets/img/defaultPerson.png";
 import downArrowPng from "../../assets/img/downArrow.png";
 import logoutPng from "../../assets/img/logout.png";
 import Code from "../../components/qrCode/qrCode";
+import Avatar from "../../components/common/avatar";
 
 const { SubMenu } = Menu;
 
@@ -192,6 +193,7 @@ const GroupTableHeader: React.FC = (prop) => {
       if (groupRole === 1) {
         setInfoChangeState(true);
         dispatch(changeGroupInfo(groupKey, groupObj));
+        dispatch(getGroup(3));
       } else {
         dispatch(setMessage(false, "权限不够,无法修改项目属性", "success"));
       }
@@ -547,13 +549,11 @@ const GroupTableHeader: React.FC = (prop) => {
           }}
         >
           <div className="groupTableHeader-logo">
-            <img
-              src={
-                groupInfo && groupInfo.groupLogo
-                  ? groupInfo.groupLogo
-                  : defaultGroupPng
-              }
-              alt=""
+            <Avatar
+              name={groupInfo?.groupName}
+              avatar={groupInfo?.groupLogo}
+              type={"group"}
+              index={0}
             />
           </div>
           <div className="groupTableHeader-name-title">
@@ -657,14 +657,14 @@ const GroupTableHeader: React.FC = (prop) => {
                       alt=""
                       style={{ width: "16px", height: "16px" }}
                     />
-                    {deviceState === "xl"||deviceState === "xxl"
+                    {deviceState === "xl" || deviceState === "xxl"
                       ? filterObject?.filterType.length > 0
                         ? filterObject.filterType.join(" / ")
                         : null
                       : null}
                   </div>
                 </Dropdown>
-                {deviceState === "xl"||deviceState === "xxl" ? (
+                {deviceState === "xl" || deviceState === "xxl" ? (
                   <React.Fragment>
                     {filterObject?.creatorKey ? (
                       <div

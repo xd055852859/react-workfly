@@ -476,7 +476,7 @@ const TimeSet: React.FC<timeSetProp> = (prop) => {
                     padding: "5px 10px",
                     display: "flex",
                   }
-                : { width: "350px", height: "41px", marginLeft: "10px" }
+                : { width: "350px", height: "41px", marginLeft: "10px",display: "flex", }
             }
           >
             <div

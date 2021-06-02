@@ -269,8 +269,8 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                   taskItem.rootType === 10
                     ? groupInfo.groupName
                     : taskItem.name
-                      ? taskItem.name
-                      : taskItem.title,
+                    ? taskItem.name
+                    : taskItem.title,
                 // father	父節點 id	String
                 type: taskItem.type,
                 disabled:
@@ -282,7 +282,7 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                 showCheckbox: taskItem.type === 6,
                 showStatus:
                   taskItem._key !== groupInfo.taskTreeRootCardKey &&
-                    taskItem.type === 6
+                  taskItem.type === 6
                     ? true
                     : false,
                 hour: taskItem.hour,
@@ -292,7 +292,7 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                   taskItem.executorKey && taskItem.type === 6
                     ? taskItem.executorAvatar
                       ? taskItem.executorAvatar +
-                      "?imageMogr2/auto-orient/thumbnail/80x"
+                        "?imageMogr2/auto-orient/thumbnail/80x"
                       : defaultPersonPng
                     : null,
                 // backgroundColor:
@@ -302,7 +302,7 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                 path1: [...frontPath, ...taskItem.path1],
                 father:
                   taskItem.parentCardKey ||
-                    key !== groupInfo.taskTreeRootCardKey
+                  key !== groupInfo.taskTreeRootCardKey
                     ? taskItem.parentCardKey
                     : "",
                 color:
@@ -310,12 +310,12 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                     ? gridTime < 5
                       ? "999999"
                       : gridTime < 10
-                        ? "CACACA"
-                        : gridTime < 15
-                          ? "D8D8D8"
-                          : gridTime < 20
-                            ? "EAEAEA"
-                            : "F9F9F9"
+                      ? "CACACA"
+                      : gridTime < 15
+                      ? "D8D8D8"
+                      : gridTime < 20
+                      ? "EAEAEA"
+                      : "F9F9F9"
                     : "#333",
               };
               if (taskItem.type === 1 || taskItem.type === 6) {
@@ -337,8 +337,8 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                 newNodeObj[taskItem._key].contract =
                   (taskItem.contract &&
                     newNodeObj[taskItem._key].sortList.length > 0) ||
-                    (taskItem.type === 15 &&
-                      key === groupInfo.taskTreeRootCardKey)
+                  (taskItem.type === 15 &&
+                    key === groupInfo.taskTreeRootCardKey)
                     ? true
                     : false;
               } else {
@@ -412,14 +412,14 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
             taskItem.taskEndDate + 1 ? taskItem.taskEndDate + 1 : 0;
           prevNodeObj[taskItem._key].showStatus =
             taskItem._key !== groupInfo.taskTreeRootCardKey &&
-              taskItem.type === 6
+            taskItem.type === 6
               ? true
               : false;
           prevNodeObj[taskItem._key].avatarUri =
             taskItem.executorKey && taskItem.type === 6
               ? taskItem.executorAvatar
                 ? taskItem.executorAvatar +
-                "?imageMogr2/auto-orient/thumbnail/80x"
+                  "?imageMogr2/auto-orient/thumbnail/80x"
                 : defaultPersonPng
               : null;
           // newNodeObj[taskItem._key].backgroundColor =
@@ -460,8 +460,8 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
       type === "child"
         ? selectedNode
         : type === "next"
-          ? newNodeObj[selectedNode].father
-          : "";
+        ? newNodeObj[selectedNode].father
+        : "";
     let addTaskRes: any = await api.task.addTask({
       title: "",
       groupKey: groupInfo._key,
@@ -475,8 +475,8 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
         type === "child"
           ? newNodeObj[selectedNode].sortList.length
           : type === "next"
-            ? targetIndex + 1
-            : 0,
+          ? targetIndex + 1
+          : 0,
       type: taskType ? taskType : 1,
       // type === 'child'
       //   ? newGridList[targetIndex].type === 6
@@ -535,6 +535,12 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
       if (type === "child") {
         newNodeObj[selectedNode].sortList.push(newNode._key);
       } else if (type === "next") {
+        if (
+          !newNodeObj[selectedNode] ||
+          !newNodeObj[newNodeObj[selectedNode].father]
+        ) {
+          return;
+        }
         let targetIndex =
           newNodeObj[newNodeObj[selectedNode].father].sortList.indexOf(
             selectedNode
@@ -692,24 +698,28 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
     let newNodeObj = { ...nodeObj };
     let newGridList = [...gridList];
     // if (taskItem.creatorGroupRole <= taskItem.groupRole) {
-    let targetNodeIndex = newNodeObj[targetNode.father].sortList.indexOf(
-      targetNode._key
-    );
-    let deleteRes: any = await api.task.deleteTask(
-      targetNode._key,
-      groupInfo._key
-    );
-    if (deleteRes.msg === "OK") {
-      newNodeObj[targetNode.father].sortList.splice(targetNodeIndex, 1);
-      delete newNodeObj[targetNode._key];
-      newGridList.splice(targetIndex, 1);
-      setSelectedId(targetNode.father);
-      setTargetNode(newNodeObj[targetNode.father]);
-      setNodeObj(newNodeObj);
-      setGridList(newGridList);
-      dispatch(setMessage(true, "删除成功", "success"));
+    if (newNodeObj[targetNode._key].type !== 30) {
+      let targetNodeIndex = newNodeObj[targetNode.father].sortList.indexOf(
+        targetNode._key
+      );
+      let deleteRes: any = await api.task.deleteTask(
+        targetNode._key,
+        groupInfo._key
+      );
+      if (deleteRes.msg === "OK") {
+        newNodeObj[targetNode.father].sortList.splice(targetNodeIndex, 1);
+        delete newNodeObj[targetNode._key];
+        newGridList.splice(targetIndex, 1);
+        setSelectedId(targetNode.father);
+        setTargetNode(newNodeObj[targetNode.father]);
+        setNodeObj(newNodeObj);
+        setGridList(newGridList);
+        dispatch(setMessage(true, "删除成功", "success"));
+      } else {
+        dispatch(setMessage(true, deleteRes.msg, "error"));
+      }
     } else {
-      dispatch(setMessage(true, deleteRes.msg, "error"));
+      dispatch(setMessage(true, "频道节点不允许删除", "error"));
     }
     //}
   };
@@ -1193,37 +1203,37 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
           <div className="tree-path">
             {selectedPath
               ? selectedPath.map((pathItem: any, pathIndex: number) => {
-                return (
-                  <React.Fragment key={"path" + pathIndex}>
-                    <div
-                      onClick={() => {
-                        let newGroupMemberItem = { ...groupMemberItem };
-                        dispatch(changeStartId(pathItem._key));
-                        setSelectedPath(nodeObj[pathItem._key].path1);
-                        newGroupMemberItem.config.treeStartId = pathItem._key;
-                        api.member.setConfig(
-                          newGroupMemberItem._key,
-                          newGroupMemberItem.config
-                        );
-                      }}
-                      style={{
-                        fontWeight:
-                          startId === pathItem._key ? "bold" : "normal",
-                      }}
-                      className="tree-path-item"
-                    >
-                      {pathItem.title === "项目任务树根节点" ||
+                  return (
+                    <React.Fragment key={"path" + pathIndex}>
+                      <div
+                        onClick={() => {
+                          let newGroupMemberItem = { ...groupMemberItem };
+                          dispatch(changeStartId(pathItem._key));
+                          setSelectedPath(nodeObj[pathItem._key].path1);
+                          newGroupMemberItem.config.treeStartId = pathItem._key;
+                          api.member.setConfig(
+                            newGroupMemberItem._key,
+                            newGroupMemberItem.config
+                          );
+                        }}
+                        style={{
+                          fontWeight:
+                            startId === pathItem._key ? "bold" : "normal",
+                        }}
+                        className="tree-path-item"
+                      >
+                        {pathItem.title === "项目任务树根节点" ||
                         (pathItem.title === "任务树" && pathIndex === 0)
-                        ? groupInfo.groupName
-                        : pathItem.title}
-                      <div className="tree-path-icon">
-                        <div className="tree-path-icon-top"></div>
-                        <div className="tree-path-icon-bottom"></div>
+                          ? groupInfo.groupName
+                          : pathItem.title}
+                        <div className="tree-path-icon">
+                          <div className="tree-path-icon-top"></div>
+                          <div className="tree-path-icon-bottom"></div>
+                        </div>
                       </div>
-                    </div>
-                  </React.Fragment>
-                );
-              })
+                    </React.Fragment>
+                  );
+                })
               : null}
           </div>
           <div className="tree-time">
@@ -1259,14 +1269,14 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
           </div>
           <div
             className="tree-container"
-          // onMouseDown={startMove}
-          // onContextMenu={endMove}
-          // ref={treeRef}
-          // style={{
-          //   height: treeRef.current
-          //     ? boxRef.current.offsetHeight + 'px'
-          //     : '0px',
-          // }}
+            // onMouseDown={startMove}
+            // onContextMenu={endMove}
+            // ref={treeRef}
+            // style={{
+            //   height: treeRef.current
+            //     ? boxRef.current.offsetHeight + 'px'
+            //     : '0px',
+            // }}
           >
             <Moveable
               scrollable={true}
@@ -1404,13 +1414,13 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                     }}
                     hideHour={!theme.hourVisible}
                     handlePaste={pasteNode}
-                  // nodeOptions={
-                  //   <GroupTableTreeItem
-                  //     taskDetail={gridList[targetIndex]}
-                  //     editTargetTask={editTargetTask}
-                  //   />
-                  // }
-                  // handleClickDot
+                    // nodeOptions={
+                    //   <GroupTableTreeItem
+                    //     taskDetail={gridList[targetIndex]}
+                    //     editTargetTask={editTargetTask}
+                    //   />
+                    // }
+                    // handleClickDot
                   />
                 ) : null}
                 <DropMenu
@@ -1500,7 +1510,7 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                     addChildrenTask={addChildrenTask}
                     typeshow={treeTypeVisible}
                     setTreeTypeVisible={setTreeTypeVisible}
-                  // typeshow={1}
+                    // typeshow={1}
                   />
                 </DropMenu>
               </div>
@@ -1523,7 +1533,7 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                   setTreeTypeVisible(0);
                 }
               }}
-              title={"删除任务"}
+              title={"删除节点"}
               dialogStyle={{ width: "400px", height: "200px" }}
             >
               <div className="dialog-onlyTitle">是否删除该节点</div>
@@ -1731,11 +1741,11 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
               </React.Fragment>
               {/* editType */}
             </Dialog>
-            {gridList.length < 2 ? (
+            {/* {gridList.length < 2 ? (
               <div className="tree-empty">
                 <img src={emptySvg} alt="" />
               </div>
-            ) : null}
+            ) : null} */}
           </div>
           <div
             className="help-container"
@@ -1803,54 +1813,54 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
         <div className="tree-member-container">
           {groupMemberArray
             ? groupMemberArray.map(
-              (taskMemberItem: any, taskMemberIndex: number) => {
-                return (
-                  <div
-                    className="tree-member-item "
-                    key={"taskMember" + taskMemberIndex}
-                    onMouseEnter={() => {
-                      setMemberCheckIndex(taskMemberIndex);
-                    }}
-                    onMouseLeave={() => {
-                      setMemberCheckIndex(null);
-                    }}
-                  >
+                (taskMemberItem: any, taskMemberIndex: number) => {
+                  return (
                     <div
-                      className="tree-member-img"
-                      style={
-                        gridList[targetIndex] &&
+                      className="tree-member-item "
+                      key={"taskMember" + taskMemberIndex}
+                      onMouseEnter={() => {
+                        setMemberCheckIndex(taskMemberIndex);
+                      }}
+                      onMouseLeave={() => {
+                        setMemberCheckIndex(null);
+                      }}
+                    >
+                      <div
+                        className="tree-member-img"
+                        style={
+                          gridList[targetIndex] &&
                           ((gridList[targetIndex].followUKeyArray &&
                             gridList[targetIndex].followUKeyArray.indexOf(
                               taskMemberItem.userId
                             ) !== -1) ||
                             gridList[targetIndex].executorKey ===
-                            taskMemberItem.userId ||
+                              taskMemberItem.userId ||
                             gridList[targetIndex].creatorKey ===
-                            taskMemberItem.userId)
-                          ? { border: "3px solid #1890ff" }
-                          : {}
-                      }
-                    >
-                      <Tooltip title={taskMemberItem.nickName}>
-                        <img
-                          src={
-                            taskMemberItem.avatar
-                              ? taskMemberItem.avatar +
-                              "?imageMogr2/auto-orient/thumbnail/80x"
-                              : defaultPersonPng
-                          }
-                          alt=""
-                          onClick={(e: any) => {
-                            e.stopPropagation();
-                            changeFollow(taskMemberItem.userId);
-                          }}
-                        />
-                      </Tooltip>
-                    </div>
-                    {/* <div>{taskMemberItem.nickName}</div> */}
-                    {gridList[targetIndex] &&
+                              taskMemberItem.userId)
+                            ? { border: "3px solid #1890ff" }
+                            : {}
+                        }
+                      >
+                        <Tooltip title={taskMemberItem.nickName}>
+                          <img
+                            src={
+                              taskMemberItem.avatar
+                                ? taskMemberItem.avatar +
+                                  "?imageMogr2/auto-orient/thumbnail/80x"
+                                : defaultPersonPng
+                            }
+                            alt=""
+                            onClick={(e: any) => {
+                              e.stopPropagation();
+                              changeFollow(taskMemberItem.userId);
+                            }}
+                          />
+                        </Tooltip>
+                      </div>
+                      {/* <div>{taskMemberItem.nickName}</div> */}
+                      {gridList[targetIndex] &&
                       gridList[targetIndex].executorKey ===
-                      taskMemberItem.userId ? (
+                        taskMemberItem.userId ? (
                         <img
                           src={taskFinishPng}
                           alt=""
@@ -1873,10 +1883,10 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                           }}
                         />
                       ) : null}
-                  </div>
-                );
-              }
-            )
+                    </div>
+                  );
+                }
+              )
             : null}
         </div>
       </div>
@@ -1886,10 +1896,10 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
           style={
             fullType === "big" || targetNode.type === 11
               ? {
-                width: "calc(100% - 3px)",
-                bottom: "0px",
-                left: "0px",
-              }
+                  width: "calc(100% - 3px)",
+                  bottom: "0px",
+                  left: "0px",
+                }
               : { width: "600px" }
           }
         >
@@ -1908,8 +1918,8 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                         editable ? (
                           <IconFont type="icon-baocun1" />
                         ) : (
-                            <IconFont type="icon-edit" />
-                          )
+                          <IconFont type="icon-edit" />
+                        )
                       }
                       onClick={() => {
                         if (!editable) {
@@ -1923,30 +1933,30 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                   </Tooltip>
                 ) : null}
                 {targetNode.type === 14 &&
-                  gridList[targetIndex].extraData?.url ? (
-                    <Tooltip title="跳转外部链接">
-                      <Button
-                        size="large"
-                        shape="circle"
-                        style={{ border: "0px" }}
-                        ghost
-                        icon={<IconFont type="icon-iconzhengli_tiaozhuan" />}
-                        onClick={() => {
-                          let linkUrl = "";
-                          let value = gridList[targetIndex].extraData.url;
-                          if (
-                            value.includes("http://") ||
-                            value.includes("https://")
-                          ) {
-                            linkUrl = value;
-                          } else {
-                            linkUrl = `https://${value}`;
-                          }
-                          window.open(linkUrl);
-                        }}
-                      />
-                    </Tooltip>
-                  ) : null}
+                gridList[targetIndex].extraData?.url ? (
+                  <Tooltip title="跳转外部链接">
+                    <Button
+                      size="large"
+                      shape="circle"
+                      style={{ border: "0px" }}
+                      ghost
+                      icon={<IconFont type="icon-iconzhengli_tiaozhuan" />}
+                      onClick={() => {
+                        let linkUrl = "";
+                        let value = gridList[targetIndex].extraData.url;
+                        if (
+                          value.includes("http://") ||
+                          value.includes("https://")
+                        ) {
+                          linkUrl = value;
+                        } else {
+                          linkUrl = `https://${value}`;
+                        }
+                        window.open(linkUrl);
+                      }}
+                    />
+                  </Tooltip>
+                ) : null}
                 <Tooltip title={fullType === "small" ? "全屏" : "缩小"}>
                   <Button
                     size="large"
@@ -1957,8 +1967,8 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                       fullType === "small" ? (
                         <IconFont type="icon-quanping" />
                       ) : (
-                          <IconFont type="icon-suoxiao" />
-                        )
+                        <IconFont type="icon-suoxiao" />
+                      )
                     }
                     onClick={() => {
                       setFullType(fullType === "big" ? "small" : "big");
@@ -1987,9 +1997,7 @@ const GroupTableTree: React.FC<GroupTableTreeProps> = (props) => {
                 setInfoBigVisible(false);
                 setEditable(false);
               }
-
             }}
-
           />
           <Modal
             visible={closeSaveVisible}

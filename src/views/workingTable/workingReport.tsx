@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./workingReport.css";
 import { useTypedSelector } from "../../redux/reducer/RootState";
-import { Input, Button, Tooltip } from "antd";
+import { Input, Button, Tooltip, DatePicker } from "antd";
 import _ from "lodash";
 import api from "../../services/api";
 import moment from "moment";
 
 import { useDispatch } from "react-redux";
 import { setMessage } from "../../redux/actions/commonActions";
-import { getWorkingTableTask } from "../../redux/actions/taskActions";
+import { useMount } from "../../hook/common";
+
 import { changeMusic } from "../../redux/actions/authActions";
 import Task from "../../components/task/task";
 
@@ -17,7 +18,8 @@ import deletePng from "../../assets/img/deleteDiary.png";
 import commentPng from "../../assets/img/comment.png";
 import reportIcon from "../../assets/svg/reportIcon.svg";
 import defaultPersonPng from "../../assets/img/defaultPerson.png";
-import { useMount } from "../../hook/common";
+
+const { RangePicker } = DatePicker;
 export interface WorkingReportProps {
   headerType?: boolean;
 }
@@ -26,16 +28,17 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
   const { headerType } = props;
   const dispatch = useDispatch();
   const user = useTypedSelector((state) => state.auth.user);
-  const theme = useTypedSelector((state) => state.auth.theme);
   const targetUserInfo = useTypedSelector((state) => state.auth.targetUserInfo);
   const headerIndex = useTypedSelector((state) => state.common.headerIndex);
   const mainGroupKey = useTypedSelector((state) => state.auth.mainGroupKey);
-  const taskArray = useTypedSelector((state) => state.task.taskArray);
+
   const taskInfo = useTypedSelector((state) => state.task.taskInfo);
-  const workingTaskArray = useTypedSelector(
-    (state) => state.task.workingTaskArray
-  );
-  const [diaryIndex, setDiaryIndex] = useState("");
+  const groupKey = useTypedSelector((state) => state.group.groupKey);
+  const [reportDateList, setReportDateList] = useState<any>([]);
+  const [reportObj, setReportObj] = useState<any>(null);
+  const [reportIndex, setReportIndex] = useState<any>(0);
+  const [reportInfoIndex, setReportInfoIndex] = useState<any>(0);
+
   const [diaryKey, setDiaryKey] = useState<any>(null);
   const [comment, setComment] = useState("");
   const [positive, setPositive] = useState("");
@@ -45,250 +48,142 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
   const [commentPage, setCommentPage] = useState(1);
   const [commentTotal, setCommentTotal] = useState(0);
   const [contentKey, setContentKey] = useState(0);
-  const [personObj, setPersonObj] = useState<any>(null);
-  const [personArray, setPersonArray] = useState<any>([{}]);
 
+  const [memberKey, setMemberKey] = useState<any>(null);
+  const [memberArray, setMemberArray] = useState<any>([]);
   const [moveState, setMoveState] = useState<any>(null);
-
+  const [startMonthDate, setStartMonthDate] = useState<any>(
+    moment().startOf("month").valueOf()
+  );
+  const [endMonthDate, setEndMonthDate] = useState<any>(
+    moment().endOf("month").valueOf()
+  );
   const commentLimit = 10;
   let unDistory = useRef<any>(true);
-  
+
   useMount(() => {
     return () => {
       unDistory.current = false;
     };
   });
-  useEffect(() => {
-    if (user && user._key) {
-      if (headerIndex === 3 && taskArray && !headerType) {
-        setDiaryKey("全部");
-        getData(taskArray, "全部");
-      } else if (
-        workingTaskArray &&
-        (headerType ||
-          headerIndex === 1 ||
-          (headerIndex === 2 && targetUserInfo))
-      ) {
-        if (headerIndex === 2 && !headerType) {
-          setDiaryKey(targetUserInfo._key);
-          getData(_.flatten(workingTaskArray), targetUserInfo._key);
-        } else {
-          setDiaryKey(user._key);
-          getData(_.flatten(workingTaskArray), user._key);
-        }
+  const getData = useCallback(
+    async (
+      targetUKey: string,
+      targetGKey: string,
+      type: number,
+      startDate: number,
+      endDate: number
+    ) => {
+      let reportDateRes: any = null;
+      switch (type) {
+        case 1:
+          reportDateRes = await api.auth.getReportList(
+            targetUKey,
+            startDate,
+            endDate + 1
+          );
+          break;
+        case 2:
+          reportDateRes = await api.auth.getGroupReportList(
+            targetGKey,
+            startDate,
+            endDate + 1
+          );
+          break;
+        case 3:
+          reportDateRes = await api.auth.getMemberReportList(
+            targetUKey,
+            targetGKey,
+            startDate,
+            endDate + 1
+          );
+          break;
       }
+      if (reportDateRes.msg === "OK") {
+        reportDateRes.result = reportDateRes.result.filter((item) => {
+          return item.myCreateCardNumber || item.myPlanCardNumber;
+        });
+        //@ts-ignore
+        setReportDateList(_.orderBy(reportDateRes.result, ["st"], ["desc"]));
+      } else {
+        dispatch(setMessage(true, reportDateRes.msg, "error"));
+      }
+    },
+    [dispatch]
+  );
+  useEffect(() => {
+    if (
+      (user?._key && headerIndex === 1) ||
+      (targetUserInfo?._key && headerIndex === 2) ||
+      (groupKey && headerIndex === 3)
+    ) {
+      switch (headerIndex) {
+        case 1:
+          getData(user._key, "", 1, startMonthDate, endMonthDate);
+          break;
+        case 2:
+          getData(targetUserInfo._key, "", 1, startMonthDate, endMonthDate);
+          break;
+        case 3:
+          getData("", groupKey, 2, startMonthDate, endMonthDate);
+          break;
+      }
+      chooseReport(moment().startOf("day").valueOf(), 0);
     }
     //eslint-disable-next-line
-  }, [user, targetUserInfo, taskArray,workingTaskArray,headerIndex, headerType]);
-
+  }, [
+    user,
+    targetUserInfo,
+    headerIndex,
+    groupKey,
+    startMonthDate,
+    endMonthDate,
+  ]);
   useEffect(() => {
-    if (user && user._key && headerType) {
-      dispatch(
-        getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10], theme.fileDay)
-      );
-    }
-  }, [headerType, dispatch, theme.fileDay, user]);
-
+    setStartMonthDate(moment().startOf("month").valueOf());
+    setEndMonthDate(moment().endOf("month").valueOf());
+  }, [headerIndex]);
   useEffect(() => {
     if (taskInfo) {
-      setPersonObj((prevPersonObj) => {
-        if (prevPersonObj) {
-          if (
-            prevPersonObj[
-              moment(taskInfo.taskEndDate).endOf("day").valueOf()
-            ] &&
-            prevPersonObj[moment(taskInfo.taskEndDate).endOf("day").valueOf()][
-              taskInfo.executorKey
-            ]
-          ) {
-            prevPersonObj[moment(taskInfo.taskEndDate).endOf("day").valueOf()][
-              taskInfo.executorKey
-            ].executorArray = prevPersonObj[
-              moment(taskInfo.taskEndDate).endOf("day").valueOf()
-            ][taskInfo.executorKey].executorArray.map((item: any) => {
-              if (item._key === taskInfo._key) {
-                item = _.cloneDeep(taskInfo);
-              }
-              return item;
-            });
-          }
-          if (
-            prevPersonObj[moment(taskInfo.createTime).endOf("day").valueOf()] &&
-            prevPersonObj[moment(taskInfo.createTime).endOf("day").valueOf()][
-              taskInfo.creatorKey
-            ]
-          ) {
-            prevPersonObj[moment(taskInfo.createTime).endOf("day").valueOf()][
-              taskInfo.creatorKey
-            ].creatorArray = prevPersonObj[
-              moment(taskInfo.createTime).endOf("day").valueOf()
-            ][taskInfo.creatorKey].creatorArray.map((item: any) => {
-              if (item._key === taskInfo._key) {
-                item = _.cloneDeep(taskInfo);
-              }
-              return item;
-            });
-          }
-        }
-        return prevPersonObj;
-      });
     }
   }, [taskInfo]);
 
-  const chooseDiary = async (item: string) => {
-    setDiaryIndex(item);
-    getDiaryList(
-      moment(parseInt(item)).startOf("day").valueOf(),
-      moment(parseInt(item)).endOf("day").valueOf()
-    );
-    setPositive("");
-    setNegative("");
-    setNote("");
-    setCommentPage(1);
-    setCommentList([]);
-    setComment("");
+  const chooseReport = async (item: number, index: number) => {
+    setReportIndex(item);
+    setReportInfoIndex(index);
+    if (memberKey) {
+      getReportData(memberKey, groupKey, item, 3);
+    } else {
+      switch (headerIndex) {
+        case 1:
+          getReportData(user._key, "", item, 1);
+          break;
+        case 2:
+          getReportData(targetUserInfo._key, "", item, 1);
+          break;
+        case 3:
+          getReportData("", groupKey, item, 2);
+          break;
+      }
+    }
     if (headerIndex !== 3) {
-      getDiaryNote(moment(parseInt(item)).startOf("day").valueOf());
+      setPositive("");
+      setNegative("");
+      setNote("");
+      setCommentPage(1);
+      setCommentList([]);
+      setComment("");
+      getDiaryNote(item);
+      getDiaryList(item, moment(item).endOf("day").valueOf());
     }
   };
   const choosePerson = (key: string) => {
-    setDiaryKey(key);
-    getData(taskArray, key);
+    setMemberKey(key);
+    console.log(key, groupKey);
+    getData(key, groupKey, 3, startMonthDate, endMonthDate);
+    getReportData(key, groupKey, moment().startOf("day").valueOf(), 3);
   };
-  const getData = async (taskArray: any, personKey: string) => {
-    let newPersonObj: any = {};
-    let targetPersonObj: any = {};
-    let newPersonArray: any = [];
-    let newCreateObj: any = {};
-    let newExecObj: any = {};
 
-    taskArray.forEach((taskItem: any, taskIndex: number) => {
-      if (
-        taskItem.taskEndDate &&
-        taskItem.taskEndDate !== 99999999999999 &&
-        (taskItem.type === 2 || taskItem.type === 6) &&
-        taskItem.finishPercent !== 10
-      ) {
-        if (!newExecObj[moment(taskItem.taskEndDate).endOf("day").valueOf()]) {
-          newExecObj[moment(taskItem.taskEndDate).endOf("day").valueOf()] = [];
-        }
-        newExecObj[moment(taskItem.taskEndDate).endOf("day").valueOf()].push(
-          taskItem
-        );
-      }
-      if (
-        taskItem.taskEndDate &&
-        taskItem.createTime &&
-        (taskItem.type === 2 || taskItem.type === 6) &&
-        taskItem.finishPercent !== 10
-      ) {
-        if (!newCreateObj[moment(taskItem.createTime).endOf("day").valueOf()]) {
-          newCreateObj[moment(taskItem.createTime).endOf("day").valueOf()] = [];
-        }
-        newCreateObj[moment(taskItem.createTime).endOf("day").valueOf()].push(
-          taskItem
-        );
-      }
-    });
-    for (let key in newExecObj) {
-      newExecObj[key].forEach((item: any, index: number) => {
-        let state = personKey === "全部" || item.executorKey === personKey;
-        if (state) {
-          if (!newPersonObj[key]) {
-            newPersonObj[key] = {
-              executorNum: 0,
-              creatorNum: 0,
-              allexecutorNum: 0,
-              allcreatorNum: 0,
-            };
-          }
-          if (!newPersonObj[key][item.executorKey]) {
-            newPersonObj[key][item.executorKey] = {
-              executorArray: [],
-              creatorArray: [],
-            };
-            if (personKey === "全部") {
-              let personIndex = _.findIndex(newPersonArray, {
-                key: item.executorKey,
-              });
-              if (personIndex === -1) {
-                newPersonArray.push({
-                  key: item.executorKey,
-                  avatar: item.executorAvatar,
-                  name: item.executorName,
-                });
-              }
-            }
-          }
-          newPersonObj[key][item.executorKey].executorArray.push(item);
-          if (item.finishPercent > 0) {
-            newPersonObj[key].executorNum = newPersonObj[key].executorNum + 1;
-          }
-          newPersonObj[key].allexecutorNum =
-            newPersonObj[key].allexecutorNum + 1;
-        }
-      });
-    }
-    for (let key in newCreateObj) {
-      newCreateObj[key].forEach((item: any, index: number) => {
-        let state = personKey === "全部" || item.creatorKey === personKey;
-        if (state) {
-          if (!newPersonObj[key]) {
-            newPersonObj[key] = {
-              executorNum: 0,
-              creatorNum: 0,
-              allexecutorNum: 0,
-              allcreatorNum: 0,
-            };
-          }
-          if (!newPersonObj[key][item.creatorKey]) {
-            newPersonObj[key][item.creatorKey] = {
-              executorArray: [],
-              creatorArray: [],
-            };
-            if (personKey === "全部") {
-              let personIndex = _.findIndex(newPersonArray, {
-                key: item.creatorKey,
-              });
-              if (personIndex === -1) {
-                newPersonArray.push({
-                  key: item.creatorKey,
-                  avatar: item.creatorAvatar,
-                  name: item.creatorName,
-                });
-              }
-            }
-          }
-          newPersonObj[key][item.creatorKey].creatorArray.push(item);
-          if (item.finishPercent > 0) {
-            newPersonObj[key].creatorNum = newPersonObj[key].creatorNum + 1;
-          }
-          newPersonObj[key].allcreatorNum = newPersonObj[key].allcreatorNum + 1;
-        }
-      });
-    }
-    Object.keys(newPersonObj)
-      .sort()
-      .reverse()
-      .forEach((item, index) => {
-        if (index === 0) {
-          setDiaryIndex(item);
-        }
-        if (
-          item <= moment().endOf("day").valueOf() + "" &&
-          item > moment().startOf("day").valueOf() + ""
-        ) {
-          setDiaryIndex(item);
-        }
-        targetPersonObj[item] = _.cloneDeep(newPersonObj[item]);
-      });
-
-    newPersonArray.unshift({ key: "全部", avatar: "", name: "全部" });
-    setPersonObj(targetPersonObj);
-    if (personKey === "全部") {
-      setPersonArray(newPersonArray);
-    }
-  };
   const getDiaryNote = async (startTime: number) => {
     if (diaryKey) {
       let noteRes: any = await api.auth.getNote(
@@ -375,94 +270,44 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
       getCommentList(newCommentPage, contentKey);
     }
   };
-  const getAllReport = (personItem: any, personIndex: number) => {
-    let dom: any = [];
-    for (let personKey in personItem) {
-      if (
-        personKey !== "executorNum" &&
-        personKey !== "creatorNum" &&
-        personKey !== "allcreatorNum" &&
-        personKey !== "allexecutorNum"
-      ) {
-        let executorNum = 0;
-        let avatar =
-          personItem[personKey].executorArray.length > 0
-            ? personItem[personKey].executorArray[0].executorAvatar
-              ? personItem[personKey].executorArray[0].executorAvatar +
-                "?imageMogr2/auto-orient/thumbnail/80x"
-              : defaultPersonPng
-            : personItem[personKey].creatorArray.length > 0
-            ? personItem[personKey].creatorArray[0].creatorAvatar +
-              "?imageMogr2/auto-orient/thumbnail/80x"
-            : defaultPersonPng;
-        let name =
-          personItem[personKey].executorArray.length > 0
-            ? personItem[personKey].executorArray[0].executorName
-              ? personItem[personKey].executorArray[0].executorName
-              : ""
-            : personItem[personKey].creatorArray.length > 0
-            ? personItem[personKey].creatorArray[0].creatorName
-            : "";
-        personItem[personKey].executorArray.forEach((item: any) => {
-          if (item.finishPercent > 0) {
-            executorNum++;
-          }
-        });
-        dom.push(
-          <React.Fragment key={"day" + personKey}>
-            <div className="diaryall-subtitle">
-              <div className="diaryall-subtitle-img">
-                <img src={avatar} alt="" />
-              </div>
-              <div>
-                <span style={{ fontWeight: "bold" }}>{name}</span>{" "}
-                <span>
-                  ( 新建完成 {personItem[personKey].creatorArray.length} 条
-                  计划完成 {executorNum} 条 )
-                </span>
-              </div>
-            </div>
-            <div className="diary-container-title">1. 计划任务</div>
-            {personItem[personKey].executorArray.map(
-              (taskItem: any, taskIndex: number) => {
-                return (
-                  <div
-                    key={"date" + taskIndex}
-                    className="diary-container-item"
-                    // onClick={() => {
-                    //   setDiaryIndex(diaryIndex);
-                    // }}
-                  >
-                    <Task taskItem={taskItem} reportState={true} />
-                  </div>
-                );
-              }
-            )}
-            <div className="diary-container-title">2. 新建任务</div>
-            {personItem[personKey].creatorArray.map(
-              (taskItem: any, taskIndex: number) => {
-                return (
-                  <div
-                    key={"date" + taskIndex}
-                    className="diary-container-item"
-                    // onClick={() => {
-                    //   setDiaryIndex(diaryIndex);
-                    // }}
-                  >
-                    <Task taskItem={taskItem} reportState={true} />
-                  </div>
-                );
-              }
-            )}
-          </React.Fragment>
+  const getReportData = async (
+    targetUKey: string,
+    targetGKey: string,
+    reportDate: number,
+    type: number
+  ) => {
+    let reportInfoRes: any = null;
+    console.log(targetUKey, targetGKey, type);
+    switch (type) {
+      case 1:
+        reportInfoRes = await api.auth.getReportInfo(targetUKey, reportDate);
+        break;
+      case 2:
+        reportInfoRes = await api.auth.getGroupReportInfo(
+          targetGKey,
+          reportDate
         );
-      }
+        break;
+      case 3:
+        reportInfoRes = await api.auth.getMemberReportInfo(
+          targetUKey,
+          targetGKey,
+          reportDate
+        );
+        break;
     }
-    return dom;
+    if (reportInfoRes.msg === "OK") {
+      setReportObj(reportInfoRes.result);
+      if (type === 2) {
+        setMemberArray(reportInfoRes.result.userArray);
+      }
+    } else {
+      dispatch(setMessage(true, reportInfoRes.msg, "error"));
+    }
   };
   const saveNote = async () => {
     let noteRes: any = await api.auth.setNote({
-      startTime: moment(parseInt(diaryIndex)).startOf("day").valueOf(),
+      startTime: moment(parseInt(reportIndex)).startOf("day").valueOf(),
       type: 2,
       positive: positive,
       negative: negative,
@@ -507,126 +352,102 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
     ];
   };
   const addTask = async () => {
-    let newPersonObj = _.cloneDeep(personObj);
     let addTaskRes: any = await api.task.addTask({
       groupKey: mainGroupKey,
       groupRole: 1,
       executorKey: user._key,
-      taskEndDate: parseInt(diaryIndex),
+      taskEndDate: reportIndex,
     });
     if (addTaskRes.msg === "OK") {
       dispatch(setMessage(true, "新增任务成功", "success"));
       dispatch(changeMusic(5));
-      newPersonObj[diaryIndex][diaryKey].executorArray.unshift(
-        addTaskRes.result
-      );
-      newPersonObj[diaryIndex][diaryKey].creatorArray.unshift(
-        addTaskRes.result
-      );
-      setPersonObj(newPersonObj);
+      getReportData(user._key, "", reportIndex, 1);
+      // newPersonObj[reportIndex][diaryKey].executorArray.unshift(
+      //   addTaskRes.result
+      // );
+      // newPersonObj[reportIndex][diaryKey].creatorArray.unshift(
+      //   addTaskRes.result
+      // );
+      // setPersonObj(newPersonObj);
     } else {
       dispatch(setMessage(true, addTaskRes.msg, "error"));
     }
   };
+  //修改日程日期
+  const changeDate = (dates) => {
+    setStartMonthDate(dates[0].valueOf());
+    setEndMonthDate(dates[1].valueOf());
+  };
   return (
     <div className="diary">
       {/* {loading ? <Loading /> : null} */}
-      {personObj && personObj[diaryIndex] ? (
-        <div className="diary-bg">
-          <div className="diary-menu">
-            <div className="diary-menu-title">
-              <span>日期</span>
-              <span>星期</span>
-              <span>完成/新建</span>
-              <span>完成/计划</span>
-            </div>
-            <div className="diary-menu-container">
-              {personObj
-                ? Object.keys(_.cloneDeep(personObj)).map(
-                    (item: any, index: number) => {
-                      return (
-                        <React.Fragment key={"date" + index}>
-                          {diaryKey !== "全部" ? (
-                            <div
-                              className="diary-menu-item"
-                              onClick={() => {
-                                chooseDiary(item);
-                              }}
-                              style={{
-                                backgroundColor:
-                                  diaryIndex === item
-                                    ? "rgb(229, 231, 234)"
-                                    : "",
-                                fontWeight:
-                                  moment(parseInt(item))
-                                    .startOf("day")
-                                    .valueOf() ===
-                                  moment().startOf("day").valueOf()
-                                    ? "bold"
-                                    : "normal",
-                              }}
-                            >
-                              <span>{formatTime(parseInt(item))[1]}</span>
-                              <span> {formatTime(parseInt(item))[0]}</span>
-                              <span>
-                                {personObj[item].allcreatorNum === 0
-                                  ? ""
-                                  : personObj[item].creatorNum +
-                                    " / " +
-                                    personObj[item].allcreatorNum}
-                              </span>
-                              <span>
-                                {personObj[item].allexecutorNum === 0
-                                  ? ""
-                                  : personObj[item].executorNum +
-                                    " / " +
-                                    personObj[item].allexecutorNum}
-                              </span>
-                            </div>
-                          ) : (
-                            <a
-                              href={"#diaryall" + index}
-                              className="diary-menu-item"
-                              style={{
-                                fontWeight:
-                                  moment(parseInt(item))
-                                    .startOf("day")
-                                    .valueOf() ===
-                                  moment().startOf("day").valueOf()
-                                    ? "bold"
-                                    : "normal",
-                              }}
-                            >
-                              <span>{formatTime(parseInt(item))[1]}</span>
-                              <span>{formatTime(parseInt(item))[0]}</span>
-                              <span>
-                                {personObj[item].allcreatorNum === 0
-                                  ? ""
-                                  : personObj[item].creatorNum +
-                                    " / " +
-                                    personObj[item].allcreatorNum}
-                              </span>
-                              <span>
-                                {personObj[item].allexecutorNum === 0
-                                  ? ""
-                                  : personObj[item].executorNum +
-                                    " / " +
-                                    personObj[item].allexecutorNum}
-                              </span>
-                            </a>
-                          )}
-                        </React.Fragment>
-                      );
-                    }
-                  )
-                : null}
-            </div>
+      <div className="diary-bg">
+        <div className="diary-menu">
+          <div className="diary-menu-title">
+            <span>日期</span>
+            <span>星期</span>
+            <span>完成/新建</span>
+            <span>完成/计划</span>
           </div>
-          {personObj ? (
-            <div className="diary-container">
-              {headerIndex !== 3 ? <h2>一、任务看板</h2> : null}
-              {diaryKey !== "全部" ? (
+          <div className="diary-menu-container">
+            {reportDateList.map((item: any, index: number) => {
+              return (
+                <React.Fragment key={"date" + index}>
+                  <div
+                    className="diary-menu-item"
+                    onClick={() => {
+                      chooseReport(item.st, index);
+                    }}
+                    style={{
+                      backgroundColor:
+                        reportIndex === item.st ? "rgb(229, 231, 234)" : "",
+                      fontWeight:
+                        moment(item.st).startOf("day").valueOf() ===
+                        moment().startOf("day").valueOf()
+                          ? "bold"
+                          : "normal",
+                    }}
+                  >
+                    <span>{formatTime(item.st)[1]}</span>
+                    <span> {formatTime(item.st)[0]}</span>
+                    <span>
+                      {item.myCreateCardNumber === 0
+                        ? ""
+                        : item.myCreateFinishCardNumber +
+                          " / " +
+                          item.myCreateCardNumber}
+                    </span>
+                    <span>
+                      {item.myPlanCardNumber === 0
+                        ? ""
+                        : item.myPlanFinishCardNumber +
+                          " / " +
+                          item.myPlanCardNumber}
+                    </span>
+                  </div>
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="diary-container">
+          <div className="diary-month">
+            <RangePicker
+              value={[moment(startMonthDate), moment(endMonthDate)]}
+              onChange={(dates) => {
+                changeDate(dates);
+              }}
+              allowClear={false}
+            />
+          </div>
+
+          {reportObj ? (
+            <div className="diary-container-box">
+              {reportDateList[reportInfoIndex] ? (
                 <React.Fragment>
+                  {headerIndex !== 3 ? <h2>一、任务看板</h2> : null}
+                  {/* {diaryKey !== "全部" ? ( */}
                   <div className="diary-container-mainTitle">
                     <div>
                       <img
@@ -639,20 +460,28 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                         alt=""
                       />
                       <span style={{ marginRight: "10px", fontWeight: "bold" }}>
-                        {formatTime(parseInt(diaryIndex))[1]}
+                        {formatTime(reportDateList[reportInfoIndex].st)[1]}
                       </span>
                       <span style={{ marginRight: "10px", fontWeight: "bold" }}>
-                        {" " + formatTime(parseInt(diaryIndex))[0] + " "}
+                        {" " +
+                          formatTime(reportDateList[reportInfoIndex].st)[0] +
+                          " "}
                       </span>
                       <span>
-                        ( 新建完成 {personObj[diaryIndex].creatorNum} 条
-                        计划完成 {personObj[diaryIndex].executorNum} 条 )
+                        ( 新建完成{" "}
+                        {
+                          reportDateList[reportInfoIndex]
+                            .myCreateFinishCardNumber
+                        }{" "}
+                        条 计划完成{" "}
+                        {reportDateList[reportInfoIndex].myPlanFinishCardNumber}{" "}
+                        条 )
                       </span>
                     </div>
                     <div>
-                      {headerIndex === 1 || headerType ? (
+                      {headerIndex === 1 ? (
                         <React.Fragment>
-                          {parseInt(diaryIndex) <
+                          {parseInt(reportIndex) <
                           moment().startOf("day").valueOf() ? (
                             <Button
                               type="primary"
@@ -677,112 +506,149 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                       ) : null}
                     </div>
                   </div>
-                  <div className="diary-container-title">1. 计划任务</div>
-                  {personObj[diaryIndex][diaryKey].executorArray.map(
-                    (taskItem: any, taskIndex: number) => {
-                      return (
-                        <div
-                          key={"date" + taskIndex}
-                          className="diary-container-item"
-                          // onClick={() => {
-                          //   setDiaryIndex(diaryIndex);
-                          // }}
-                        >
-                          <Task taskItem={taskItem} reportState={true} />
-                        </div>
-                      );
-                    }
-                  )}
-                  <div className="diary-container-title">2. 新建任务</div>
-                  {personObj[diaryIndex][diaryKey].creatorArray.map(
-                    (taskItem: any, taskIndex: number) => {
-                      return (
-                        <div
-                          key={"date" + taskIndex}
-                          className="diary-container-item"
-                          // onClick={() => {
-                          //   setDiaryIndex(diaryIndex);
-                          // }}
-                        >
-                          <Task taskItem={taskItem} reportState={true} />
-                        </div>
-                      );
-                    }
-                  )}
                 </React.Fragment>
-              ) : (
-                <React.Fragment>
-                  {Object.values(_.cloneDeep(personObj)).map(
-                    (personItem: any, personIndex: number) => {
-                      return (
-                        <div key={"dayCanlendar" + personIndex}>
-                          <a
-                            id={"diaryall" + personIndex}
-                            className="diaryall-a"
-                            key={"dayCanlendar" + personIndex}
-                            href={"#diaryall" + personIndex}
-                          >
-                            {" "}
-                          </a>
-                          <div className="diary-container-mainTitle">
-                            <div>
+              ) : null}
+              {reportObj.userArray.map((item, index) => {
+                return (
+                  <React.Fragment key={"report" + index}>
+                    {reportObj.cardObject[item.userKey].myPlanCardList.length >
+                      0 ||
+                    reportObj.cardObject[item.userKey].myCreateCardList.length >
+                      0 ? (
+                      <React.Fragment>
+                        {headerIndex === 3 ? (
+                          <div className="diaryall-subtitle">
+                            <div className="diaryall-subtitle-img">
                               <img
-                                src={reportIcon}
-                                style={{
-                                  marginRight: "5px",
-                                  height: "16px",
-                                  width: "19px",
-                                }}
+                                src={
+                                  item.avatar ? item.avatar : defaultPersonPng
+                                }
                                 alt=""
                               />
-                              <span
-                                style={{
-                                  marginRight: "10px",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {
-                                  formatTime(
-                                    parseInt(
-                                      Object.keys(_.cloneDeep(personObj))[
-                                        personIndex
-                                      ]
-                                    )
-                                  )[1]
-                                }
-                              </span>
-                              <span
-                                style={{
-                                  marginRight: "10px",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {" " +
-                                  formatTime(
-                                    parseInt(
-                                      Object.keys(_.cloneDeep(personObj))[
-                                        personIndex
-                                      ]
-                                    )
-                                  )[0] +
-                                  " "}
-                              </span>
-                              <span>
-                                ( 新建完成 {personItem.creatorNum} 条 计划完成{" "}
-                                {personItem.executorNum} 条 )
-                              </span>
                             </div>
+                            <span style={{ fontWeight: "bold" }}>
+                              {item.nickName}
+                            </span>{" "}
+                            {/* <span>
+                  ( 新建完成 {personItem[personKey].creatorArray.length} 条
+                  计划完成 {executorNum} 条 )
+                </span> */}
                           </div>
-                          {getAllReport(personItem, personIndex)}
+                        ) : null}
+
+                        <div className="diary-container-title">1. 计划任务</div>
+                        {reportObj.cardObject[item.userKey].myPlanCardList.map(
+                          (taskItem: any, taskIndex: number) => {
+                            return (
+                              <div
+                                key={"date" + taskIndex}
+                                className="diary-container-item"
+                                // onClick={() => {
+                                //   setDiaryIndex(reportIndex);
+                                // }}
+                              >
+                                <Task taskItem={taskItem} reportState={true} />
+                              </div>
+                            );
+                          }
+                        )}
+                        <div className="diary-container-title">2. 新建任务</div>
+                        {reportObj.cardObject[
+                          item.userKey
+                        ].myCreateCardList.map(
+                          (taskItem: any, taskIndex: number) => {
+                            return (
+                              <div
+                                key={"date" + taskIndex}
+                                className="diary-container-item"
+                                // onClick={() => {
+                                //   setDiaryIndex(reportIndex);
+                                // }}
+                              >
+                                <Task taskItem={taskItem} reportState={true} />
+                              </div>
+                            );
+                          }
+                        )}
+                      </React.Fragment>
+                    ) : null}
+                  </React.Fragment>
+                );
+              })}
+
+              {/* ) : (
+              <React.Fragment>
+                {Object.values(_.cloneDeep(personObj)).map(
+                  (personItem: any, personIndex: number) => {
+                    return (
+                      <div key={"dayCanlendar" + personIndex}>
+                        <a
+                          id={"diaryall" + personIndex}
+                          className="diaryall-a"
+                          key={"dayCanlendar" + personIndex}
+                          href={"#diaryall" + personIndex}
+                        >
+                          {" "}
+                        </a>
+                        <div className="diary-container-mainTitle">
+                          <div>
+                            <img
+                              src={reportIcon}
+                              style={{
+                                marginRight: "5px",
+                                height: "16px",
+                                width: "19px",
+                              }}
+                              alt=""
+                            />
+                            <span
+                              style={{
+                                marginRight: "10px",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {
+                                formatTime(
+                                  parseInt(
+                                    Object.keys(_.cloneDeep(personObj))[
+                                      personIndex
+                                    ]
+                                  )
+                                )[1]
+                              }
+                            </span>
+                            <span
+                              style={{
+                                marginRight: "10px",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {" " +
+                                formatTime(
+                                  parseInt(
+                                    Object.keys(_.cloneDeep(personObj))[
+                                      personIndex
+                                    ]
+                                  )
+                                )[0] +
+                                " "}
+                            </span>
+                            <span>
+                              ( 新建完成 {personItem.creatorNum} 条 计划完成{" "}
+                              {personItem.executorNum} 条 )
+                            </span>
+                          </div>
                         </div>
-                      );
-                    }
-                  )}
-                </React.Fragment>
-              )}
+                        {getAllReport(personItem, personIndex)}
+                      </div>
+                    );
+                  }
+                )}
+              </React.Fragment>
+            )} */}
 
               {(headerIndex !== 3 || headerType) &&
-              parseInt(diaryIndex) < moment().startOf("day").valueOf() ? (
+              parseInt(reportIndex) < moment().startOf("day").valueOf() ? (
                 <React.Fragment>
                   <h2>二、工作日志</h2>
                   <div className="diary-content-pn">
@@ -943,9 +809,9 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
             </div>
           ) : null}
         </div>
-      ) : null}
+      </div>
       <React.Fragment>
-        {headerIndex === 3 && !headerType ? (
+        {headerIndex === 3 && reportObj?.userArray ? (
           <div
             className="diary-member"
             style={
@@ -974,47 +840,42 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                 }}
               />
             </Tooltip>
-            {personArray.length > 0
-              ? personArray.map((item: any, index: number) => {
+            <div
+              className="diary-avatar"
+              onClick={() => {
+                getData("", groupKey, 2, startMonthDate, endMonthDate);
+                chooseReport(moment().startOf("day").valueOf(), 0);
+                setMemberKey(null);
+              }}
+              style={{
+                backgroundColor: "#1890ff",
+                color: "#fff",
+              }}
+            >
+              全部
+            </div>
+            {memberArray.length > 0
+              ? memberArray.map((item: any, index: number) => {
                   return (
                     <React.Fragment key={"person" + index}>
-                      {index === 0 ? (
-                        <div
-                          className="diary-avatar"
-                          onClick={() => {
-                            choosePerson(item.key);
-                          }}
-                          style={
-                            item.key === diaryKey
-                              ? {
-                                  backgroundColor: "#1890ff",
-                                  color: "#fff",
-                                }
-                              : {}
-                          }
-                        >
-                          全部
-                        </div>
-                      ) : (
-                        <div
-                          className="diary-avatar"
-                          onClick={() => {
-                            choosePerson(item.key);
-                          }}
-                          style={
-                            item.key === diaryKey
-                              ? {
-                                  border: "2px solid #1890ff",
-                                }
-                              : {}
-                          }
-                        >
-                          <img
-                            src={item.avatar ? item.avatar : defaultPersonPng}
-                            alt=""
-                          />
-                        </div>
-                      )}
+                      <div
+                        className="diary-avatar"
+                        onClick={() => {
+                          choosePerson(item.userKey);
+                        }}
+                        style={
+                          item.key === memberKey
+                            ? {
+                                border: "2px solid #1890ff",
+                              }
+                            : {}
+                        }
+                      >
+                        <img
+                          src={item.avatar ? item.avatar : defaultPersonPng}
+                          alt=""
+                        />
+                      </div>
                     </React.Fragment>
                   );
                 })

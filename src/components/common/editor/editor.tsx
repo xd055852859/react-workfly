@@ -43,7 +43,7 @@ const Editor: React.FC<EditorProps> = (props) => {
     ];
     ref.current.config.uploadImgAccept = imgType;
     ref.current.config.uploadVideoAccept = videoType;
-    ref.current.config.zIndex = 3;
+    ref.current.config.zIndex = 8;
     ref.current.config.menuTooltipPosition = "down";
     ref.current.config.customUploadImg = function (
       resultFiles: any,

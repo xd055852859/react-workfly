@@ -45,6 +45,7 @@ import tab4Svg from "../../assets/svg/tabw4.svg";
 import tab5Svg from "../../assets/svg/tabw5.svg";
 import tab6Svg from "../../assets/svg/tabw6.svg";
 import filterPng from "../../assets/img/filter.png";
+import Avatar from "../../components/common/avatar";
 
 const { SubMenu } = Menu;
 interface WorkingTableHeaderProps {
@@ -82,17 +83,23 @@ const WorkingTableHeader: React.FC<WorkingTableHeaderProps> = (prop) => {
   const [fileState, setFileState] = useState(true);
   const [fileInput, setFileInput] = useState("7");
   const [tabArray, setTabArray] = useState<any>([
-    "任务",
-    "超级树",
-    "日报",
-    "活力",
-    "日程",
+    { name: "任务", id: 0 },
+    { name: "超级树", id: 0 },
+    { name: "日报", id: 0 },
+    { name: "活力", id: 0 },
+    { name: "日程", id: 0 },
   ]);
   const viewImgb: string[] = [labelbSvg, groupbSvg];
-  const tabImg: string[] = [tab0Svg, tab1Svg, tab4Svg, tab6Svg, tab5Svg];
-  const tabbImg: string[] = [tabb0Svg, tabb1Svg, tabb4Svg, tabb6Svg, tabb5Svg];
   const viewArray = ["分频道", "分项目"];
   const checkedTitleRef = useRef<any>();
+  let tabImgRef = useRef<any>([tab0Svg, tab5Svg, tab1Svg, tab4Svg, tab6Svg]);
+  let tabbImgRef = useRef<any>([
+    tabb0Svg,
+    tabb5Svg,
+    tabb1Svg,
+    tabb4Svg,
+    tabb6Svg,
+  ]);
   checkedTitleRef.current = ["过期", "今天", "未来", "已完成", "已归档"];
 
   const chooseMemberHeader = (headIndex: number) => {
@@ -104,14 +111,30 @@ const WorkingTableHeader: React.FC<WorkingTableHeaderProps> = (prop) => {
     }
   }, [workingTaskArray]);
   useEffect(() => {
-    setTabArray(
-      headerIndex === 1
-        ? ["任务", "超级树", "日报", "活力", "日程"]
-        : clickType === "self"
-        ? ["任务"]
-        : ["任务", "日报", "活力"]
-    );
-    setTabIndex(headerIndex === 2 && clickType !== "self" ? 1 : 0);
+    if (headerIndex === 1) {
+      setTabArray([
+        { name: "任务", id: 0 },
+        { name: "超级树", id: 2 },
+        { name: "日报", id: 3 },
+        { name: "活力", id: 4 },
+        { name: "日程", id: 5 },
+      ]);
+      setTabIndex(0);
+    } else if (headerIndex === 2) {
+      setTabArray([
+        { name: "任务", id: 0 },
+        { name: "日报", id: 3 },
+        { name: "活力", id: 4 },
+      ]);
+      tabImgRef.current = [tab0Svg, tab1Svg, tab4Svg];
+      tabbImgRef.current = [tabb0Svg, tabb1Svg, tabb4Svg];
+      setTabIndex(1);
+    }
+   
+    if (clickType === "self") {
+      setTabIndex(1);
+      setTabArray(["任务"]);
+    }
   }, [headerIndex, clickType]);
   useEffect(() => {
     dispatch(setFilterObject(theme.filterObject));
@@ -222,12 +245,12 @@ const WorkingTableHeader: React.FC<WorkingTableHeaderProps> = (prop) => {
                         setTabIndex(0);
                       }}
                     >
-                      {tabItem}
+                      {tabItem.name}
                     </div>
                   }
                   icon={
                     <img
-                      src={tabbImg[index]}
+                      src={tabbImgRef.current[index]}
                       alt=""
                       className="viewTableHeader-tab-logo"
                     />
@@ -261,16 +284,16 @@ const WorkingTableHeader: React.FC<WorkingTableHeaderProps> = (prop) => {
                 <Menu.Item
                   className="viewTableHeader-tab"
                   onClick={() => {
-                    chooseMemberHeader(index + 1);
+                    chooseMemberHeader(tabItem.id);
                     setTabIndex(index);
                   }}
                 >
                   <img
-                    src={tabbImg[index]}
+                    src={tabbImgRef.current[index]}
                     alt=""
                     className="viewTableHeader-tab-logo"
                   />
-                  {tabItem}
+                  {tabItem.name}
                 </Menu.Item>
               )}
             </React.Fragment>
@@ -364,34 +387,17 @@ const WorkingTableHeader: React.FC<WorkingTableHeaderProps> = (prop) => {
   );
   return (
     <div className="workingTableHeader">
-      {headerIndex === 2 ? (
+      {headerIndex === 2 && targetUserInfo?.profile ? (
         <React.Fragment>
           <div className="workingTableHeader-name">
-            <div
-              className="workingTableHeader-logo"
-              style={{ borderRadius: "50%" }}
-            >
-              <img
-                src={
-                  targetUserInfo && targetUserInfo.profile.avatar
-                    ? targetUserInfo.profile.avatar +
-                      "?imageMogr2/auto-orient/thumbnail/80x"
-                    : defaultPersonPng
-                }
-                alt=""
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  marginRight: "0px",
-                }}
-                onError={(e: any) => {
-                  e.target.onerror = null;
-                  e.target.src = defaultPersonPng;
-                }}
+            <div className="workingTableHeader-logo">
+              <Avatar
+                name={targetUserInfo.profile.nickName}
+                avatar={targetUserInfo.profile.avatar}
+                type={"person"}
+                index={0}
               />
             </div>
-
             <div
               className="groupTableHeader-name-title"
               onClick={() => {
@@ -448,8 +454,8 @@ const WorkingTableHeader: React.FC<WorkingTableHeaderProps> = (prop) => {
               setFilterVisible(false);
             }}
           >
-            <img src={tabImg[tabIndex]} alt=""></img>
-            {tabArray[tabIndex]}
+            <img src={tabImgRef.current[tabIndex]} alt=""></img>
+            {tabArray[tabIndex].name}
           </div>
         </Dropdown>
         {memberHeaderIndex < 2 ? (
@@ -469,14 +475,14 @@ const WorkingTableHeader: React.FC<WorkingTableHeaderProps> = (prop) => {
                   alt=""
                   style={{ width: "16px", height: "16px" }}
                 />
-                {deviceState === "xl"||deviceState === "xxl"
+                {deviceState === "xl" || deviceState === "xxl"
                   ? filterObject?.filterType.length > 0
                     ? filterObject.filterType.join(" / ")
                     : null
                   : null}
               </div>
             </Dropdown>
-            {deviceState === "xl"||deviceState === "xxl" ? (
+            {deviceState === "xl" || deviceState === "xxl" ? (
               <React.Fragment>
                 {filterObject?.groupKey ? (
                   <div

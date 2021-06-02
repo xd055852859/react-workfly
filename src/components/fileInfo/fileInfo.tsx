@@ -136,6 +136,11 @@ const FileInfo: React.FC<FileInfoProps> = (props) => {
       setFileInfo(newTargetItem, true);
       // setFileList(newFileList);
     }
+    if (closeSaveVisible) {
+      setCloseSaveVisible(false);
+      dispatch(setFileInfo(null, false));
+      setEditable(false);
+    }
     if (newTargetItem.type !== 11) {
       setEditable(false);
     }
@@ -183,31 +188,31 @@ const FileInfo: React.FC<FileInfoProps> = (props) => {
               <div>{fileInfo.title ? fileInfo.title : ""}</div>
               <div className="groupTableTree-full-img">
                 {fileInfo.type === 10 ||
-                  (fileInfo.type === 11 && !editable) ||
-                  fileInfo.type === 13 ? (
-                    <Tooltip title={editable ? "保存" : "编辑"}>
-                      <Button
-                        size="large"
-                        shape="circle"
-                        style={{ border: "0px" }}
-                        ghost
-                        icon={
-                          editable ? (
-                            <IconFont type="icon-baocun1" />
-                          ) : (
-                              <IconFont type="icon-edit" />
-                            )
+                (fileInfo.type === 11 && !editable) ||
+                fileInfo.type === 13 ? (
+                  <Tooltip title={editable ? "保存" : "编辑"}>
+                    <Button
+                      size="large"
+                      shape="circle"
+                      style={{ border: "0px" }}
+                      ghost
+                      icon={
+                        editable ? (
+                          <IconFont type="icon-baocun1" />
+                        ) : (
+                          <IconFont type="icon-edit" />
+                        )
+                      }
+                      onClick={() => {
+                        if (!editable) {
+                          setEditable(true);
+                        } else {
+                          changeContent();
                         }
-                        onClick={() => {
-                          if (!editable) {
-                            setEditable(true);
-                          } else {
-                            changeContent();
-                          }
-                        }}
-                      />
-                    </Tooltip>
-                  ) : null}
+                      }}
+                    />
+                  </Tooltip>
+                ) : null}
                 {fileInfo.type === 14 && fileInfo.extraData?.url ? (
                   <Tooltip title="跳转外部链接">
                     <Button
@@ -258,7 +263,6 @@ const FileInfo: React.FC<FileInfoProps> = (props) => {
                   dispatch(setFileInfo(null, false));
                   setEditable(false);
                 }
-
               }}
             />
           ) : null}
@@ -267,7 +271,6 @@ const FileInfo: React.FC<FileInfoProps> = (props) => {
             title={"保存内容"}
             onOk={() => {
               changeContent();
-              setCloseSaveVisible(false);
             }}
             onCancel={() => {
               dispatch(setFileInfo(null, false));

@@ -765,7 +765,7 @@ const Task: React.FC<TaskProps> = (props) => {
                   {(!bottomtype || bottomtype === "create") && !myState ? (
                     <div className="taskItem-footer">
                       <div className="taskItem-footer-left">
-                        {reportState && headerIndex === 1 ? (
+                        {reportState && headerIndex !== 3 ? (
                           <div
                             className="taskItem-img"
                             style={{ borderRadius: "5px" }}
