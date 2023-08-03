@@ -1,0 +1,77 @@
+.oDialog-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.oDialog-left,
+.oDialog-right {
+    width: 50%;
+    height: 100%;
+    padding: 5px 15px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+.oDialog-left-top {
+    width: 100%;
+    height: 50px;
+}
+
+.oDialog-right {
+    overflow: auto;
+}
+
+.oDialog-left-container {
+    width: 100%;
+    height: calc(100% - 50px);
+    overflow: auto;
+}
+
+.oDialog-left {
+    border-right: 1px solid #eaeaea;
+
+}
+
+.oDialog-left-item {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+}
+
+.oDialog-left-item:hover {
+    background-color: #f0f0f0;
+}
+
+.oDialog-left-title {
+    width: calc(100% - 45px);
+}
+
+.oDialog-right-o {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.oDialog-right-o .ant-radio-wrapper {
+    font-size: 16px !important;
+}
+
+.oDialog-right-kr {
+    width: 100%;
+    min-height: 35px;
+    display: flex;
+    align-items: center;
+    padding-left: 25px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.oDialog-right-kr .ant-radio-wrapper {
+    font-size: 14px !important;
+}

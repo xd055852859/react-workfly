@@ -6,15 +6,19 @@
   display: flex;
   align-items: center;
   color: #fff;
-  cursor: pointer;
 }
-.companyHeader-logo {
+.companyHeader-img {
   width: 40px;
   height: 40px;
   overflow: hidden;
   border-radius: 5px;
   margin-right: 10px;
   flex-shrink: 0;
+}
+.calendarHeader-logo {
+  width: 27px;
+  height: 23px;
+  margin-right: 10px;
 }
 .companyHeader-logo img{
   width:100%;

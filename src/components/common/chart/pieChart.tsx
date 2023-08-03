@@ -1,4 +1,4 @@
-import React, {useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Pie } from '@antv/g2plot';
 import { useMount } from '../../../hook/common';
 // import './userCenter.css';
@@ -8,10 +8,11 @@ interface PieChartProps {
   height: number;
   width: number;
   pieId: string;
+  fontColor: string
 }
 
 const PieChart: React.FC<PieChartProps> = (props) => {
-  const { data, height, width, pieId } = props;
+  const { data, height, width, pieId, fontColor } = props;
   let pieRef = useRef<any>(null);
   useMount(() => {
     pieRef.current = new Pie(pieId, {
@@ -28,6 +29,9 @@ const PieChart: React.FC<PieChartProps> = (props) => {
       label: {
         type: 'outer',
         content: '{name} {percentage}',
+        style: {
+          fill: fontColor,
+        },
       },
       state: {
         active: {
@@ -41,6 +45,23 @@ const PieChart: React.FC<PieChartProps> = (props) => {
         { type: 'element-single-selected' },
         { type: 'element-active' },
       ],
+      xAxis: {
+        // 格式化 y 轴标签加单位，自定义 labal 样式
+        label: {
+          style: {
+            fill: fontColor,
+          },
+        },
+      },
+      yAxis: {
+        // 格式化 y 轴标签加单位，自定义 labal 样式
+        label: {
+          style: {
+            fill: fontColor,
+          },
+        },
+      },
+      legend: false
     });
     pieRef.current.render();
     return () => {

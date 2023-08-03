@@ -2,10 +2,10 @@ import React from "react";
 import "./groupTableTreeItem.css";
 
 interface GroupTableTreeTypeProps {
-  targetNodeKey: any;
-  addChildrenTask: any;
-  typeshow: number;
-  setTreeTypeVisible: any;
+  targetNodeKey?: any;
+  addChildrenTask?: any;
+  typeshow?: number;
+  setTreeTypeVisible?: any;
 }
 
 const GroupTableTreeType: React.FC<GroupTableTreeTypeProps> = (props) => {
@@ -81,6 +81,14 @@ const GroupTableTreeType: React.FC<GroupTableTreeTypeProps> = (props) => {
         }}
       >
         <div className="groupTableTreeItem-title">新建电子书</div>
+      </div>
+      <div
+        className="groupTableTreeItem-item"
+        onClick={() => {
+          addChildrenTask(targetNodeKey, typeshow === 1 ? "child" : "next", 16);
+        }}
+      >
+        <div className="groupTableTreeItem-title">新建PPT</div>
       </div>
     </div>
   );

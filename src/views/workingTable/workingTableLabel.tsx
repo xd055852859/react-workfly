@@ -40,6 +40,7 @@ const WorkingTableLabel: React.FC = (prop) => {
   const workingTaskArray = useTypedSelector(
     (state) => state.task.workingTaskArray
   );
+  const clickType = useTypedSelector((state) => state.auth.clickType);
   const [mainLabelArray, setMainLabelArray] = useState<any>([]);
 
   const [taskNumber] = useState(() =>
@@ -98,7 +99,8 @@ const WorkingTableLabel: React.FC = (prop) => {
                     labelArray[index][taskItem.labelKey].arr,
                     taskItem
                   );
-                } else {
+                }
+                else {
                   if (!labelArray[index]["ToDo" + index]) {
                     labelArray[index]["ToDo" + index] = {
                       arr: [],
@@ -152,13 +154,18 @@ const WorkingTableLabel: React.FC = (prop) => {
             // .filter((arrItem, arrIndex) => {
             //   return arrItem.show;
             // });
-            item[key].arrlength =
-              item[key].groupObj._key === mainGroupKey &&
-              item[key].labelObj &&
-              !item[key].labelObj._key
-                ? 10000
-                : item[key].arr.length;
-            labelLoadArray[index] = item[key].arr;
+            item[key].arrlength = item[key].arr.length;
+            // item[key].groupObj._key === mainGroupKey &&
+            //   item[key].labelObj &&
+            //   !item[key].labelObj._key
+            //   ? 10000
+            //   : item[key].arr.length;
+            if (item[key].arrlength === 0&&clickType!=='self') {
+              delete item[key];
+            } else {
+              labelLoadArray[index] = item[key].arr;
+            }
+
             // .filter(
             //   (taskItem: any, taskIndex: number) => {
             // if (taskItem.show) {
@@ -173,12 +180,12 @@ const WorkingTableLabel: React.FC = (prop) => {
         labelArray.forEach((item: any, index: number) => {
           labelLoadArray[index] = item.arr.slice(0, taskNumber + 1);
         });
-
         setLabelLoadArray(labelLoadArray);
         setMainLabelArray(labelArray);
       }
     },
-    [filterObject, mainGroupKey, taskNumber, sortArr]
+     //eslint-disable-next-line
+    [filterObject, taskNumber, sortArr]
   );
   useMemo(() => {
     if (workingTaskArray) {
@@ -210,7 +217,7 @@ const WorkingTableLabel: React.FC = (prop) => {
     let batchRes: any = await api.task.batchTaskArray(cardKeyArray);
     if (batchRes.msg === "OK") {
       dispatch(setMessage(true, "归档成功", "success"));
-      dispatch(changeMusic(4));
+      dispatch(changeMusic(10));
       if (headerIndex === 1) {
         dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10]));
       } else if (headerIndex === 2) {
@@ -278,8 +285,8 @@ const WorkingTableLabel: React.FC = (prop) => {
       className="workingTableLabel-container"
       style={{
         display: "flex",
-        overflowX: "auto",
-        height: "100%",
+        overflow: "auto",
+        height: document.documentElement.clientHeight - 68 + "px",
       }}
       ref={workingTableRef}
       onMouseDown={startMove}

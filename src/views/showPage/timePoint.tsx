@@ -3,12 +3,9 @@ import React, { useState, useRef } from "react";
 import moment from "moment";
 import { useMount } from "../../hook/common";
 import { useTypedSelector } from "../../redux/reducer/RootState";
-import format from "../../components/common/format";
-import traditionalDate from "../../components/common/date";
-
+import calendarDay from '../../components/common/calendar'
 import ClockNew from "../../components/clock/clockNew";
-interface TimePointProps {}
-
+interface TimePointProps { }
 const TimePoint: React.FC<TimePointProps> = (props) => {
   const theme = useTypedSelector((state) => state.auth.theme);
   const [nowTime, setNowTime] = useState<any>(new Date());
@@ -62,10 +59,10 @@ const TimePoint: React.FC<TimePointProps> = (props) => {
         {theme.cDayShow !== false ? (
           <div>
             {" 农历 " +
-              format.formatJq(year, month, day) +
+              calendarDay(moment().valueOf()).solarTerm +
               " " +
-              traditionalDate.GetLunarDay(moment())[1] +
-              traditionalDate.GetLunarDay(moment())[2]}
+              calendarDay(moment().valueOf()).lunarMonthCn +
+              calendarDay(moment().valueOf()).lunarDayCn}
           </div>
         ) : null}
       </div>

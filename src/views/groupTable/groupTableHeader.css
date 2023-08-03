@@ -172,13 +172,39 @@
   border-bottom: 1px solid #eee;
 }
 .groupTable-share-title {
-  width: 200px;
+  width: 70%;
   height: 100%;
   display: flex;
   align-items: center;
 }
 .groupTable-code {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: center;
+}
+.home-item {
+  height: 38px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  justify-content: center;
+}
+
+.home-item {
+  padding-left: 35px;
+  justify-content: flex-start;
+}
+
+.home-item:hover {
+  background-color: #f0f0f0;
+}
+.groupTableHeader .header-home-item:nth-child(1),
+.groupTableHeader .header-home-item:nth-child(7),
+.groupTableHeader .header-home-item:nth-child(10) {
+  padding-left: 15px;
+}
+.groupTableHeader .ant-progress-text {
+  color: #fff !important;
 }

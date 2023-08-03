@@ -6,6 +6,7 @@ import bootlogo from '../../assets/svg/bootlogo.svg';
 import boottitle from '../../assets/img/boottitle.png';
 import { Button } from 'antd';
 import _ from 'lodash';
+declare var window: Window 
 const Bootpage: React.FC = () => {
   const history = useHistory();
   const bootpageRef: React.RefObject<any> = useRef();
@@ -101,7 +102,7 @@ const Bootpage: React.FC = () => {
           loop
           style={{ height: '100%', position: 'absolute', right: '-35%' }}
         >
-          您的浏览器不支持 audio 标签。
+          您的浏览器不支持 video 标签。
         </video>
       </div> */}
       <div

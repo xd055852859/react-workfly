@@ -2,24 +2,26 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./createMoreTask.css";
 import { useDispatch } from "react-redux";
 import { useTypedSelector } from "../../redux/reducer/RootState";
-import { Tooltip } from "antd";
+import { Tooltip, Modal } from "antd";
 import api from "../../services/api";
 import _ from "lodash";
 
 import {
   setMessage,
   setCommonHeaderIndex,
-  setMoveState,
 } from "../../redux/actions/commonActions";
-import { getGroupTask } from "../../redux/actions/taskActions";
+import {
+  getGroupTask,
+  getWorkingTableTask,
+} from "../../redux/actions/taskActions";
 import { setGroupKey, getGroup } from "../../redux/actions/groupActions";
 
 import Loading from "../common/loading";
 
-import defaultGroupPng from "../../assets/img/defaultGroup.png";
 import rightArrowPng from "../../assets/img/rightArrow.png";
 import { useMount } from "../../hook/common";
 import { setTaskInfo } from "../../redux/actions/taskActions";
+import Avatar from "../common/avatar";
 
 interface CreateMoreTaskProps {
   visible: boolean;
@@ -39,7 +41,6 @@ interface CreateMoreTaskProps {
 const CreateMoreTask: React.FC<CreateMoreTaskProps> = (props) => {
   const {
     visible,
-    moreTitle,
     onClose,
     createStyle,
     changeGroupArray,
@@ -51,9 +52,11 @@ const CreateMoreTask: React.FC<CreateMoreTaskProps> = (props) => {
     taskItem,
   } = props;
   const dispatch = useDispatch();
-  const theme = useTypedSelector((state) => state.auth.theme);
+  const user = useTypedSelector((state) => state.auth.user);
   const headerIndex = useTypedSelector((state) => state.common.headerIndex);
   const mainGroupKey = useTypedSelector((state) => state.auth.mainGroupKey);
+  const groupKey = useTypedSelector((state) => state.group.groupKey);
+  const targetUserInfo = useTypedSelector((state) => state.auth.targetUserInfo);
   const taskInfo = useTypedSelector((state) => state.task.taskInfo);
   const [labelChooseArray, setLabelChooseArray] = useState<any>([
     {
@@ -74,7 +77,7 @@ const CreateMoreTask: React.FC<CreateMoreTaskProps> = (props) => {
   const [loading, setLoading] = useState(false);
   const createRef: React.RefObject<any> = useRef();
   let unDistory = useRef<any>(true);
-  
+
   useMount(() => {
     return () => {
       unDistory.current = false;
@@ -132,12 +135,11 @@ const CreateMoreTask: React.FC<CreateMoreTaskProps> = (props) => {
 
   const addMoreTask = async (groupItem: any, labelItem: any) => {
     setLoading(true);
-    let addTaskRes: any = await api.task.togetherCreateCard({
-      title: moreTitle ? moreTitle : "",
-      taskType: taskItem.taskType,
-      groupKeyArray: [groupItem._key],
-      labelKey2Array: [[labelItem.labelKey]],
-    });
+    let addTaskRes: any = await api.task.cloneCard(
+      taskItem._key,
+      groupItem._key,
+      labelItem.labelKey
+    );
     if (addTaskRes.msg === "OK") {
       // setLoading(false);
       dispatch(setMessage(true, "复制任务成功", "success"));
@@ -150,9 +152,9 @@ const CreateMoreTask: React.FC<CreateMoreTaskProps> = (props) => {
         dispatch(setGroupKey(groupItem._key));
         // dispatch(getGroupInfo(groupKey));
         dispatch(setCommonHeaderIndex(3));
-        if (!theme.moveState) {
-          dispatch(setMoveState("in"));
-        }
+        // if (!theme.moveState) {
+        //   dispatch(setMoveState("in"));
+        // }
         // await api.group.visitGroupOrFriend(2, groupKey);
         dispatch(getGroup(3));
       }
@@ -172,25 +174,23 @@ const CreateMoreTask: React.FC<CreateMoreTaskProps> = (props) => {
       newTaskInfo.groupKey = groupAllItem._key;
       newTaskInfo.groupName = groupAllItem.groupName;
       newTaskInfo.labelKey = labelAllItem.labelKey;
-      newTaskInfo.labelName = groupAllItem.labelName;
+      newTaskInfo.labelName = labelAllItem.labelName;
       dispatch(setTaskInfo(newTaskInfo));
       dispatch(setMessage(true, "移动任务成功", "success"));
       onClose();
-      if (headerIndex === 3 && taskItem.groupKey === groupAllItem._key) {
-        dispatch(getGroupTask(3, taskItem.groupKey, "[0,1,2,10]"));
-      } else if (
-        taskItem.groupKey !== mainGroupKey ||
-        headerIndex !== 3 ||
-        (headerIndex === 3 && taskItem.groupKey !== groupAllItem._key)
-      ) {
-        dispatch(setGroupKey(groupAllItem._key));
-        // dispatch(getGroupInfo(groupKey));
-        dispatch(setCommonHeaderIndex(3));
-        if (!theme.moveState) {
-          dispatch(setMoveState("in"));
-        }
-        // await api.group.visitGroupOrFriend(2, groupAllKey);
-        dispatch(getGroup(3));
+      if (headerIndex === 1) {
+        dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10]));
+      } else if (headerIndex === 2) {
+        dispatch(
+          getWorkingTableTask(
+            user._key === targetUserInfo._key ? 4 : 2,
+            targetUserInfo._key,
+            1,
+            [0, 1, 2, 10]
+          )
+        );
+      } else if (headerIndex === 3) {
+        dispatch(getGroupTask(3, groupKey, "[0,1,2,10]"));
       }
     } else {
       dispatch(setMessage(true, addTaskRes.msg, "error"));
@@ -215,7 +215,6 @@ const CreateMoreTask: React.FC<CreateMoreTaskProps> = (props) => {
       groupAllArray[groupChooseIndex]._key
     );
     localStorage.setItem("createLabelKey", labelItem.labelKey);
-    // console.log(groupAllArray[groupChooseIndex]._key, labelItem.labelKey);
     onClose();
   };
   const searchGroup = (e: any, type: string) => {
@@ -312,13 +311,11 @@ const CreateMoreTask: React.FC<CreateMoreTaskProps> = (props) => {
                         >
                           <div className="createMoreTask-item-title">
                             <div className="createMoreTask-avatar">
-                              <img
-                                src={
-                                  item.groupLogo
-                                    ? item.groupLogo
-                                    : defaultGroupPng
-                                }
-                                alt=""
+                              <Avatar
+                                avatar={item?.groupLogo}
+                                name={item?.groupName}
+                                type={"group"}
+                                index={index}
                               />
                             </div>
                             <Tooltip
@@ -374,15 +371,33 @@ const CreateMoreTask: React.FC<CreateMoreTaskProps> = (props) => {
                                   })
                                 );
                               } else if (moveTaskType === "复制") {
-                                addMoreTask(
-                                  groupAllArray[groupChooseIndex],
-                                  item
-                                );
+                                Modal.confirm({
+                                  title: "复制任务",
+                                  content: "复制任务前请确认内容已保存",
+                                  onOk: () => {
+                                    addMoreTask(
+                                      groupAllArray[groupChooseIndex],
+                                      item
+                                    );
+                                  },
+                                  onCancel: () => {
+                                    Modal.destroyAll();
+                                  },
+                                });
                               } else if (moveTaskType === "移动") {
-                                moveMoreTask(
-                                  groupAllArray[groupChooseIndex],
-                                  item
-                                );
+                                Modal.confirm({
+                                  title: "移动任务",
+                                  content: "移动任务前请确认内容已保存",
+                                  onOk: () => {
+                                    moveMoreTask(
+                                      groupAllArray[groupChooseIndex],
+                                      item
+                                    );
+                                  },
+                                  onCancel: () => {
+                                    Modal.destroyAll();
+                                  },
+                                });
                               }
                             }}
                             key={"label" + index}

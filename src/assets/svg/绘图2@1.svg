@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="88px" height="92px" viewBox="0 0 88 92" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59 (86127) - https://sketch.com -->
+    <title>绘图2@1</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="编组-50">
+            <g id="绘图2" transform="translate(1.000000, 1.000000)">
+                <g id="编组-41备份">
+                    <g id="DOC备份-33">
+                        <path d="M6.14285714,-0.5 L46.3476615,-0.5 L69.5,22.2905832 L69.5,84.375 C69.5,87.7466703 66.7029666,90.5 63.2857143,90.5 L6.14285714,90.5 C2.72560481,90.5 -0.0714285714,87.7466703 -0.0714285714,84.375 L-0.0714285714,5.625 C-0.0714285714,2.25332974 2.72560481,-0.5 6.14285714,-0.5 Z" id="路径" stroke="#BCC6CF" fill="#FFFFFF" fill-rule="nonzero"></path>
+                        <g id="编组-18备份-4" transform="translate(51.000000, 46.607143)">
+                            <rect id="矩形" fill="#6B5DE7" x="0" y="0" width="35.3571429" height="35.3571429" rx="5"></rect>
+                            <text id="D备份-2" font-family="SourceHanSansCN-Medium, Source Han Sans CN" font-size="30" font-weight="400" fill="#FFFFFF">
+                                <tspan x="7.015" y="29.3928571">D</tspan>
+                            </text>
+                        </g>
+                        <path d="M51.8571429,22.5 L69,22.5 L46.1428571,0 L46.1428571,16.875 C46.1428571,19.96875 48.7142857,22.5 51.8571429,22.5 Z" id="路径" fill="#BCC6CF" fill-rule="nonzero"></path>
+                        <polygon id="路径" fill="#EBEEF2" fill-rule="nonzero" points="69 39.375 51.8571429 22.5 69 22.5"></polygon>
+                    </g>
+                    <g id="编组-24备份-3" transform="translate(7.000000, 28.000000)">
+                        <circle id="椭圆形" stroke="#BCC6CF" stroke-width="3" cx="30" cy="7.2972973" r="5.7972973"></circle>
+                        <rect id="矩形" stroke="#BCC6CF" stroke-width="3" x="1.5" y="3.12162162" width="11.5945946" height="9.16216216" rx="4"></rect>
+                        <path d="M20.027027,5.67567568 L22.7027027,7.67568564 L20.027027,9.72972973 L20.027027,8.04054054 L13.7837838,8.04054054 L13.7837838,7.36486486 L20.027027,7.36486486 L20.027027,5.67567568 Z" id="形状结合" fill="#BCC6CF" fill-rule="nonzero"></path>
+                        <path d="M31.8290466,16.7253844 L34.5047223,18.7253944 L31.8290466,20.7794385 L31.8290466,19.0902493 L25.5858033,19.0902493 L25.5858033,18.4145736 L31.8290466,18.4145736 L31.8290466,16.7253844 Z" id="形状结合备份-5" fill="#BCC6CF" fill-rule="nonzero" transform="translate(30.045263, 18.752411) rotate(-270.000000) translate(-30.045263, -18.752411) "></path>
+                        <path d="M19.7046582,13.8509483 L22.339736,15.998117 L19.7046582,18.2032957 L19.7046597,16.3898176 L7.29934759,16.3889483 L7.30031365,32.1279657 L6.56834759,32.1279657 L6.56834759,15.9117495 L6.73134759,15.9109483 L6.73168673,15.6644264 L19.7046597,15.6644264 L19.7046582,13.8509483 Z" id="形状结合备份-6" fill="#BCC6CF" fill-rule="nonzero" transform="translate(14.454042, 22.989457) rotate(-90.000000) translate(-14.454042, -22.989457) "></path>
+                        <path d="M30,25.4516049 L23.4498595,30.8108108 L30,36.1700167 L36.5501405,30.8108108 L30,25.4516049 Z" id="矩形备份-11" stroke="#BCC6CF" stroke-width="3"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

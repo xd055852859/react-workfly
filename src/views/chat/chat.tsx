@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./chat.css";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import { useDispatch } from "react-redux";
+import { CloseCircleOutlined } from "@ant-design/icons";
 import _ from "lodash";
 import api from "../../services/api";
 
@@ -11,13 +12,13 @@ import {
   setMessage,
 } from "../../redux/actions/commonActions";
 
-import closePng from "../../assets/img/close.png";
 import { useMount } from "../../hook/common";
 interface ChatProps {
   chatType?: any;
 }
 
-const Chat: React.FC<ChatProps> = () => {
+const Chat: React.FC<ChatProps> = (props) => {
+  const { chatType } = props;
   const dispatch = useDispatch();
   const user = useTypedSelector((state) => state.auth.user);
   const headerIndex = useTypedSelector((state) => state.common.headerIndex);
@@ -40,9 +41,17 @@ const Chat: React.FC<ChatProps> = () => {
   });
   useEffect(() => {
     if (user) {
-      setUrl(
-        api.ROCKET_CHAT_URL + "/login?chatToken=" + user.rocketChat.authToken
-      );
+      setUrl(api.ROCKET_CHAT_URL);
+      const dom: any = document.querySelector("#chat");
+      dom.onload = () => {
+        dom.contentWindow.postMessage(
+          {
+            externalCommand: "login-with-token",
+            token: user.rocketChat.authToken,
+          },
+          "*"
+        );
+      };
     }
   }, [user]);
   const goChat = useCallback(
@@ -116,6 +125,7 @@ const Chat: React.FC<ChatProps> = () => {
     memberArray,
     url,
     goChat,
+    chatType,
   ]);
   const handlerIframeEvent = (e: any) => {
     switch (e.data.eventName) {
@@ -131,11 +141,19 @@ const Chat: React.FC<ChatProps> = () => {
   return (
     <React.Fragment>
       <div
-        className="chat-iframe  animate__animated animate__slideInRight"
+        className="chat-iframe"
         style={
           chatState
             ? {
                 width: "700px",
+              }
+            : chatType === "custom"
+            ? {
+                width: "480px",
+                height: "calc(100% + 60px)",
+                position: "absolute",
+                top: "-60px",
+                left: "0px",
               }
             : { opacity: 0, width: "0px", height: "0px" }
         }
@@ -145,36 +163,25 @@ const Chat: React.FC<ChatProps> = () => {
           src={url}
           className="chat"
           title=" "
-          style={{
-            left: "0px",
-          }}
+          style={
+            chatType === "custom"
+              ? { width: "100%", left: "0px" }
+              : {
+                  left: "0px",
+                }
+          }
         ></iframe>
-        {/* <div
-           className="chat-more"
-           onClick={() => {
-             setClickType(!clickType);
-           }}
-           style={
-             !clickType
-               ? {
-                   left: "10px",
-                 }
-               : {
-                  left: "215px",
-                 }
-           }
-         ></div>  */}
-        {chatState ? (
-          <img
-            src={closePng}
-            className="chat-close"
-            onClick={() => {
-              dispatch(setChatState(false));
-            }}
-            alt=""
-          />
-        ) : null}
       </div>
+      {chatState ? (
+        <div
+          className="chat-close"
+          onClick={() => {
+            dispatch(setChatState(false));
+          }}
+        >
+          <CloseCircleOutlined style={{ color: "#1890ff", fontSize: "25px" }} />
+        </div>
+      ) : null}
     </React.Fragment>
   );
 };

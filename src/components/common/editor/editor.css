@@ -1,0 +1,29 @@
+/* @font-face {
+    font-family: 'icon-font';
+    src: url('//at.alicdn.com/t/font_2676034_87m9m34qm78.woff2?t=1626318547565') format('woff2'),
+        url('//at.alicdn.com/t/font_2676034_87m9m34qm78.woff?t=1626318547565') format('woff'),
+        url('//at.alicdn.com/t/font_2676034_87m9m34qm78.ttf?t=1626318547565') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="w-e-icon-"],
+[class*=" w-e-icon-"] {
+    font-family: 'icon-font' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+}
+
+.w-e-icon-header:before {
+    content: "\e6ed"  !important;
+} */
+.w-e-icon-paint-brush+.w-e-droplist {
+    left: -70px !important;
+}
+.w-e-icon-pencil2+.w-e-droplist {
+    left: -70px !important;
+}

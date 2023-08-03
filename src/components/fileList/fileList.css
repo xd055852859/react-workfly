@@ -2,11 +2,12 @@
   width: 100%;
   height: 100%;
   overflow: auto;
--webkit-overflow-scrolling:touch;
+  -webkit-overflow-scrolling: touch;
   padding: 6px 5px;
   box-sizing: border-box;
   color: #333;
 }
+
 .file-container {
   width: 100%;
   min-height: 70px;
@@ -22,25 +23,30 @@
   background-color: #fff;
   margin-bottom: 5px;
 }
+
 .file-container-img {
   width: 30px;
   height: 30px;
   margin-right: 10px;
 }
+
 .file-container-img img {
   width: 100%;
   height: 100%;
 }
+
 .file-container-title {
   width: calc(100% - 50px);
   height: 100%;
   font-size: 14px;
   color: #333;
 }
-.file-container-title > div:nth-child(2) {
+
+.file-container-title>div:nth-child(2) {
   font-size: 12px;
   color: #8091a0;
 }
+
 .file-container-time {
   /* width: 70px; */
   /* height: 100%; */
@@ -50,6 +56,7 @@
   font-size: 12px;
   color: #8091a0;
 }
+
 .file-container-icon {
   /* width: 70px; */
   /* height: 100%; */
@@ -58,7 +65,13 @@
   right: 12px;
   font-size: 12px;
   cursor: pointer;
+  display: none;
 }
-.ant-tabs-top > .ant-tabs-nav {
+
+.file-container:hover .file-container-icon {
+  display: flex;
+}
+
+.ant-tabs-top>.ant-tabs-nav {
   margin-bottom: 5px !important;
 }

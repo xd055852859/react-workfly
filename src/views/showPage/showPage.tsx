@@ -23,6 +23,7 @@ import { setTheme } from "../../redux/actions/authActions";
 import {
   setMessage,
   setCommonHeaderIndex,
+  changeContentVisible,
 } from "../../redux/actions/commonActions";
 import { getGroup } from "../../redux/actions/groupActions";
 
@@ -47,16 +48,17 @@ import search4Svg from "../../assets/svg/search4.svg";
 import showAddSvg from "../../assets/svg/showAdd.svg";
 import linkIconSvg from "../../assets/svg/linkIcon.svg";
 import { useMount } from "../../hook/common";
+import axios from "axios";
 
 interface ShowPageProps {
   changeShowType: any;
 }
-
+declare var window: Window;
 const ShowPage: React.FC<ShowPageProps> = (props) => {
   const dispatch = useDispatch();
   const user = useTypedSelector((state) => state.auth.user);
   const theme = useTypedSelector((state) => state.auth.theme);
-  const mainGroupKey = useTypedSelector((state) => state.auth.mainGroupKey);
+  // const mainGroupKey = useTypedSelector((state) => state.auth.mainGroupKey);
   const fileInfo = useTypedSelector((state) => state.common.fileInfo);
   const fileVisible = useTypedSelector((state) => state.common.fileVisible);
 
@@ -91,8 +93,10 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
     if (localStorage.getItem("bg")) {
       setBg(localStorage.getItem("bg"));
     }
+    localStorage.removeItem("showType");
     // getSocket();
     localStorage.setItem("headerIndex", "1");
+    dispatch(changeContentVisible(false));
     return () => {
       unDistory.current = false;
     };
@@ -108,42 +112,51 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
       }
     }
   }, [dispatch]);
-  const getWeather = useCallback(async () => {
+  const getWeather = async () => {
     let newWeatherObj: any = {};
-    let weatherRes: any = await api.common.getWeather(
-      user?.profile.lo,
-      user?.profile.la
-    );
-    if (unDistory.current) {
-      if (weatherRes.msg === "OK") {
-        newWeatherObj = _.cloneDeep(weatherRes.result);
-        setWeatherObj(newWeatherObj);
-      } else {
-        dispatch(setMessage(true, weatherRes.msg, "error"));
-      }
-    }
-  }, [dispatch, user?.profile.lo, user?.profile.la]);
+    // let weatherRes: any = await api.common.getWeather(
+    //   user?.profile.lo,
+    //   user?.profile.la
+    // );
+    // if (unDistory.current) {
+    //   if (weatherRes.msg === "OK") {
+    //     newWeatherObj = _.cloneDeep(weatherRes.result);
+    //     setWeatherObj(newWeatherObj);
+    //   } else {
+    //     dispatch(setMessage(true, weatherRes.msg, "error"));
+    //   }
+    // }
+    let weatherRes: any = await axios
+      .get("https://api.vvhan.com/api/weather")
+      .then((response) => {
+        let data = response.data;
+        if (data?.success) {
+          setWeatherObj(data);
+          console.log(data);
+        }
+      });
+    console.log(weatherRes);
+  };
   useEffect(() => {
     if (user) {
       getPrompt();
       dispatch(setCommonHeaderIndex(1));
       dispatch(getGroup(3));
-      if (
-        parseInt(user.profile.lo) !== user.profile.lo &&
-        parseInt(user.profile.la) !== user.profile.la &&
-        user.profile.la &&
-        user.profile.lo
-      ) {
-        getWeather();
-      }
+      // if (
+      //   parseInt(user.profile.lo) !== user.profile.lo &&
+      //   parseInt(user.profile.la) !== user.profile.la &&
+      //   user.profile.la &&
+      //   user.profile.lo
+      // ) {
+      getWeather();
+      // }
     }
   }, [
     user,
-    user?.profile.lo,
-    user?.profile.la,
+    // user?.profile.lo,
+    // user?.profile.la,
     dispatch,
     getPrompt,
-    getWeather,
   ]);
   useEffect(() => {
     if (theme.backgroundImg) {
@@ -236,8 +249,6 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
     if (urlRes.msg === "OK") {
       let index = _.findIndex(newTheme.urlArr, { url: linkUrl });
       if (index !== -1) {
-        console.log(newTheme.urlArr[index].icon);
-        console.log(urlRes.icon);
         newTheme.urlArr[index].icon = urlRes.icon;
       }
       // dispatch(setMessage(true, '添加快捷方式成功', 'success'));
@@ -332,71 +343,61 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
           </div>
         </React.Fragment>
       ) : null}
-      {theme.weatherShow !== false &&
-      parseInt(user?.profile.lo) !== user?.profile.lo &&
-      parseInt(user?.profile.la) !== user?.profile.la &&
-      user?.profile.la &&
-      user?.profile.lo ? (
-        <div
-          className="showPage-weather"
-          style={{ left: theme.searchShow !== false ? "320px" : "10px" }}
-        >
-          <div className="showPage-weather-item">
-            <div className="showPage-weather-item-top">
-              {weatherObj.basic && weatherObj.basic.province}
-            </div>
-            <div className="showPage-weather-item-bottom">
-              {weatherObj.basic && weatherObj.basic.city}
-            </div>
-          </div>
-          <div className="showPage-weather-item">
-            <div className="showPage-weather-item-top">
-              {weatherObj.now &&
-                weatherObj.now.condition &&
-                weatherObj.now.condition.description}
-            </div>
-            <div className="showPage-weather-item-img">
-              <img
-                src={
-                  weatherObj.now && weatherObj.now.condition
-                    ? require("../../assets/weather/w" +
-                        weatherObj.now.condition.code +
-                        "@3x.png").default
-                    : null
-                }
-                alt=""
-              />
-            </div>
-          </div>
-          <div className="showPage-weather-item">
-            <div className="showPage-weather-item-top">温度</div>
-            <div className="showPage-weather-item-bottom">
-              {weatherObj.now && weatherObj.now.temperature}
-              <div className="showPage-weather-icon">℃</div>
-            </div>
-          </div>
-          <div className="showPage-weather-item">
-            <div className="showPage-weather-item-top">湿度</div>
-            <div className="showPage-weather-item-bottom">
-              {weatherObj.now && weatherObj.now.humidity}
-              <div className="showPage-weather-icon">%</div>
-            </div>
-          </div>
-          <div className="showPage-weather-item">
-            <div className="showPage-weather-item-top">PM2.5</div>
-            <div className="showPage-weather-item-bottom">
-              {weatherObj.now && weatherObj.now.aqi && weatherObj.now.aqi.pm25}
-            </div>
+
+      <div
+        className="showPage-weather"
+        style={{ left: theme.searchShow !== false ? "320px" : "10px" }}
+      >
+        <div className="showPage-weather-item">
+          <div className="showPage-weather-item-top">地址</div>
+          <div className="showPage-weather-item-bottom">{weatherObj.city}</div>
+        </div>
+        <div className="showPage-weather-item">
+          <div className="showPage-weather-item-top">天气</div>
+          <div className="showPage-weather-item-bottom">{weatherObj?.info?.type}</div>
+          {/* <div className="showPage-weather-item-img">
+            <img
+              src={
+                weatherObj?.info?.type
+                  ? require("../../assets/weather/w" +
+                      weatherObj.now.condition.code +
+                      "@3x.png").default
+                  : null
+              }
+              alt=""
+            />
+          </div> */}
+        </div>
+        <div className="showPage-weather-item">
+          <div className="showPage-weather-item-top">温度</div>
+          <div className="showPage-weather-item-bottom">
+            {weatherObj?.info?.low && weatherObj.info.low.replace("°C", "")}
+            <div className="showPage-weather-icon">°C</div>~{" "}
+            {weatherObj?.info?.high && weatherObj.info.high.replace("°C", "")}
+            <div className="showPage-weather-icon">°C</div>
           </div>
         </div>
-      ) : null}
+        {/* <div className="showPage-weather-item">
+          <div className="showPage-weather-item-top">湿度</div>
+          <div className="showPage-weather-item-bottom">
+            {weatherObj.now && weatherObj.now.humidity}
+            <div className="showPage-weather-icon">%</div>
+          </div>
+        </div> */}
+        <div className="showPage-weather-item">
+          <div className="showPage-weather-item-top">PM2.5</div>
+          <div className="showPage-weather-item-bottom">
+            {weatherObj?.info?.air && weatherObj.info.air["pm2.5"]}
+          </div>
+        </div>
+      </div>
       {fileVisible && fileInfo ? (
         <div className="showPage-fileContainer">
           <FileInfo />
         </div>
       ) : null}
       <div className="showPage-clock">
-        <div className="showPage-timepoint" >
+        <div className="showPage-timepoint">
           <TimePoint />
         </div>
         <div className="showPage-button">
@@ -488,7 +489,7 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
           >
             我的文件
           </div>
-          <div
+          {/* <div
             className="showPage-task-menu-item"
             style={{
               borderBottom:
@@ -500,7 +501,7 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
             }}
           >
             收藏
-          </div>
+          </div> */}
         </div>
         {menuShow === 0 ? (
           theme.taskShow !== false ? (
@@ -512,21 +513,21 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
           <div className="showPage-timeos-container">
             <FileList
               groupKey={""}
-              type="最近"
+              type="文档"
               fileHeight={document.body.clientHeight - 85}
               fileItemWidth={"calc(100% - 365px)"}
             />
           </div>
-        ) : menuShow === 2 ? (
-          <div className="showPage-timeos-container">
-            <FileList
-              groupKey={mainGroupKey}
-              type="收藏"
-              fileHeight={document.body.clientHeight - 85}
-              fileItemWidth={"calc(100% - 365px)"}
-            />
-          </div>
-        ) : null}
+        ) : // ) : menuShow === 2 ? (
+        //   <div className="showPage-timeos-container">
+        //     <FileList
+        //       groupKey={mainGroupKey}
+        //       type="收藏"
+        //       fileHeight={document.body.clientHeight - 85}
+        //       fileItemWidth={"calc(100% - 365px)"}
+        //     />
+        //   </div>
+        null}
         <img
           src={showAddSvg}
           alt=""
@@ -557,6 +558,7 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
           headerStyle={{
             padding: "10px",
             boxSizing: "border-box",
+            border: "0px",
           }}
           destroyOnClose={true}
           getContainer={() => showPageRef.current}
@@ -576,13 +578,16 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
         onClose={() => {
           setShowPageState(false);
         }}
-        width={300}
+        width={280}
         bodyStyle={{
           padding: "25px 10px 10px 10px",
           boxSizing: "border-box",
         }}
         headerStyle={{
           display: "none",
+        }}
+        maskStyle={{
+          backgroundColor: "rgba(255,255,255,0)",
         }}
         destroyOnClose={true}
       >
@@ -726,15 +731,20 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
           //   childRef.current.getInfo();
           // }
         }}
-        width={275}
+        width={280}
         bodyStyle={{
-          padding: "20 10px 10px 10px",
+          padding: "10px",
           boxSizing: "border-box",
         }}
         headerStyle={{
-          display: "none",
+          padding: "10px",
+          boxSizing: "border-box",
+        }}
+        maskStyle={{
+          backgroundColor: "rgba(255,255,255,0)",
         }}
         destroyOnClose={true}
+        title={"壁纸设置"}
       >
         <HeaderBg setChooseWallKey={setChooseWallKey} />
       </Drawer>

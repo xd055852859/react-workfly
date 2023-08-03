@@ -4,15 +4,14 @@ import { useTypedSelector } from "../../redux/reducer/RootState";
 import { useDispatch } from "react-redux";
 import { Button, Input, Tooltip, Tabs, Table, Modal, Checkbox } from "antd";
 import { PlusOutlined, CloseOutlined } from "@ant-design/icons";
-import { useMount, usePrevious } from "../../hook/common";
+import { useMount } from "../../hook/common";
 
 // import addPng from '../../assets/img/contact-plus.png';
 import { setMessage } from "../../redux/actions/commonActions";
 
 import _ from "lodash";
 import api from "../../services/api";
-import defaultPersonPng from "../../assets/img/defaultPerson.png";
-import defaultGroupPng from "../../assets/img/defaultGroup.png";
+import Avatar from "../../components/common/avatar";
 const { Search } = Input;
 const { TabPane } = Tabs;
 interface CompanySearchListProps {
@@ -37,6 +36,10 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
   } = props;
   const dispatch = useDispatch();
   const groupKey = useTypedSelector((state) => state.group.groupKey);
+  const groupInfo = useTypedSelector((state) => state.group.groupInfo);
+
+  const userKey = useTypedSelector((state) => state.auth.userKey);
+
   const [searchInput, setSearchInput] = useState<any>("");
   const [searchIndex, setSearchIndex] = React.useState(0);
   const [total, setTotal] = React.useState(0);
@@ -66,21 +69,10 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
       key: "avatar",
       width: 20,
       align: "center" as "center",
-      render: (avatar) => (
+      render: (avatar, item, index) => (
         <div className="company-avatar-container ">
           <div className="company-avatar">
-            <img
-              src={
-                avatar
-                  ? avatar + "?imageMogr2/auto-orient/thumbnail/80x"
-                  : defaultPersonPng
-              }
-              alt=""
-              onError={(e: any) => {
-                e.target.onerror = null;
-                e.target.src = defaultPersonPng;
-              }}
-            />
+            <Avatar avatar={avatar} name={""} type={"person"} index={index} />
           </div>
         </div>
       ),
@@ -119,17 +111,10 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
       key: "groupLogo",
       width: 20,
       align: "center" as "center",
-      render: (groupLogo) => (
+      render: (groupLogo, item, index) => (
         <div className="company-avatar-container ">
           <div className="company-avatar">
-            <img
-              src={
-                groupLogo
-                  ? groupLogo + "?imageMogr2/auto-orient/thumbnail/80x"
-                  : defaultGroupPng
-              }
-              alt=""
-            />
+            <Avatar avatar={groupLogo} name={""} type={"group"} index={index} />
           </div>
         </div>
       ),
@@ -147,15 +132,19 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
       dataIndex: "operation",
       key: "operation",
       render: (operation, item, index) => (
-        <Tooltip title="添加项目">
-          <Button
-            shape="circle"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              addMember(item);
-            }}
-          />
-        </Tooltip>
+        <React.Fragment>
+          {item.groupMaster === userKey ? (
+            <Tooltip title="添加项目">
+              <Button
+                shape="circle"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  addMember(item, index, operateGroup);
+                }}
+              />
+            </Tooltip>
+          ) : null}
+        </React.Fragment>
       ),
       width: 20,
       align: "center" as "center",
@@ -168,21 +157,10 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
       key: "avatar",
       width: 10,
       align: "center" as "center",
-      render: (avatar) => (
+      render: (avatar, item, index) => (
         <div className="company-avatar-container ">
           <div className="company-avatar">
-            <img
-              src={
-                avatar
-                  ? avatar + "?imageMogr2/auto-orient/thumbnail/80x"
-                  : defaultPersonPng
-              }
-              alt=""
-              onError={(e: any) => {
-                e.target.onerror = null;
-                e.target.src = defaultPersonPng;
-              }}
-            />
+            <Avatar avatar={avatar} name={""} type={"person"} index={index} />
           </div>
         </div>
       ),
@@ -210,6 +188,7 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
                 setPostIndex(index);
                 setPostStr(post === "无职位" ? "" : post);
               }}
+              style={{ width: "100%", display: "inline-block" }}
             >
               {post}
             </span>
@@ -217,6 +196,9 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
             <Input
               value={postStr}
               onChange={(e: any) => {
+                if (!e.target.value) {
+                  e.target.value = "无职位";
+                }
                 setPostStr(e.target.value);
               }}
               onBlur={() => {
@@ -240,6 +222,7 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
           onChange={(e: any) => {
             changeLeader(index);
           }}
+          disabled={groupInfo.role !== 1}
         />
       ),
     },
@@ -268,16 +251,14 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
       key: "groupLogo",
       width: 20,
       align: "center" as "center",
-      render: (groupLogo) => (
+      render: (groupLogo, item, index) => (
         <div className="company-avatar-container">
           <div className="company-avatar">
-            <img
-              src={
-                groupLogo
-                  ? groupLogo + "?imageMogr2/auto-orient/thumbnail/80x"
-                  : defaultGroupPng
-              }
-              alt=""
+            <Avatar
+              avatar={groupLogo}
+              name={item.groupName}
+              type={"group"}
+              index={index}
             />
           </div>
         </div>
@@ -321,6 +302,7 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
     ) => {
       let newRow: any = [];
       let companyPersonRes: any = null;
+      console.log(searchType);
       if (searchType === 2) {
         if (searchIndex) {
           companyPersonRes = await api.company.getCompanyList(
@@ -348,6 +330,7 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
             groupKey,
             page,
             limit,
+            1,
             searchInput,
             nodeId
           );
@@ -356,11 +339,16 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
       if (unDistory.current) {
         if (companyPersonRes.msg === "OK") {
           companyPersonRes.result.forEach((item: any, index: number) => {
-            newRow[index] = {
-              ...item,
-            };
+            if (searchIndex) {
+              newRow[index] = {
+                ...item,
+              };
+            } else {
+              if (!item.hasAddOrgTree) {
+                newRow.push({ ...item });
+              }
+            }
           });
-
           setRows(newRow);
           if (searchType === 2) {
             setTotal(companyPersonRes.totalNumber);
@@ -390,6 +378,7 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
               newRow.push({
                 ...item,
                 post: item.post ? item.post : "无职位",
+                isLeader: item.isLeader === 2 ? true : false,
               });
             });
             setNodeRows(newRow);
@@ -419,6 +408,12 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
     },
     [dispatch]
   );
+  const operateGroup = (index) => {
+    let newRow: any = [...rows];
+    console.log(index);
+    newRow.splice(index, 1);
+    setRows(newRow);
+  };
   useEffect(() => {
     if (companyObj) {
       getCompanyRow(
@@ -438,9 +433,8 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
     }
   }, [companyObj, searchType, getCompanyNodeRow]);
 
-  const prevSearchInput = usePrevious(searchInput);
   useEffect(() => {
-    if (prevSearchInput !== searchInput && companyObj) {
+    if (companyObj) {
       setPage(0);
       getCompanyRow(
         0,
@@ -451,15 +445,8 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
         searchIndex
       );
     }
-  }, [
-    searchInput,
-    prevSearchInput,
-    pageSize,
-    companyObj,
-    searchType,
-    searchIndex,
-    getCompanyRow,
-  ]);
+    //eslint-disable-next-line
+  }, [pageSize, companyObj, searchType, searchIndex, getCompanyRow]);
 
   const handleChangePage = (page: number) => {
     setPage(page);
@@ -482,7 +469,7 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
     let updateCompanyRes: any = await api.company.updateOrgOrStaffProperty(
       2,
       newNodeRows[index].staffKey,
-      { isLeader: !newNodeRows[index].isLeader ? 1 : 2 }
+      { isLeader: !newNodeRows[index].isLeader ? 2 : 1 }
     );
     if (updateCompanyRes.msg === "OK") {
       newNodeRows[index].isLeader = !newNodeRows[index].isLeader;
@@ -496,10 +483,10 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
     let updateCompanyRes: any = await api.company.updateOrgOrStaffProperty(
       2,
       newNodeRows[index].staffKey,
-      { post: post }
+      { post: post ? post : "无职位" }
     );
     if (updateCompanyRes.msg === "OK") {
-      newNodeRows[index].post = post;
+      newNodeRows[index].post = post ? post : "无职位";
       setNodeRows(newNodeRows);
     } else {
       dispatch(setMessage(true, updateCompanyRes.msg, "error"));
@@ -535,7 +522,10 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
         className="companySearch-info-container"
         ref={personRef}
         style={{
-          height: companyObj.orgType === 1 ? "calc(100% - 205px)" : "100%",
+          height:
+            companyObj && companyObj.orgType === 1
+              ? "calc(100% - 205px)"
+              : "100%",
         }}
       >
         {searchType === 3 ? (
@@ -589,11 +579,12 @@ const CompanySearchList: React.FC<CompanySearchListProps> = (props) => {
           />
         )}
       </div>
-      {companyObj.orgType === 1 ? (
+      {companyObj && companyObj.orgType === 1 ? (
         <React.Fragment>
           <div className="companySearch-info-title">
             {companyObj?.name}:现有{searchType === 2 ? "成员" : "项目"} ({" "}
-            {nodeRows.length}人 )
+            {nodeRows.length}
+            {searchType === 2 ? "人" : "个"})
           </div>
           <div className="companySearch-info-container">
             {searchType === 2 ? (

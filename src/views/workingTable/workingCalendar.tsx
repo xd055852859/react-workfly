@@ -7,7 +7,7 @@ import _ from 'lodash';
 import format from '../../components/common/format';
 import Task from '../../components/task/task';
 
-import defaultPersonPng from '../../assets/img/defaultPerson.png';
+import Avatar from '../../components/common/avatar';
 
 interface WorkingCanlendarProps {}
 
@@ -141,19 +141,14 @@ const WorkingCanlendar: React.FC<WorkingCanlendarProps> = (prop) => {
           <React.Fragment key={'canlendarItem' + key}>
             <div className="dayCanlendar-title">
               <div className="dayCanlendar-img">
-                <img
-                  src={
-                    item[key][0].executorAvatar
-                      ? item[key][0].executorAvatar +
-                        '?imageMogr2/auto-orient/thumbnail/80x'
-                      : defaultPersonPng
-                  }
-                  alt=""
-                  onError={(e: any) => {
-                    e.target.onerror = null;
-                    e.target.src = defaultPersonPng;
-                  }}
-                />
+              <Avatar
+                      avatar={
+                        item[key][0]?.executorAvatar
+                      }
+                      name={item[key][0]?.executorName}
+                      index={0}
+                      type={'person'}
+                    />
               </div>
               <div className="dayCanlendar-name">
                 {item[key][0] ? item[key][0].executorName : ''}

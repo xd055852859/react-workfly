@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./headerSet.css";
 import { useTypedSelector } from "../../redux/reducer/RootState";
-import { Input, Tooltip, Badge, Drawer, Select } from "antd";
+import { Input, Tooltip, Badge, Drawer, Checkbox } from "antd";
+// , Select
 import { useDispatch } from "react-redux";
 import _ from "lodash";
 import api from "../../services/api";
@@ -24,9 +25,10 @@ import addPng from "../../assets/img/taskAdd.png";
 import messagePng from "../../assets/img/headerMessage.png";
 import chatPng from "../../assets/img/headerChat.png";
 import clockInPng from "../../assets/img/clockIn.png";
+import Avatar from "../common/avatar";
 const { Search } = Input;
-const { Option } = Select;
-interface HeaderSetProps { }
+// const { Option } = Select;
+interface HeaderSetProps {}
 
 const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
   const dispatch = useDispatch();
@@ -34,6 +36,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
   const unChatNum = useTypedSelector((state) => state.common.unChatNum);
   const unMessageNum = useTypedSelector((state) => state.common.unMessageNum);
   const user = useTypedSelector((state) => state.auth.user);
+  const taskInfo = useTypedSelector((state) => state.task.taskInfo);
   const groupKey = useTypedSelector((state) => state.group.groupKey);
   const chatState = useTypedSelector((state) => state.common.chatState);
   const [contentSetVisilble, setContentSetVisilble] = useState(false);
@@ -41,43 +44,98 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
   const [messageVisible, setMessageVisible] = useState(false);
   const [clockVisible, setClockVisible] = useState(false);
   const [addVisible, setAddVisible] = useState(false);
-  const [avatarShow, setAvatarShow] = useState(false);
+  const [pathChecked, setPathChecked] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [searchTaskList, setSearchTaskList] = useState<any>([]);
+  const [lastPage, setLastPage] = useState(1);
+  const [lastTaskList, setLastTaskList] = useState<any>([]);
+  const [lastTotal, setLastTotal] = useState(0);
+
   const [avatar, setAvatar] = useState<any>(null);
-  const [checkValue, setCheckValue] = useState<any>([]);
+  const [nickName, setNickName] = useState<any>(null);
+  const [chooseKey, setChooseKey] = useState<string>("");
+  // const [checkValue, setCheckValue] = useState<any>([]);
 
   const childRef = useRef<any>();
+  const childCreateRef = useRef<any>();
   const setRef: React.RefObject<any> = useRef();
 
   const limit = 20;
   useEffect(() => {
     if (user) {
       setAvatar(user.profile.avatar);
+      setNickName(user.profile.nickName);
     }
   }, [user]);
+  useEffect(() => {
+    if (taskInfo) {
+      let newLastTaskList = _.cloneDeep(lastTaskList);
+      newLastTaskList = newLastTaskList.map((item) => {
+        if (item._key === taskInfo._key) {
+          item = taskInfo;
+        }
+        return item;
+      });
+      setLastTaskList(newLastTaskList);
+      let newSearchTaskList = _.cloneDeep(searchTaskList);
+      newSearchTaskList = newSearchTaskList.map((item) => {
+        if (item._key === taskInfo._key) {
+          item = taskInfo;
+        }
+        return item;
+      });
+      setSearchTaskList(newSearchTaskList);
+    }
+    //eslint-disable-next-line
+  }, [taskInfo]);
   useEffect(() => {
     setPage(1);
     setSearchTaskList([]);
     setSearchInput("");
   }, [groupKey, headerIndex]);
-
+  useEffect(() => {
+    setPage(1);
+    searchTask(1);
+    //eslint-disable-next-line
+  }, [pathChecked]);
   useEffect(() => {
     if (searchInput === "") {
       setSearchTaskList([]);
       setPage(1);
     }
   }, [searchInput]);
-
-  const searchTask = () => {
+  const getTaskLast = useCallback(
+    async (page: number) => {
+      let obj: any = {
+        curPage: 1,
+        perPage: limit * page,
+        groupKey: "",
+        typeArray: [2, 6],
+      };
+      let res: any = await api.task.getCardLast(obj);
+      if (res.msg === "OK") {
+        setLastTaskList([...res.result]);
+        setLastTotal(res.totalNumber);
+      } else {
+        dispatch(setMessage(true, res.msg, "error"));
+      }
+    },
+    [dispatch]
+  );
+  useEffect(() => {
+    if (searchVisible) {
+      getTaskLast(1);
+    }
+  }, [searchVisible, getTaskLast]);
+  const searchTask = (page) => {
     if (searchInput !== "") {
       // this.getSearchList({ param: { name: this.searchInput }, type: 1 })
-      getTaskSearch(page, checkValue);
+      getTaskSearch(page);
     }
   };
-  const getTaskSearch = async (page: number, checkArr: any) => {
+  const getTaskSearch = async (page: number) => {
     let newSearchTaskList: any = [];
     if (searchInput === "") {
       return;
@@ -92,55 +150,77 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
       perPage: limit * page,
       searchCondition: searchInput,
       searchType: 1,
+      isPath: pathChecked ? 2 : 1,
     };
-    if (checkArr.indexOf("已归档") !== -1) {
-      obj.finishPercentStr = "0,1,2";
-    }
-    if (checkArr.indexOf("当前项目") !== -1) {
-      obj.groupKey = groupKey;
-      obj.searchType = 3;
-    }
-    if (checkArr.indexOf("与我有关") !== -1) {
-      obj.searchType = 2;
-    }
-    if (
-      checkArr.indexOf("当前项目") !== -1 &&
-      checkArr.indexOf("与我有关") !== -1
-    ) {
-      obj.searchType = 4;
-    }
+    // if (checkArr.indexOf("已归档") !== -1) {
+    obj.finishPercentStr = "0,1,2";
+    // }
+    // if (checkArr.indexOf("当前项目") !== -1) {
+    //   obj.groupKey = groupKey;
+    //   obj.searchType = 3;
+    // }
+    // if (checkArr.indexOf("与我有关") !== -1) {
+    //   obj.searchType = 2;
+    // }
+    // if (
+    //   checkArr.indexOf("当前项目") !== -1 &&
+    //   checkArr.indexOf("与我有关") !== -1
+    // ) {
+    // obj.searchType = 4;
+    // }
     let res: any = await api.task.getCardSearch(obj);
     if (res.msg === "OK") {
       newSearchTaskList = _.cloneDeep(res.result);
       setSearchTaskList(newSearchTaskList);
       setTotal(res.totalNumber);
+      if (res.totalNumber === 0) {
+        dispatch(setMessage(true, "无搜索结果", "warning"));
+      }
     } else {
       dispatch(setMessage(true, res.msg, "error"));
     }
   };
 
   const scrollSearchLoading = (e: any) => {
-    let newPage = page;
-    //文档内容实际高度（包括超出视窗的溢出部分）
-    let scrollHeight = e.target.scrollHeight;
-    //滚动条滚动距离
-    let scrollTop = e.target.scrollTop;
-    //窗口可视范围高度
-    let clientHeight = e.target.clientHeight;
-    if (
-      clientHeight + scrollTop >= scrollHeight - 1 &&
-      searchTaskList.length < total
-    ) {
-      newPage = newPage + 1;
-      setPage(newPage);
-      getTaskSearch(newPage, checkValue);
+    if (searchInput === "") {
+      let newPage = lastPage;
+      //文档内容实际高度（包括超出视窗的溢出部分）
+      let scrollHeight = e.target.scrollHeight;
+      //滚动条滚动距离
+      let scrollTop = e.target.scrollTop;
+      //窗口可视范围高度
+      let clientHeight = e.target.clientHeight;
+      if (
+        clientHeight + scrollTop >= scrollHeight - 1 &&
+        lastTaskList.length < lastTotal
+      ) {
+        newPage = newPage + 1;
+        setLastPage(newPage);
+        getTaskLast(newPage);
+      }
+    } else {
+      let newPage = page;
+      //文档内容实际高度（包括超出视窗的溢出部分）
+      let scrollHeight = e.target.scrollHeight;
+      //滚动条滚动距离
+      let scrollTop = e.target.scrollTop;
+      //窗口可视范围高度
+      let clientHeight = e.target.clientHeight;
+      if (
+        clientHeight + scrollTop >= scrollHeight - 1 &&
+        searchTaskList.length < total
+      ) {
+        newPage = newPage + 1;
+        setPage(newPage);
+        getTaskSearch(newPage);
+      }
     }
   };
-  const handleChange = (value: string) => {
-    setCheckValue(value);
-    getTaskSearch(1, value);
-    setPage(1);
-  };
+  // const handleChange = (value: string) => {
+  //   setCheckValue(value);
+  //   getTaskSearch(1, value);
+  //   setPage(1);
+  // };
   return (
     <div
       ref={setRef}
@@ -167,7 +247,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
               }}
             />
           </Tooltip>
-          <Tooltip title="搜索中心" getPopupContainer={() => setRef.current}>
+          <Tooltip title="搜索" getPopupContainer={() => setRef.current}>
             <img
               src={searchPng}
               alt=""
@@ -186,7 +266,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
             />
           </Tooltip>
 
-          <Tooltip title="消息中心" getPopupContainer={() => setRef.current}>
+          <Tooltip title="消息" getPopupContainer={() => setRef.current}>
             <Badge count={unMessageNum} offset={[-10, 5]}>
               <img
                 src={messagePng}
@@ -209,7 +289,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
               />
             </Badge>
           </Tooltip>
-          <Tooltip title="聊天中心" getPopupContainer={() => setRef.current}>
+          <Tooltip title="聊天" getPopupContainer={() => setRef.current}>
             <Badge count={unChatNum ? unChatNum : 0} offset={[-10, 5]}>
               <img
                 src={chatPng}
@@ -229,7 +309,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
               />
             </Badge>
           </Tooltip>
-          <Tooltip title="打卡中心" getPopupContainer={() => setRef.current}>
+          <Tooltip title="打卡" getPopupContainer={() => setRef.current}>
             <img
               src={clockInPng}
               alt=""
@@ -248,39 +328,14 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
             />
           </Tooltip>
         </React.Fragment>
-        {/* <Tooltip title="用户中心"> */}
+        {/* <Tooltip title="用户"> */}
         <div
-          className="contentHeader-avatar-info"
+          className="contentHeader-avatar"
           onClick={() => {
             setContentSetVisilble(true);
-            setAvatarShow(true);
-          }}
-          onTouchStart={() => {
-            setContentSetVisilble(true);
-            setAvatarShow(true);
           }}
         >
-          <div
-            className="contentHeader-avatar"
-            style={
-              avatarShow
-                ? {
-                  animation: "avatarSmall 500ms",
-                  // animationFillMode: 'forwards',
-                  width: "25px",
-                  height: "25px",
-                }
-                : {
-                  animation: "avatarBig 500ms",
-                  // animationFillMode: 'forwards',
-                  width: "35px",
-                  height: "35px",
-                }
-            }
-          >
-            <img src={avatar} alt="" />
-          </div>
-          <div className="contentHeader-avatar-bg"></div>
+          <Avatar avatar={avatar} name={nickName} index={0} type={"group"} />
         </div>
         {/* </Tooltip> */}
       </div>
@@ -288,16 +343,22 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
       <Drawer
         visible={addVisible}
         onClose={() => {
-          setAddVisible(false);
+          if (childCreateRef?.current) {
+            //@ts-ignore
+            childCreateRef.current.changeSave();
+          } else {
+            setAddVisible(false);
+          }
         }}
         width={430}
         bodyStyle={{
-          padding: "10px",
+          padding: "3px 10px",
           boxSizing: "border-box",
         }}
         headerStyle={{
           padding: "10px",
           boxSizing: "border-box",
+          border: "0px",
         }}
         destroyOnClose={true}
         getContainer={() => setRef.current}
@@ -312,6 +373,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
             setAddVisible(false);
           }}
           visible={addVisible}
+          ref={childCreateRef}
         />
       </Drawer>
       <Drawer
@@ -319,7 +381,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
         onClose={() => {
           setSearchVisible(false);
           setSearchInput("");
-          setCheckValue([]);
+          // setCheckValue([]);
         }}
         width={430}
         bodyStyle={{
@@ -346,13 +408,14 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
             onChange={(e) => {
               setSearchInput(e.target.value);
             }}
-            onSearch={() => searchTask()}
-            allowClear
-            style={{ width: headerIndex === 3 ? "calc(100% - 290px)" : "calc(100% - 200px)", height: "32px" }}
+            onSearch={() => searchTask(1)}
+            allowClear={false}
+            style={{ width: "100%", height: "32px" }}
           />
-          <Select
+          {/* headerIndex === 3 ? "calc(100% - 290px)" : "calc(100% - 200px)" */}
+          {/* <Select
             mode="multiple"
-            allowClear
+            allowClear={false}
             style={{ width: headerIndex === 3 ? "285px" : "196px" }}
             placeholder="请选择"
             defaultValue={""}
@@ -371,19 +434,57 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
                 当前项目
               </Option>
             ) : null}
-          </Select>
+          </Select> */}
         </div>
-        {searchTaskList.length > 0 ? (
-          <div className="headerSet-search-info" onScroll={scrollSearchLoading}>
-            {searchTaskList.map((taskItem: any, taskIndex: number) => {
-              return (
-                <Task
-                  key={"search" + taskIndex}
-                  taskItem={taskItem}
-                  showGroupName={true}
-                />
-              );
-            })}
+        {searchInput === "" ? (
+          lastTaskList.length > 0 ? (
+            <React.Fragment>
+              <div className="headerSet-last-title">最近访问：</div>
+              <div
+                className="headerSet-search-info"
+                onScroll={scrollSearchLoading}
+              >
+                {lastTaskList.map((taskItem: any, taskIndex: number) => {
+                  return (
+                    <Task
+                      key={"last" + taskIndex}
+                      taskItem={taskItem}
+                      showGroupName={true}
+                    />
+                  );
+                })}
+              </div>
+            </React.Fragment>
+          ) : null
+        ) : searchTaskList.length > 0 ? (
+          <React.Fragment>
+            <div className="headerSet-last-title">搜索结果：</div>
+            <div
+              className="headerSet-search-info"
+              onScroll={scrollSearchLoading}
+            >
+              {searchTaskList.map((taskItem: any, taskIndex: number) => {
+                return (
+                  <Task
+                    key={"search" + taskIndex}
+                    taskItem={taskItem}
+                    showGroupName={true}
+                  />
+                );
+              })}
+            </div>
+          </React.Fragment>
+        ) : null}
+        {searchInput !== "" ? (
+          <div className="search-checkbox">
+            <Checkbox
+              checked={pathChecked}
+              onChange={() => {
+                setPathChecked(!pathChecked);
+              }}
+            >
+              显示路径
+            </Checkbox>
           </div>
         ) : null}
       </Drawer>
@@ -396,6 +497,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
         bodyStyle={{
           padding: "0px 10px",
           boxSizing: "border-box",
+          overflow:'visible'
         }}
         headerStyle={{
           padding: "10px",
@@ -406,7 +508,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
         }}
         destroyOnClose={true}
         getContainer={() => setRef.current}
-        title={"消息中心"}
+        title={"消息"}
         push={false}
       >
         <MessageBoard type={"header"} />
@@ -420,7 +522,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
           }
           setClockVisible(false);
         }}
-        width={280}
+        width={430}
         bodyStyle={{
           padding: "10px",
           boxSizing: "border-box",
@@ -441,11 +543,13 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
         visible={contentSetVisilble}
         onClose={() => {
           setContentSetVisilble(false);
-          setAvatarShow(false);
           // if (childRef?.current) {
           //   //@ts-ignore
           //   childRef.current.getInfo();
           // }
+          if (chooseKey) {
+            api.auth.chooseWallPapers(chooseKey);
+          }
         }}
         width={280}
         bodyStyle={{
@@ -462,7 +566,7 @@ const HeaderSet: React.FC<HeaderSetProps> = (prop) => {
         // getContainer={() => setRef.current}
         push={false}
       >
-        <HeaderContent />
+        <HeaderContent setChooseKey={setChooseKey} />
       </Drawer>
       <Chat />
     </div>

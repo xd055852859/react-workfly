@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import "./bookEditor.css";
 import { useTypedSelector } from "../../../redux/reducer/RootState";
 import { MenuTree } from "tree-graph-react";
-import { Button } from "antd";
+import { Button, Tooltip } from "antd";
 import api from "../../../services/api";
 import _ from "lodash";
 
@@ -14,6 +14,9 @@ import Dialog from "../../common/dialog";
 import Editor from "../../common/editor/editor";
 import Loading from "../../common/loading";
 import IconFont from "../../common/iconFont";
+import { useAuth } from "../../../context/auth";
+import { useMount } from "../../../hook/common";
+import DropMenu from "../../common/dropMenu";
 
 interface BookEditorProps {
   nodeObj: any;
@@ -24,6 +27,7 @@ interface BookEditorProps {
   setNodeObj: Function;
   setGridList: Function;
   setSelectId: Function;
+  viewState: any;
 }
 
 const BookEditor: React.FC<BookEditorProps> = (props) => {
@@ -35,6 +39,7 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
     setNodeObj,
     setGridList,
     setSelectId,
+    viewState,
   } = props;
   const groupInfo = useTypedSelector((state) => state.group.groupInfo);
   const dispatch = useDispatch();
@@ -42,11 +47,20 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
   const [targetIndex, setTargetIndex] = useState(0);
   const [content, setContent] = useState<any>("");
   const [editable, setEditable] = useState<any>(false);
+  const [treeMenuLeft, setTreeMenuLeft] = useState(0);
+  const [treeMenuTop, setTreeMenuTop] = useState(0);
+  const [itemDialogShow, setItemDialogShow] = useState(false);
   const [deleteDialogShow, setDeleteDialogShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const targetTreeRef: React.RefObject<any> = useRef();
   const bookRef: React.RefObject<any> = useRef();
-
+  let { deviceType } = useAuth();
+  useMount(() => {
+    if (nodeObj) {
+      chooseNode(nodeObj[selectId]);
+    }
+    //eslint-disable-next-line
+  });
   const chooseNode = async (node: any) => {
     let newGridList = _.cloneDeep(gridList);
     let nodeIndex = _.findIndex(newGridList, { _key: node._key });
@@ -63,7 +77,17 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
       } else {
         setContent("<p>标题:</p>");
       }
-      setTargetNode(taskInfo);
+      let newNode: any = {
+        _key: taskInfo._key,
+        name: taskInfo.title ? taskInfo.title : "新标题",
+        // father	父節點 id	String
+        type: taskInfo.type,
+        contract: false,
+        father: taskInfo.parentCardKey,
+        sortList: taskInfo.children,
+        content: taskInfo.content,
+      };
+      setTargetNode(newNode);
       setSelectId(node._key);
     } else {
       setLoading(false);
@@ -73,6 +97,10 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
   const addChildrenTask = async (selectedNode: any, type: string) => {
     let newNodeObj = _.cloneDeep(nodeObj);
     let newGridList = _.cloneDeep(gridList);
+    if (type === "next" && selectedNode === targetData._key) {
+      dispatch(setMessage(true, "电子书根节点不允许新建兄弟节点", "error"));
+      return;
+    }
     let addTaskRes: any = await api.task.addTask({
       groupKey: groupInfo._key,
       groupRole: groupInfo.role,
@@ -99,15 +127,20 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
         content: "<p>标题</p>",
       };
       newNodeObj[newNode._key] = newNode;
+      console.log(selectedNode);
+      console.log(newNodeObj[selectedNode]);
+      console.log(newNodeObj[selectedNode].father);
       if (type === "child") {
         newNodeObj[selectedNode].sortList.push(newNode._key);
       } else if (type === "next") {
         newNodeObj[newNodeObj[selectedNode].father].sortList.push(newNode._key);
       }
+
       setContent("<p>标题</p>");
       setSelectId(newNode._key);
       setTargetNode(newNodeObj[newNode._key]);
       setNodeObj(newNodeObj);
+      setItemDialogShow(false);
       targetTreeRef.current.rename();
     } else {
       dispatch(setMessage(true, addTaskRes.msg, "error"));
@@ -140,6 +173,9 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
     let newNodeObj = _.cloneDeep(nodeObj);
     let newGridList = _.cloneDeep(gridList);
     let newTargetNode = _.cloneDeep(targetNode);
+    if (!targetNode) {
+      newTargetNode = targetData;
+    }
     newNodeObj[newTargetNode._key].content = content;
     let nodeIndex = _.findIndex(newGridList, { _key: newTargetNode._key });
     newGridList[nodeIndex].content = content;
@@ -170,6 +206,7 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
     let newNodeObj = _.cloneDeep(nodeObj);
     let newGridList = _.cloneDeep(gridList);
     // if (taskItem.creatorGroupRole <= taskItem.groupRole) {
+    console.log(targetNode);
     let targetNodeIndex = newNodeObj[targetNode.father].sortList.indexOf(
       targetNode._key
     );
@@ -197,22 +234,27 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
       <div className="book-left">
         <div className="book-left-title">
           目录
-          <Button
-            size="large"
-            shape="circle"
-            style={{ border: "0px" }}
-            ghost
-            icon={
-              editable ? (
-                <IconFont type="icon-baocun1" />
-              ) : (
-                <IconFont type="icon-edit" />
-              )
-            }
-            onClick={() => {
-              setEditable(!editable);
-            }}
-          />
+          {deviceType !== "mobile" && !viewState ? (
+            <Button
+              size="large"
+              shape="circle"
+              style={{ border: "0px" }}
+              ghost
+              icon={
+                editable ? (
+                  <IconFont type="icon-baocun1" />
+                ) : (
+                  <IconFont type="icon-edit" />
+                )
+              }
+              onClick={() => {
+                setEditable(!editable);
+                // if (!targetNode) {
+                //   chooseNode(targetData)
+                // }
+              }}
+            />
+          ) : null}
         </div>
         {nodeObj && targetData && targetData._key ? (
           <MenuTree
@@ -222,9 +264,11 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
             uncontrolled={false}
             startId={targetData._key}
             backgroundColor="#f5f5f5"
+            selectedBackgroundColor="#02cdd3"
             color="#333"
-            hoverColor="#595959"
+            hoverColor="#fff"
             defaultSelectedId={selectId}
+            showMoreButton={true}
             handleClickNode={(node: any) => {
               chooseNode(node);
             }}
@@ -241,6 +285,13 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
             handleDeleteNode={(nodeId: any) => {
               setDeleteDialogShow(true);
             }}
+            handleClickMoreButton={(node: any) => {
+              console.log(node)
+              chooseNode(node);
+              setTreeMenuLeft(node.x);
+              setTreeMenuTop(node.y);
+              setItemDialogShow(true);
+            }}
             // itemHeight={32}
             // blockHeight={
             //   departmentRef.current ? departmentRef.current.offsetHeight : 0
@@ -249,24 +300,36 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
         ) : null}
       </div>
       <div className="book-right">
-        {editable ? (
+        {editable && !viewState ? (
           <React.Fragment>
             <Editor
               data={content}
-              height={500}
+              height={
+                bookRef?.current ? bookRef?.current.offsetHeight + 50 : 500
+              }
               onChange={changeTaskContent}
               editorKey={targetNode?._key}
+              cardKey={targetNode?._key}
             />
-            <Button
-              type="primary"
-              onClick={() => {
-                editTaskContent();
-              }}
-              className="book-editor-button"
-              style={{ color: "#fff" }}
-            >
-              保存
-            </Button>
+            <Tooltip title="保存">
+              <Button
+                ghost
+                size="large"
+                shape="circle"
+                icon={
+                  <IconFont type="icon-baocun1" style={{ fontSize: "25px" }} />
+                }
+                className="book-editor-button"
+                type="primary"
+                onClick={() => {
+                  editTaskContent();
+                }}
+                style={{
+                  position: deviceType === "mobile" ? "absolute" : "fixed",
+                  border: "0px",
+                }}
+              />
+            </Tooltip>
           </React.Fragment>
         ) : (
           <div
@@ -287,11 +350,56 @@ const BookEditor: React.FC<BookEditorProps> = (props) => {
         onOK={() => {
           deleteTask();
         }}
-        title={"删除任务"}
+        title={"删除节点"}
         dialogStyle={{ width: "400px", height: "200px" }}
       >
         <div className="dialog-onlyTitle">是否删除该节点</div>
       </Dialog>
+      <DropMenu
+        visible={itemDialogShow}
+        dropStyle={{
+          width: "200px",
+          // height: '70px',
+          top:
+            targetNode && targetData && targetNode._key === targetData._key
+              ? treeMenuTop + 15
+              : treeMenuTop - 32,
+          left: treeMenuLeft + 150,
+          color: "#333",
+          overflow: "auto",
+          zIndex: 1000,
+        }}
+        onClose={() => {
+          setItemDialogShow(false);
+        }}
+      >
+        <div
+          className="bookItem-item"
+          onClick={() => {
+            addChildrenTask(selectId, "child");
+          }}
+        >
+          <div className="bookItem-title">新建子节点</div>
+        </div>
+        {selectId !== targetData?._key ? (
+          <div
+            className="bookItem-item"
+            onClick={() => {
+              addChildrenTask(selectId, "next");
+            }}
+          >
+            <div className="bookItem-title">新建兄弟节点</div>
+          </div>
+        ) : null}
+        <div
+          className="bookItem-item"
+          onClick={() => {
+            setDeleteDialogShow(true);
+          }}
+        >
+          <div className="bookItem-title">删除节点</div>
+        </div>
+      </DropMenu>
     </div>
   );
 };

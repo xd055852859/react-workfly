@@ -1,0 +1,18 @@
+.company-okr-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333333;
+    margin: 25px 0px;
+}
+
+.company-okr-month {
+    width: 347px;
+    height: 36px;
+    background: #fafafa;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 36px;
+    padding-left: 15px;
+    box-sizing: border-box;
+}

@@ -124,69 +124,69 @@ const format = {
     let arr = [];
     let state = "";
     let str = "";
-    let startTaskTime = moment(new Date())
-      .add(1, "days")
-      .startOf("day")
-      .valueOf();
-    let filterArray = filterObject.filterType;
-    const startTime = moment().startOf("day").valueOf();
-    const endTime = moment().endOf("day").valueOf();
-    if (filterObject.groupKey) {
+    // let startTaskTime = moment(new Date())
+    //   .add(1, "days")
+    //   .startOf("day")
+    //   .valueOf();
+    // let filterArray = filterObject.filterType;
+    // const startTime = moment().startOf("day").valueOf();
+    // const endTime = moment().endOf("day").valueOf();
+    if (filterObject?.groupKey) {
       state = "item.groupKey===filterObject.groupKey";
     }
-    if (filterObject.executorKey) {
+    if (filterObject?.executorKey) {
       state =
         state === ""
           ? "item.executorKey===filterObject.executorKey"
           : `${state} && item.executorKey===filterObject.executorKey`;
     }
-    if (filterObject.creatorKey) {
+    if (filterObject?.creatorKey) {
       state =
         state === ""
           ? "item.creatorKey===filterObject.creatorKey"
           : `${state} && item.creatorKey===filterObject.creatorKey`;
     }
-    if (filterArray.indexOf("过期") !== -1) {
-      str =
-        str === ""
-          ? `(item.taskEndDate < ${startTime} && item.finishPercent===0)`
-          : `${str} || (item.taskEndDate < ${startTime} && item.finishPercent===0)`;
-    }
-    if (filterArray.indexOf("今天") !== -1) {
-      str =
-        str === ""
-          ? `(item.taskEndDate >= ${startTime} && item.taskEndDate <= ${endTime} && item.finishPercent<2)`
-          : `${str} || (item.taskEndDate >= ${startTime} && item.taskEndDate <= ${endTime} && item.finishPercent<2)`;
-    }
-    if (filterArray.indexOf("已完成") !== -1) {
-      str =
-        str === ""
-          ? "(item.taskEndDate && item.finishPercent===1)"
-          : `${str} || (item.taskEndDate && item.finishPercent===1)`;
-    }
-    if (filterArray.indexOf("重要") !== -1) {
-      str =
-        str === "" ? "item.importantStatus" : `${str} || item.importantStatus`;
-    }
-    if (filterArray.indexOf("未来") !== -1) {
-      str =
-        str === ""
-          ? "item.taskEndDate >= " + startTaskTime
-          : `${str} || item.taskEndDate >= ${startTaskTime}`;
-    }
+    // if (filterArray.indexOf("过期") !== -1) {
+    //   str =
+    //     str === ""
+    //       ? `(item.taskEndDate < ${startTime} && item.finishPercent===0)`
+    //       : `${str} || (item.taskEndDate < ${startTime} && item.finishPercent===0)`;
+    // }
+    // if (filterArray.indexOf("今天") !== -1) {
+    //   str =
+    //     str === ""
+    //       ? `(item.taskEndDate >= ${startTime} && item.taskEndDate <= ${endTime} && item.finishPercent<2)`
+    //       : `${str} || (item.taskEndDate >= ${startTime} && item.taskEndDate <= ${endTime} && item.finishPercent<2)`;
+    // }
+    // if (filterArray.indexOf("已完成") !== -1) {
+    //   str =
+    //     str === ""
+    //       ? "(item.taskEndDate && item.finishPercent===1)"
+    //       : `${str} || (item.taskEndDate && item.finishPercent===1)`;
+    // }
+    // if (filterArray.indexOf("重要") !== -1) {
+    //   str =
+    //     str === "" ? "item.importantStatus" : `${str} || item.importantStatus`;
+    // }
+    // if (filterArray.indexOf("未来") !== -1) {
+    //   str =
+    //     str === ""
+    //       ? "item.taskEndDate >= " + startTaskTime
+    //       : `${str} || item.taskEndDate >= ${startTaskTime}`;
+    // }
 
-    if (filterArray.indexOf("一般卡片") !== -1) {
-      str =
-        str === ""
-          ? "item.finishPercent===10"
-          : `${str} || item.finishPercent===10`;
-    }
-    if (filterArray.indexOf("已归档") !== -1) {
-      str =
-        str === ""
-          ? "item.finishPercent===2"
-          : `${str} || item.finishPercent===2`;
-    }
+    // if (filterArray.indexOf("普通卡片") !== -1) {
+    //   str =
+    //     str === ""
+    //       ? "item.finishPercent===10"
+    //       : `${str} || item.finishPercent===10`;
+    // }
+    // if (filterArray.indexOf("已归档") !== -1) {
+    //   str =
+    //     str === ""
+    //       ? "item.finishPercent===2"
+    //       : `${str} || item.finishPercent===2`;
+    // }
     state =
       str !== "" ? (state !== "" ? state + "&& (" + str + ")" : str) : state;
     if (state === "" && str === "") {
@@ -293,7 +293,6 @@ const format = {
     //    let tmp2 = tmp1.getUTCDate();
     //    if (tmp2==day)
     //        solarTerms = solarTerm[month*2+1];
-    //    console.log(solarTerms);
     //    tmp1 = new Date((31556925974.7*(year-1900)+sTermInfo[month*2]*60000)+Date.UTC(1900,0,6,2,5));
     //    tmp2= tmp1.getUTCDate();
     //    if (tmp2==day)

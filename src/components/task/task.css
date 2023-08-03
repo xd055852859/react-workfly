@@ -39,6 +39,7 @@
   height: 18px;
   overflow: hidden;
   border-radius: 50%;
+  flex-shrink: 0;
   /* margin-top: 6px;
   margin-right: 5px; */
 }
@@ -55,7 +56,7 @@
   height: 100%;
   width: 100%;
   overflow: auto;
--webkit-overflow-scrolling:touch;
+  -webkit-overflow-scrolling: touch;
   padding: 10px 0px;
   box-sizing: border-box;
 }
@@ -160,8 +161,6 @@
   position: relative;
 }
 
-
-
 .taskItem-title {
   width: calc(100% - 35px);
   /* min-height: 28px; */
@@ -231,19 +230,21 @@
   bottom: 0px; */
   /* width: 16px; */
   height: 100%;
-
   align-items: center;
   justify-content: center;
   margin-right: 4px;
   cursor: pointer;
   flex-shrink: 0;
 }
+
 .taskItem-check-icon {
   display: none;
 }
+
 .taskItem-detail {
   opacity: 0;
 }
+
 /* .taskItem-check-icon img {
   width: 100%;
   height: 100%;
@@ -256,9 +257,11 @@
 .taskItem:hover .taskItem-check-icon {
   display: flex;
 }
+
 .taskItem:hover .taskItem-detail {
   opacity: 1;
 }
+
 /* .taskItem-title-name {
   min-height: 28px;
   position: absolute;
@@ -272,8 +275,8 @@
   height: 0px;
   width: 0px;
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: -1px;
+  right: -1px;
   border-top-right-radius: 5px;
   z-index: 3;
 }
@@ -290,10 +293,12 @@ input {
   padding: 5px;
   background-color: transparent;
 }
+
 .taskItem textarea:focus {
   border: 1px solid #1890ff;
   outline: 0px;
 }
+
 .taskItem textarea::-webkit-scrollbar {
   width: 0px;
 }
@@ -388,7 +393,7 @@ input {
   text-align: left;
   resize: none;
   overflow: auto;
--webkit-overflow-scrolling:touch;
+  -webkit-overflow-scrolling: touch;
   background-color: transparent;
   font-family: PingFangSC-Medium, PingFang SC;
   font-weight: 500;
@@ -427,6 +432,7 @@ input {
   justify-content: space-between;
   font-size: 12px;
   color: #8091a0;
+  cursor: pointer;
 }
 
 .taskItem-group {
@@ -438,20 +444,27 @@ input {
 .task-executor-dropMenu-follow {
   width: 15px;
   height: 100%;
-  display: flex;
   align-items: center;
   margin-left: 10px;
+  display: none;
+}
+
+.defaultExecutor-info-item:hover .task-executor-dropMenu-follow {
+  display: flex;
+}
+.task-executor-dropMenu-container:hover .task-executor-dropMenu-follow {
+  display: flex;
 }
 .task-executor-input {
   width: calc(100% - 16px);
-  height: 30px;
-  border: 1px solid #dfdfdf;
-  border-radius: 5px;
   margin-left: 8px;
-  margin-bottom:5px;
-  padding:0px 5px;
+  margin-bottom: 5px;
   box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
 @keyframes taskAvatarSmall {
   from {
     width: 25px;
@@ -475,7 +488,8 @@ input {
     height: 25px;
   }
 }
-.taskItem-auditStatus{
-  width:100%;
-  margin:5px 0px;
+
+.taskItem-auditStatus {
+  width: 100%;
+  margin: 5px 0px;
 }

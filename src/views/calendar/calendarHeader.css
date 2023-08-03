@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   color: #fff;
-  cursor: pointer;
+  font-size: 16px;
 }
 .calendarHeader-logo {
   width: 27px;

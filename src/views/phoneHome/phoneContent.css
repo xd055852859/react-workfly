@@ -1,0 +1,102 @@
+.phoneContent {
+    width: 100%;
+    height: 100%;
+    color: #fff;
+}
+
+.phoneContent-header {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 5px;
+    box-sizing: border-box;
+}
+
+.phoneContent-header-profile {
+    height: 45px;
+    display: flex;
+    align-items: center;
+}
+
+.phoneContent-header-name {
+    margin-left: 10px;
+}
+
+.phoneContent-filter-box {
+    width: 135px;
+}
+
+.phoneContent-filter-item {
+    height: 38px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    cursor: pointer;
+    justify-content: center;
+    padding-left: 15px;
+    justify-content: flex-start;
+}
+
+.phoneContent-filter-item :hover {
+    background-color: #f0f0f0;
+}
+
+.phoneContent-box {
+    width: 100%;
+    height: calc(100% - 45px);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.phoneContent-taskNav {
+    width: 100%;
+    height: 60px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 15px 0px 5px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.phoneContent-button {
+    max-width: 45px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.taskItem-plus-button {
+    width: 100%;
+    height: 30px;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.taskNav-url {
+    width: 280px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.taskNav-url-input {
+    width: 0px;
+    height: 30px;
+    margin-left: 5px;
+    border: 1px solid #cecece;
+    border-radius: 6px;
+    box-sizing: border-box;
+    opacity: 0;
+}
+
+.treeButton {
+    margin-right: 5px;
+    border: 0px;
+}

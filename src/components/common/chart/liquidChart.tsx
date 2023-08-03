@@ -1,4 +1,4 @@
-import React, {useEffect,useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Liquid } from '@antv/g2plot';
 import { useMount } from '../../../hook/common';
 // import './userCenter.css';
@@ -10,7 +10,7 @@ interface LiquidChartProps {
 }
 
 const LiquidChart: React.FC<LiquidChartProps> = (props) => {
-  const { percent, zoom, liquidId,fillColor } = props;
+  const { percent, zoom, liquidId, fillColor } = props;
   let liquidRef = useRef<any>(null);
   useMount(() => {
     liquidRef.current = new Liquid(liquidId, {
@@ -30,11 +30,11 @@ const LiquidChart: React.FC<LiquidChartProps> = (props) => {
       statistic: {
         content: {
           style: {
-            fontSize: '120px',
-            height: '120px',
+            fontSize: '110px',
+            height: '110px',
           },
           formatter: (item) => {
-            return item?.percent * 100 + '%';
+            return parseInt(item?.percent * 100 + '') + '%';
           },
         },
       },

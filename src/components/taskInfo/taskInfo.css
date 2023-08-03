@@ -11,9 +11,12 @@
   color: #333;
   position: relative;
   z-index: 1;
+  padding-bottom: 40px;
+  box-sizing: border-box;
   /* box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5); */
   /* border-radius: 12px; */
 }
+
 .taskInfo-mainTitle {
   width: 100%;
   height: 40px;
@@ -22,8 +25,9 @@
   justify-content: space-between;
   margin-top: 10px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
+
 .taskInfo-mainTitle-left,
 .taskInfo-mainTitle-left-info {
   height: 100%;
@@ -42,24 +46,29 @@
   margin-right: 9px;
   cursor: pointer;
 }
+
 .taskInfo-mainTitle-left-icon {
   width: 27px;
   height: 27px;
 }
+
 .taskInfo-mainTitle-left-avatar {
   border-radius: 50%;
   overflow: hidden;
 }
+
 .taskInfo-mainTitle-left-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .taskInfo-mainTitle-right {
   height: 100%;
   display: flex;
   align-items: center;
 }
+
 .taskInfo-mainTitle-right-icon {
   width: 20px;
   height: 100%;
@@ -70,14 +79,16 @@
   align-items: center;
   position: relative;
 }
+
 .taskInfo-container {
   width: 100%;
-  height: calc(100vh - 68px);
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
   z-index: 1;
 }
+
 .taskInfo-title {
   width: calc(100% - 5px);
   margin: 15px 0px 20px 2.5px;
@@ -86,7 +97,9 @@
   padding: 5px;
   box-sizing: border-box;
 }
+
 .taskInfo-item,
+.taskInfo-path-item,
 .taskInfo-auto-item {
   width: 100%;
   margin-bottom: 5px;
@@ -94,10 +107,12 @@
   align-items: center;
   position: relative;
 }
+
 .taskInfo-item {
   height: 48px;
   line-height: 48px;
 }
+
 /* .taskInfo-Editor {
   border: 1px solid #efefef;
   padding: 2px;
@@ -113,6 +128,7 @@
   right: 0px;
   z-index: 2;
 }
+
 .taskInfo-Editor-img {
   width: 18px;
   height: 18px;
@@ -122,14 +138,17 @@
   z-index: 5;
   cursor: pointer;
 }
+
 .taskInfo-item-title {
   width: 30px;
   height: 100%;
   margin-right: 12px;
 }
+
 .taskInfo-item-info,
 .taskInfo-item-auto-info,
-.taskInfo-item-follow {
+.taskInfo-item-follow,
+.taskInfo-item-img-info {
   width: calc(100% - 42px);
   height: 100%;
   display: flex;
@@ -137,9 +156,39 @@
   justify-content: space-between;
   position: relative;
 }
-.taskInfo-item-auto-info > span {
+
+.taskInfo-item-auto-info>span {
   width: 100%;
 }
+
+.taskInfo-item-img-info {
+  justify-content: flex-start;
+}
+
+.taskInfo-item-img-preview {
+  /* width: 70px;
+  height: 70px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center; */
+  margin-right: 5px;
+  position: relative;
+  z-index: 1
+}
+
+.taskInfo-item-img-preview:hover .taskInfo-item-img-delete {
+  display: block;
+}
+
+.taskInfo-item-img-preview .taskInfo-item-img-delete {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  z-index: 2;
+  display: none;
+}
+
 .taskInfo-item-suggest {
   /* width: 36px; */
   height: 36px;
@@ -154,6 +203,7 @@
   z-index: 10;
   margin-left: 7px;
 }
+
 .taskInfo-item-suggest-item {
   width: 100%;
   height: 30px;
@@ -162,6 +212,7 @@
   justify-content: center;
   cursor: pointer;
 }
+
 .taskInfo-item-hour,
 .taskInfo-item-countdown {
   width: 20px;
@@ -176,12 +227,14 @@
   position: relative;
   cursor: pointer;
 }
+
 .taskInfo-item-hour img,
 .taskInfo-item-countdown img {
   width: 17px;
   height: 17px;
   margin-right: 5px;
 }
+
 .taskInfo-item-follow {
   width: calc(100% - 42px);
   min-height: 48px;
@@ -189,9 +242,11 @@
   border: 1px solid rgba(235, 235, 235, 1);
   border-radius: 4px;
 }
+
 .taskInfo-comment {
   margin: 15px 0px 65px 0px;
 }
+
 .taskInfo-comment-tabs {
   width: 100%;
   height: 32px;
@@ -201,40 +256,53 @@
   border-bottom: 1px solid #d3d3d3;
   box-sizing: border-box;
 }
+
 .taskInfo-comment-tabs-item {
   height: 32px;
   text-align: center;
   cursor: pointer;
   padding: 0px 8px;
 }
+
 .taskInfo-comment-tabs-item:nth-child(1) {
   margin-right: 34px;
 }
+
 .taskInfo-comment-tab {
   width: 100%;
-  height: calc(100vh - 330px);
+  height: calc(100vh - 420px);
   overflow: auto;
+  padding-top: 15px;
+  box-sizing: border-box;
   -webkit-overflow-scrolling: touch;
 }
+
 .taskInfo-comment-tab::-webkit-scrollbar,
 .taskInfo-container::-webkit-scrollbar {
   width: 0px;
 }
+
 .taskInfo-comment-tab::-webkit-scrollbar-thumb,
 .taskInfo-container::-webkit-scrollbar-thum {
   background: #47475b;
   border-radius: 100px;
 }
+
 .taskInfo-comment-historyLog {
   width: 100%;
-  min-height: 50px;
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 10px;
-  line-height: 20px;
+  font-size: 12px;
+  color: #8091a0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.taskInfo-comment-title {
+  width: calc(100% - 105px);
   display: flex;
   align-items: center;
 }
+
 .taskInfo-comment-avatar {
   width: 35px;
   height: 35px;
@@ -242,30 +310,34 @@
   overflow: hidden;
   border-radius: 50%;
 }
+
 .taskInfo-comment-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .taskInfo-comment-info {
   width: calc(100% - 45px);
   height: 100%;
   min-height: 50px;
   border-bottom: 1px solid #f0f0f0;
 }
+
 .taskInfo-comment-input {
-  width: 100%;
+  /* width: 427px; */
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   margin-bottom: 10px;
-  padding: 0px 10px;
-  position: absolute;
-  left: 0px;
+  position: fixed;
+  right: 0px;
   bottom: 0px;
   background-color: #fff;
   z-index: 10;
+  margin-right: 3px
 }
+
 .point {
   width: 5px;
   height: 5px;
@@ -273,6 +345,7 @@
   background-color: #8091a0;
   margin-right: 5px;
 }
+
 .editor-button {
   background-color: #1890ff;
   color: #fff;
@@ -281,6 +354,7 @@
   right: 0px;
   z-index: 30;
 }
+
 /* .taskInfo [contenteditable]:focus {
   outline: none;
 } */
@@ -288,32 +362,94 @@
   width: 100%;
   justify-content: space-between;
 }
+
 .taskInfo-item-input {
-  width: calc(100% - 42px);
+  width: calc(100% - 72px);
   height: 36px;
   border: 1px solid #cecece;
   border-radius: 6px;
   padding: 0px 8px;
   box-sizing: border-box;
 }
+
+.taskInfo-item-url {
+  width: 30px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .comment-button {
   position: absolute;
-  right: 10px;
-  bottom: 10px;
-  z-index: 10;
+  right: 65px;
+  bottom: 50px;
+  z-index: 20;
 }
+
 .comment-info {
   width: 100%;
   position: absolute;
   left: 0px;
   background-color: #fff;
   z-index: 10;
+  box-shadow: 0px -3px 10px #e4e3e3;
 }
+
 .taskInfo::-webkit-scrollbar {
   width: 0px !important;
   height: 0px !important;
 }
+
 .taskInfo-container::-webkit-scrollbar {
   width: 0px !important;
   height: 0px !important;
+}
+
+.taskInfo .w-e-toolbar {
+  z-index: 1 !important;
+}
+
+.taskInfo .w-e-text-container {
+  z-index: 0 !important;
+}
+
+.taskInfo .ant-timeline-item-last>.ant-timeline-item-content {
+  min-height: 15px !important;
+}
+
+.taskInfo .ant-timeline-item {
+  padding-bottom: 15px !important;
+  padding-left: 8px !important;
+}
+
+.taskInfo .ant-timeline-item-head-custom {
+  left: 15px !important;
+}
+
+.taskInfo-path-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.taskInfo-path {
+  width: 100%;
+  font-size: 8px;
+  /* transform: scale(0.9); */
+  text-align: left;
+  /* margin-left:-20px; */
+  /* color: #333; */
+  /* display: flex;
+  flex-wrap: wrap; */
+}
+
+/* .taskInfo-path>span {
+  cursor: pointer;
+} */
+
+.taskInfo .ant-image-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
 }

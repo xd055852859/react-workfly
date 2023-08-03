@@ -13,7 +13,12 @@ import { Button } from "antd";
 import moment from "moment";
 
 import api from "../../services/api";
-import { setMessage } from "../../redux/actions/commonActions";
+import {
+  setMessage,
+  setCommonHeaderIndex,
+} from "../../redux/actions/commonActions";
+import { setWorkHeaderIndex } from "../../redux/actions/memberActions";
+import { changeMusic } from "../../redux/actions/authActions";
 
 import Dialog from "../common/dialog";
 import DropMenu from "../common/dropMenu";
@@ -21,12 +26,15 @@ import DropMenu from "../common/dropMenu";
 import WorkingReport from "../../views/workingTable/workingReport";
 
 import downArrowbPng from "../../assets/img/downArrowb.png";
-import defaultGroupPng from "../../assets/img/defaultGroup.png";
 import reportSvg from "../../assets/svg/report.svg";
+import Avatar from "../common/avatar";
+import { useAuth } from "../../context/auth";
 const ClockIn = forwardRef((prop, ref) => {
   const dispatch = useDispatch();
   const user = useTypedSelector((state) => state.auth.user);
-  const allTask = useTypedSelector((state) => state.auth.allTask);
+  const mainGroupKey = useTypedSelector((state) => state.auth.mainGroupKey);
+
+  // const allTask = useTypedSelector((state) => state.auth.allTask);
   const [note, setNote] = useState("");
   const [positive, setPositive] = useState("");
   const [negative, setNegative] = useState("");
@@ -36,7 +44,7 @@ const ClockIn = forwardRef((prop, ref) => {
   const [groupList, setGroupList] = useState<any>([]);
   const [clockInIndex, setClockInIndex] = useState(0);
   let unDistory = useRef<any>(true);
-  
+  const { clockState } = useAuth();
 
   const getClockIn = useCallback(async () => {
     let noteRes: any = await api.auth.getNote(
@@ -72,7 +80,10 @@ const ClockIn = forwardRef((prop, ref) => {
     if (unDistory.current) {
       if (groupRes.msg === "OK") {
         groupRes.result.forEach((groupItem: any, groupIndex: number) => {
-          if (groupItem.groupName.indexOf("个人事务") === -1) {
+          if (
+            groupItem.groupName.indexOf("个人事务") === -1 &&
+            groupItem._key !== mainGroupKey
+          ) {
             newGroupList.push(groupItem);
           }
         });
@@ -81,7 +92,7 @@ const ClockIn = forwardRef((prop, ref) => {
         dispatch(setMessage(true, groupRes.msg, "error"));
       }
     }
-  }, [dispatch]);
+  }, [dispatch,mainGroupKey]);
   useEffect(() => {
     if (user && user._key) {
       getClockIn();
@@ -131,16 +142,17 @@ const ClockIn = forwardRef((prop, ref) => {
     let res: any = await api.auth.clockIn(obj);
     if (res.msg === "OK") {
       dispatch(setMessage(true, "打卡成功", "success"));
-      if (nowTime) {
-        // https://tts.baidu.com/text2audio?cuid=baike&lan=ZH&ctp=1&pdt=301&vol=9&rate=32&per=4&tex=试试这个。
-        let url =
-          "https://tts.baidu.com/text2audio?cuid=baike&lan=ZH&ctp=1&pdt=301&vol=9&rate=32&per=4&tex=打卡成功,你已完成" +
-          (allTask[0] - allTask[1]) +
-          "条任务";
-        let n = new Audio(url);
-        n.src = url;
-        n.play();
-      }
+      localStorage.setItem("clockState", "true");
+      // if (nowTime) {
+      //   // https://tts.baidu.com/text2audio?cuid=baike&lan=ZH&ctp=1&pdt=301&vol=9&rate=32&per=4&tex=试试这个。
+      //   let url =
+      //     "https://tts.baidu.com/text2audio?cuid=baike&lan=ZH&ctp=1&pdt=301&vol=9&rate=32&per=4&tex=打卡成功,你已完成" +
+      //     (allTask[0] - allTask[1]) +
+      //     "条任务";
+      //   let n = new Audio(url);
+      //   n.src = url;
+      //   n.play();
+      // }
     } else {
       dispatch(setMessage(true, res.msg, "error"));
     }
@@ -154,16 +166,27 @@ const ClockIn = forwardRef((prop, ref) => {
               type="primary"
               onClick={() => {
                 clockIn();
+                if (moment().hour() > 15) {
+                  dispatch(changeMusic(13));
+                } else {
+                  dispatch(changeMusic(12));
+                }
               }}
               style={{ color: "#fff" }}
               // className={classes.clockInButton}
             >
-              {nowTime ? "下班打卡" : "上班打卡"}
+              {moment().hour() > 15
+                ? "下班打卡"
+                : moment().hour() < 9 && clockState
+                ? "上班打卡"
+                : "晒一晒"}
             </Button>
 
             <div
               onClick={() => {
-                setShowReport(true);
+                // setShowReport(true);
+                dispatch(setCommonHeaderIndex(1));
+                dispatch(setWorkHeaderIndex(5));
               }}
               className="clockIn-report"
             >
@@ -181,13 +204,11 @@ const ClockIn = forwardRef((prop, ref) => {
           >
             晒一晒:
             <div className="clockIn-title-logo">
-              <img
-                src={
-                  groupList[clockInIndex].groupLogo
-                    ? groupList[clockInIndex].groupLogo
-                    : defaultGroupPng
-                }
-                alt=""
+              <Avatar
+                avatar={groupList[clockInIndex]?.groupLogo}
+                name={groupList[clockInIndex]?.groupName}
+                type={"group"}
+                index={0}
               />
             </div>
             <div className="toLong" style={{ width: "123px" }}>
@@ -219,13 +240,11 @@ const ClockIn = forwardRef((prop, ref) => {
                       className="clockInGroup-item"
                     >
                       <div className="clockInGroup-item-logo">
-                        <img
-                          src={
-                            groupItem.groupLogo
-                              ? groupItem.groupLogo
-                              : defaultGroupPng
-                          }
-                          alt=""
+                        <Avatar
+                          avatar={groupItem?.groupLogo}
+                          name={groupItem?.groupName}
+                          type={"group"}
+                          index={groupIndex}
                         />
                       </div>
                       {/* <Tooltip title={groupItem.groupName}> */}
@@ -240,7 +259,7 @@ const ClockIn = forwardRef((prop, ref) => {
             </DropMenu>
           </div>
         ) : null}
-        <div className="clockIn-info">
+        <div className="clockIn-info-first">
           <div className="clockIn-info-title">随记</div>
           <textarea
             value={note}
@@ -251,7 +270,7 @@ const ClockIn = forwardRef((prop, ref) => {
             }}
           />
         </div>
-        <div className="clockIn-info">
+        <div className="clockIn-info-second">
           <div className="clockIn-info-title">成就</div>
           <textarea
             value={positive}
@@ -262,7 +281,7 @@ const ClockIn = forwardRef((prop, ref) => {
             }}
           />
         </div>
-        <div className="clockIn-info">
+        <div className="clockIn-info-third">
           <div className="clockIn-info-title">审视</div>
           <textarea
             value={negative}

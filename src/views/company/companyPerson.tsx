@@ -7,7 +7,6 @@ import XLSX from "xlsx";
 import { setGroupKey, getGroupInfo } from "../../redux/actions/groupActions";
 import { setMessage } from "../../redux/actions/commonActions";
 import Loading from "../../components/common/loading";
-import defaultPersonPng from "../../assets/img/defaultPerson.png";
 import {
   Table,
   Modal,
@@ -31,6 +30,7 @@ import api from "../../services/api";
 
 import CompanyEdit from "./companyEdit";
 import { useMount } from "../../hook/common";
+import Avatar from "../../components/common/avatar";
 const { Search } = Input;
 const { Option } = Select;
 const { CheckableTag } = Tag;
@@ -61,12 +61,14 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
   const [personIndex, setPersonIndex] = useState<any>(null);
   const [userVisible, setUserVisible] = useState(false);
   const [targetUser, setTargetUser] = useState<any>(null);
-  const [changeState, setChangeState] = useState<any>(false);
+  // const [changeState, setChangeState] = useState<any>(false);
   const [clearState, setClearState] = useState<any>(false);
   const [isQuit, setIsQuit] = useState<any>(false);
+  // const [strongManagement, setStrongManagement] = useState<any>(false);
+
   const personRef: React.RefObject<any> = useRef();
   let unDistory = useRef<any>(true);
-  
+
   useMount(() => {
     return () => {
       unDistory.current = false;
@@ -79,7 +81,7 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
       key: "operation",
       fixed: "left" as "left",
       render: (operation, item, index) => (
-        <React.Fragment key={'operationArr'+index}>
+        <React.Fragment key={"operationArr" + index}>
           <Button
             onClick={() => {
               setClearState(false);
@@ -89,13 +91,12 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
             }}
             type="primary"
             shape="circle"
-            icon={<EditOutlined />}
+            icon={<EditOutlined style={{ color: "#333" }} />}
             ghost
             style={{ marginRight: "5px", border: "0px" }}
           />
         </React.Fragment>
       ),
-
       width: 100,
       align: "center" as "center",
     },
@@ -113,23 +114,10 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
             setUserVisible(true);
             setPersonIndex(index);
           }}
-          key={'avatarArr'+index}
+          key={"avatarArr" + index}
         >
           <div className="company-avatar">
-            <img
-              src={
-                avatar
-                  ? avatar.indexOf("data:") === -1
-                    ? avatar + "?imageMogr2/auto-orient/thumbnail/80x"
-                    : avatar
-                  : defaultPersonPng
-              }
-              alt=""
-              onError={(e: any) => {
-                e.target.onerror = null;
-                e.target.src = defaultPersonPng;
-              }}
-            />
+            <Avatar avatar={avatar} name={""} type="person" index={index} />
             <div
               className="companyPerson-online"
               style={{
@@ -262,8 +250,10 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
       key: "status",
       title: "状态",
       dataIndex: "status",
-      render: (status,row,index) => (
-        <React.Fragment  key={"statusArr" + index}>{status !== 0 ? "在职" : "离职"}</React.Fragment>
+      render: (status, row, index) => (
+        <React.Fragment key={"statusArr" + index}>
+          {status !== 0 ? "在职" : "离职"}
+        </React.Fragment>
       ),
       width: 100,
       align: "center" as "center",
@@ -292,6 +282,28 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
       }
     }
   }, [user, dispatch]);
+  // useEffect(() => {
+  //   if (targetUser) {
+  //     let newRow = [...rows]
+  //     let targetIndex = _.findIndex(newRow, { _key: targetUser._key });
+  //     if (targetIndex !== -1) {
+  //       newRow[targetIndex] = { ...targetUser }
+  //       newRow[targetIndex].gender = targetUser.gender === "男" || targetUser.gender === "0" || targetUser.gender === 0 ? "男" : "女";
+  //       newRow[targetIndex].birthday = targetUser.birthday.valueOf() !== 'Invalid date' ? moment(targetUser.birthday).format(
+  //         "YYYY/MM/DD"
+  //       ) : moment().format(
+  //         "YYYY/MM/DD"
+  //       );
+  //       setRows(newRow)
+  //     }
+  //     // getCompanyRow(
+  //     //   page,
+  //     //   pageSize,
+  //     //   searchInput,
+  //     //   isQuit)
+  //   }
+  //   //eslint-disable-next-line
+  // }, [targetUser])
   const getBatchArray = useCallback(async () => {
     let newBatchArray: any = [];
     let batchRes: any = await api.company.getBatchList(groupKey);
@@ -376,6 +388,7 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
   useEffect(() => {
     if (groupInfo) {
       getBatchArray();
+      // setStrongManagement(groupInfo.strongManagement)
     }
   }, [groupInfo, getBatchArray]);
   const formatData = useCallback((nodeObj: any, nodeId: string) => {
@@ -459,11 +472,11 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
         getCompanyRow(page, pageSize, searchInput, isQuit);
       }
     }
+    //eslint-disable-next-line
   }, [
     groupInfo,
     page,
     pageSize,
-    searchInput,
     isQuit,
     selectedId,
     companyData,
@@ -630,11 +643,16 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
   const editPerson = async (type: string) => {
     let newRow: any = _.cloneDeep(rows);
     let newTargetUser = _.cloneDeep(targetUser);
+    // setChangeState(false);
+    if (!newTargetUser) {
+      dispatch(setMessage(true, "请输入内容", "error"));
+      return;
+    }
     if (!newTargetUser.nickName) {
       dispatch(setMessage(true, "昵称不能为空", "error"));
       return;
     }
-    let reg1 = /^1(3[0-9]|4[5,7]|5[0,1,2,3,5,6,7,8,9]|6[2,5,6,7]|7[0,1,7,8]|8[0-9]|9[1,8,9])\d{8}$/;
+    let reg1 = /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
     if (!reg1.test(newTargetUser.mobile)) {
       dispatch(setMessage(true, "手机号码输入错误", "error"));
       return;
@@ -642,6 +660,13 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
     let reg2 = /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/;
     if (!reg2.test(newTargetUser.email)) {
       dispatch(setMessage(true, "邮箱输入错误", "error"));
+      return;
+    }
+    if (
+      newTargetUser.emergencyContactTel &&
+      !reg1.test(newTargetUser.emergencyContactTel)
+    ) {
+      dispatch(setMessage(true, "紧急电话输入错误", "error"));
       return;
     }
     setClearState(false);
@@ -657,23 +682,39 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
         emergencyContact: newTargetUser.emergencyContact,
         emergencyContactTel: newTargetUser.emergencyContactTel,
         address: newTargetUser.address,
-        gender: newTargetUser.gender,
+        gender:
+          newTargetUser.gender !== "男" && newTargetUser.gender !== "女"
+            ? parseInt(newTargetUser.gender)
+            : newTargetUser.gender === "男"
+            ? 0
+            : 1,
       });
       if (updatePersonRes.msg === "OK") {
         dispatch(setMessage(true, "编辑人员成功", "success"));
         let rowIndex = _.findIndex(newRow, { _key: newTargetUser._key });
         for (let key in newRow[rowIndex]) {
           if (newTargetUser[key] && key !== "key") {
-            if (key === "birthday") {
-              newRow[rowIndex].birthday = moment(newTargetUser.birthday).format(
-                "YYYY/MM/DD"
-              );
-            } else if (key === "gender") {
-              newRow[rowIndex].gender =
-                newTargetUser.gender === 1 ? "女" : "男";
-            } else {
-              newRow[rowIndex][key] = newTargetUser[key];
-            }
+            newRow[rowIndex] = { ...newTargetUser };
+            newRow[rowIndex].gender =
+              newTargetUser.gender === "男" ||
+              targetUser.gender === "0" ||
+              targetUser.gender === 0
+                ? "男"
+                : "女";
+            newRow[rowIndex].birthday =
+              newTargetUser.birthday.valueOf() !== "Invalid date"
+                ? moment(targetUser.birthday).format("YYYY/MM/DD")
+                : moment().format("YYYY/MM/DD");
+            // if (key === "birthday") {
+            //   newRow[rowIndex].birthday = moment(newTargetUser.birthday).format(
+            //     "YYYY/MM/DD"
+            //   );
+            // } else if (key === "gender") {
+            //   newRow[rowIndex].gender =
+            //     newTargetUser.gender === 1 ? "女" : "男";
+            // } else {
+            //   newRow[rowIndex][key] = newTargetUser[key];
+            // }
           }
         }
         // newRow.splice(personIndex, 1);
@@ -695,7 +736,12 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
       if (newTargetUser.nickName) {
         newTargetUser.name = newTargetUser.nickName;
       }
-      newTargetUser.gender = parseInt(newTargetUser.gender);
+      newTargetUser.gender =
+        newTargetUser.gender !== "男" && newTargetUser.gender !== "女"
+          ? parseInt(newTargetUser.gender)
+          : newTargetUser.gender === "男"
+          ? 0
+          : 1;
       let res: any = await api.company.addCompanyUser(groupKey, [
         {
           ...newTargetUser,
@@ -714,6 +760,25 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
       }
     }
   };
+  const clearVitality = async () => {
+    let clearRes: any = await api.company.clearVitality(groupKey);
+    if (clearRes.msg === "OK") {
+      dispatch(setMessage(true, "清空负活力值成功", "success"));
+    } else {
+      dispatch(setMessage(true, clearRes.msg, "error"));
+    }
+  };
+  // const changeStrongManagement = async (checked) => {
+  //   setStrongManagement(checked)
+  //   let clearRes: any = await api.group.changeGroupInfo(
+  //     groupKey, { strongManagement: checked }
+  //   );
+  //   if (clearRes.msg === "OK") {
+  //     dispatch(setMessage(true, `${checked ? '设置' : '取消'}强管理成功`, "success"));
+  //   } else {
+  //     dispatch(setMessage(true, clearRes.msg, "error"));
+  //   }
+  // }
   return (
     <div className="company-info">
       {loading ? <Loading /> : null}
@@ -722,6 +787,20 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
           <span style={{ fontSize: "18px" }}>通讯录（{total}人）</span>
         </div>
         <div className="company-header-button">
+          {/* <Tooltip title="强管理">
+            <Switch checked={strongManagement} onChange={changeStrongManagement} checkedChildren="开启" unCheckedChildren="关闭" style={{ marginRight: "5px" }} />
+          </Tooltip> */}
+
+          <Button
+            type="primary"
+            // className={classes.button}
+            onClick={() => {
+              clearVitality();
+            }}
+            style={{ marginRight: "5px" }}
+          >
+            清空负活力
+          </Button>
           <Button
             type="primary"
             // className={classes.button}
@@ -768,7 +847,9 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
               <Search
                 placeholder="请输入成员名"
                 value={searchInput}
-                onSearch={() => getCompanyRow(0, pageSize, searchInput, isQuit)}
+                onSearch={() => {
+                  getCompanyRow(0, pageSize, searchInput, isQuit);
+                }}
                 onChange={(e: any) => {
                   if (e.target.value === "") {
                     setPage(0);
@@ -918,18 +999,14 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
       <Modal
         visible={userVisible}
         onOk={() => {
-          if (changeState) {
-            editPerson("继续");
-          }
-          setChangeState(false);
+          editPerson("继续");
         }}
-        onCancel={() => {
-          if (changeState) {
-            editPerson("退出");
-          } else {
+        onCancel={(e: any) => {
+          if (e.target.tagName !== "SPAN") {
             setUserVisible(false);
+            return;
           }
-          setChangeState(false);
+          editPerson("退出");
         }}
         okText={"保存并继续"}
         cancelText={"保存并退出"}
@@ -940,7 +1017,7 @@ const CompanyPerson: React.FC<CompanyPersonProps> = () => {
         <CompanyEdit
           targetUser={targetUser}
           setTargetUser={setTargetUser}
-          setChangeState={setChangeState}
+          // setChangeState={setChangeState}
           clearState={clearState}
           rows={rows}
           setRows={setRows}

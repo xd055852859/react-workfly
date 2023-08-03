@@ -5,7 +5,7 @@
   flex-direction: column;
 }
 .linkInfo {
-  width: 95%;
+  width: 100%;
   padding: 12px 24px;
   display: flex;
   justify-content: flex-start;

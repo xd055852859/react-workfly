@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "./gridTree.css";
 import { useDispatch } from "react-redux";
 import api from "../../services/api";
@@ -34,7 +34,8 @@ const GridTree: React.FC<GridTreeProps> = (props) => {
       setGridTaskItem(_.cloneDeep(taskItem));
       setGridTaskNavDay(_.cloneDeep(taskNavDay));
     }
-  }, [taskItem, taskNavDay]);
+    //eslint-disable-next-line
+  }, [taskItem]);
   const chooseTask = async (index: number) => {
     // this.$emit("playTreeAudio");
     let newGridTaskItem = _.cloneDeep(gridTaskItem);
@@ -44,12 +45,19 @@ const GridTree: React.FC<GridTreeProps> = (props) => {
     });
     newGridTaskItem.dayArr[taskNavIndex] = "";
     if (newGridTaskNavDay[taskNavIndex]?.allTaskNum) {
-      newGridTaskNavDay[taskNavIndex].allTaskNum =
-        newGridTaskNavDay[taskNavIndex].allTaskNum - 1;
+      newGridTaskNavDay[taskNavIndex].allTaskNum = parseFloat(
+        (
+          newGridTaskNavDay[taskNavIndex].allTaskNum - newGridTaskItem.hour
+        ).toFixed(1)
+      );
+      newGridTaskItem.dayArr[index] = 0;
     }
     newGridTaskItem.dayArr[index] = newGridTaskItem.hour;
-    newGridTaskNavDay[index].allTaskNum =
-      newGridTaskNavDay[index].allTaskNum + 1;
+    console.log(newGridTaskNavDay[index].allTaskNum);
+    newGridTaskNavDay[index].allTaskNum = parseFloat(
+      (newGridTaskNavDay[index].allTaskNum + newGridTaskItem.hour).toFixed(1)
+    );
+    console.log(newGridTaskNavDay[index].allTaskNum);
     if (!gridState) {
       newGridTaskItem.executorKey = taskNavDay[index].userId;
       newGridTaskItem.executorName = taskNavDay[index].nickName;

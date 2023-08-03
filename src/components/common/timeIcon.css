@@ -10,7 +10,7 @@
   box-sizing: border-box;
   /* margin-right: 5px; */
   font-size: 12px;
-  /* margin-top: 4px; */
+  margin-top: 4px;
   cursor: pointer;
   word-wrap: normal;
 }

@@ -20,7 +20,6 @@ import Dialog from "../../components/common/dialog";
 import defaultPersonPng from "../../assets/svg/defaultPerson.svg";
 import defaultGroupPng from "../../assets/img/defaultGroup.png";
 
-
 interface CompanyDepartmentProps {}
 
 const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
@@ -32,6 +31,8 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
   const [rows, setRows] = useState<any>([]);
   const [companyData, setCompanyData] = useState<any>(null);
   const [companyObj, setCompanyObj] = useState<any>(null);
+  //eslint-disable-next-line
+  const [targetNodeArray, setTargetNodeArray] = useState<any>([]);
   const [selectedId, setSelectedId] = useState<any>(null);
   const [startId, setStartId] = useState<any>(null);
   const [selectedPath, setSelectedPath] = useState<any>([]);
@@ -45,12 +46,12 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
   const targetTreeRef: React.RefObject<any> = useRef();
   let moveRef: any = useRef();
   let unDistory = useRef<any>(true);
-  
-  useMount(()=>{
+
+  useMount(() => {
     return () => {
       unDistory.current = false;
     };
-  })
+  });
   const getCompanyTree = useCallback(
     async (nodeId: any, type: number, info: any) => {
       let newCompanyData: any = {};
@@ -79,7 +80,10 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
               if (data[key].orgType === 2) {
                 //?imageMogr2/auto-orient/thumbnail/80x
                 newCompanyData[key].avatarUri = data[key].avatar
-                  ? data[key].avatar + "?imageMogr2/auto-orient/thumbnail/80x"
+                  ? data[key].avatar.indexOf("imageMogr2") !== -1 &&
+                    data[key].avatar.indexOf(".svg") !== -1
+                    ? data[key].avatar + "?imageMogr2/auto-orient/thumbnail/80x"
+                    : data[key].avatar
                   : defaultPersonPng;
               }
               if (data[key].orgType === 3) {
@@ -88,8 +92,9 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
                   ? data[key].groupLogo
                   : defaultGroupPng;
               }
-              if (!nodeId && !data[key].parentOrgKey) {
+              if (!nodeId && !data[key].parentOrgKey&&newCompanyData[key]) {
                 nodeId = data[key]._key;
+                newCompanyData[key].name = groupInfo.groupName;
                 newCompanyData[key].icon = info.groupLogo
                   ? info.groupLogo
                   : defaultGroupPng;
@@ -106,6 +111,7 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
         }
       }
     },
+    //eslint-disable-next-line
     [groupKey, dispatch]
   );
   useEffect(() => {
@@ -120,10 +126,18 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
     }
   }, [user, location, groupInfo, getCompanyTree]);
   const chooseNode = async (node: any) => {
-    setSelectedId(node._key);
-    setDepartmentId(node._key);
-    setCompanyObj(node);
-    setRows([]);
+    if (node) {
+      setSelectedId(node._key);
+      setDepartmentId(node._key);
+      setCompanyObj(node);
+      setRows([]);
+    } else {
+      setSelectedId(null);
+      setDepartmentId(null);
+      setCompanyObj(null);
+      setRows([]);
+      setTargetNodeArray([]);
+    }
   };
   const clickDot = (node: any) => {
     setStartId(node._key);
@@ -198,9 +212,10 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
         newRow.splice(rowIndex, 1);
         setRows(newRow);
       }
-      let targetNodeIndex = newCompanyData[
-        newCompanyData[departmentId].father
-      ].sortList.indexOf(departmentId);
+      let targetNodeIndex =
+        newCompanyData[newCompanyData[departmentId].father].sortList.indexOf(
+          departmentId
+        );
       if (targetNodeIndex !== -1) {
         chooseNode(newCompanyData[newCompanyData[departmentId].father]);
         delete newCompanyData[departmentId];
@@ -212,7 +227,7 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
     }
   };
 
-  const addMember = async (node: any) => {
+  const addMember = async (node: any,index:number,fn:any) => {
     const newCompanyObj = _.cloneDeep(companyObj);
     let newCompanyKey = "";
     let addMemberRes: any = null;
@@ -238,85 +253,136 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
       if (addMemberRes.result.length > 0) {
         dispatch(setMessage(true, "添加到组织成功", "success"));
         getCompanyTree(newCompanyKey, departmentType, groupInfo);
-      } else if (addMemberRes.result.length === 0) {
-        dispatch(setMessage(true, "该节点已经被添加", "error"));
+        fn(index)
+      } else if (addMemberRes.errorGroupKeyArray.length > 0) {
+        dispatch(setMessage(true, "该节点添加错误", "error"));
       }
     } else {
       dispatch(setMessage(true, addMemberRes.msg, "error"));
     }
   };
-  const dragNode = async (dragInfo: any) => {
+  // const dragNode = async (dragInfo: any, validSelectedNodes: any) => {
+  //   let newCompanyData = _.cloneDeep(companyData);
+  //   let newTargetNode = _.cloneDeep(newCompanyData[dragInfo.dragNodeId]);
+  //   let obj = {};
+
+  //   let fatherKey = newCompanyData[dragInfo.dropNodeId].father;
+  //   let targetFatherKey = newCompanyData[dragInfo.dragNodeId].father;
+
+  //   let sortIndex = newCompanyData[targetFatherKey].sortList.indexOf(
+  //     dragInfo.dragNodeId
+  //   );
+  //   let childrenAllIndex = newCompanyData[targetFatherKey].childrenAll.indexOf(
+  //     dragInfo.dragNodeId
+  //   );
+
+  //   if (dragInfo.placement === "in") {
+  //     if (newCompanyData[dragInfo.dropNodeId].orgType === 1) {
+  //       newCompanyData[dragInfo.dropNodeId].sortList.push(dragInfo.dragNodeId);
+  //       newCompanyData[dragInfo.dropNodeId].childrenAll.push(
+  //         dragInfo.dragNodeId
+  //       );
+  //       newCompanyData[dragInfo.dragNodeId].father = dragInfo.dropNodeId;
+  //       obj = {
+  //         oldFatherOrgKey: targetFatherKey,
+  //         sonOrgKey: dragInfo.dragNodeId,
+  //         newFatherOrgKey: dragInfo.dropNodeId,
+  //         childrenIndex:
+  //           newCompanyData[dragInfo.dropNodeId].childrenAll.length - 1,
+  //       };
+  //     } else {
+  //       dispatch(setMessage(true, "组织机构下才能添加子节点", "error"));
+  //       return;
+  //     }
+  //   } else if (fatherKey) {
+  //     let nodeIndex = newCompanyData[fatherKey].childrenAll.indexOf(
+  //       dragInfo.dropNodeId
+  //     );
+  //     //删除原父亲的children
+  //     //增加原父亲的children
+  //     newCompanyData[fatherKey].sortList.splice(
+  //       dragInfo.placement === "up" ? nodeIndex : nodeIndex + 1,
+  //       0,
+  //       dragInfo.dragNodeId
+  //     );
+  //     newCompanyData[fatherKey].childrenAll.splice(
+  //       dragInfo.placement === "up" ? nodeIndex : nodeIndex + 1,
+  //       0,
+  //       dragInfo.dragNodeId
+  //     );
+  //     //改变父亲
+  //     newTargetNode.father = fatherKey;
+  //     newCompanyData[dragInfo.dragNodeId].father = fatherKey;
+
+  //     obj = {
+  //       oldFatherOrgKey: targetFatherKey,
+  //       sonOrgKey: dragInfo.dragNodeId,
+  //       newFatherOrgKey: fatherKey,
+  //       childrenIndex: dragInfo.placement === "up" ? nodeIndex : nodeIndex + 1,
+  //     };
+
+  //     if (fatherKey === targetFatherKey) {
+  //       sortIndex = dragInfo.placement === "up" ? sortIndex + 1 : sortIndex;
+  //       childrenAllIndex =
+  //         dragInfo.placement === "up" ? sortIndex + 1 : sortIndex;
+  //     }
+  //   }
+  //   newCompanyData[targetFatherKey].sortList.splice(sortIndex, 1);
+  //   newCompanyData[targetFatherKey].childrenAll.splice(childrenAllIndex, 1);
+  //   let treeRelationRes: any = await api.company.changeTreeCompanyRelation(obj);
+  //   if (treeRelationRes.msg === "OK") {
+  //     setCompanyData(newCompanyData);
+
+  //     // setGridList(newGridList);
+  //   } else {
+  //     dispatch(setMessage(true, treeRelationRes.msg, "error"));
+  //   }
+  // };
+
+  const dragNode = async (dragInfo: any, validSelectedNodes: any) => {
     let newCompanyData = _.cloneDeep(companyData);
-    let newTargetNode = _.cloneDeep(newCompanyData[dragInfo.dragNodeId]);
-    let obj = {};
-
     let fatherKey = newCompanyData[dragInfo.dropNodeId].father;
-    let targetFatherKey = newCompanyData[dragInfo.dragNodeId].father;
-
-    let sortIndex = newCompanyData[targetFatherKey].sortList.indexOf(
-      dragInfo.dragNodeId
-    );
-    let childrenAllIndex = newCompanyData[targetFatherKey].childrenAll.indexOf(
-      dragInfo.dragNodeId
-    );
-
-    if (dragInfo.placement === "in") {
-      if (newCompanyData[dragInfo.dropNodeId].orgType === 1) {
-        newCompanyData[dragInfo.dropNodeId].sortList.push(dragInfo.dragNodeId);
-        newCompanyData[dragInfo.dropNodeId].childrenAll.push(
-          dragInfo.dragNodeId
-        );
-        newCompanyData[dragInfo.dragNodeId].father = dragInfo.dropNodeId;
-        obj = {
-          oldFatherOrgKey: targetFatherKey,
-          sonOrgKey: dragInfo.dragNodeId,
-          newFatherOrgKey: dragInfo.dropNodeId,
-          childrenIndex:
-            newCompanyData[dragInfo.dropNodeId].childrenAll.length - 1,
-        };
-      } else {
-        dispatch(setMessage(true, "组织机构下才能添加子节点", "error"));
-        return;
-      }
-    } else if (fatherKey) {
-      let nodeIndex = newCompanyData[fatherKey].childrenAll.indexOf(
-        dragInfo.dropNodeId
-      );
-      //删除原父亲的children
-      //增加原父亲的children
-      newCompanyData[fatherKey].sortList.splice(
-        dragInfo.placement === "up" ? nodeIndex : nodeIndex + 1,
-        0,
-        dragInfo.dragNodeId
-      );
-      newCompanyData[fatherKey].childrenAll.splice(
-        dragInfo.placement === "up" ? nodeIndex : nodeIndex + 1,
-        0,
-        dragInfo.dragNodeId
-      );
-      //改变父亲
-      newTargetNode.father = fatherKey;
-      newCompanyData[dragInfo.dragNodeId].father = fatherKey;
-
-      obj = {
-        oldFatherOrgKey: targetFatherKey,
-        sonOrgKey: dragInfo.dragNodeId,
-        newFatherOrgKey: fatherKey,
-        childrenIndex: dragInfo.placement === "up" ? nodeIndex : nodeIndex + 1,
-      };
-
-      if (fatherKey === targetFatherKey) {
-        sortIndex = dragInfo.placement === "up" ? sortIndex + 1 : sortIndex;
-        childrenAllIndex =
-          dragInfo.placement === "up" ? sortIndex + 1 : sortIndex;
-      }
+    let obj: any = {
+      oldFatherOrgKeyArray: [],
+      sonOrgKeyArray: [],
+      newFatherOrgKey: null,
+      childrenIndex: 0,
+    };
+    if (!validSelectedNodes || validSelectedNodes?.length === 0) {
+      validSelectedNodes = [
+        {
+          nodeKey: dragInfo.dragNodeId,
+          oldFather: newCompanyData[dragInfo.dragNodeId].father,
+        },
+      ];
     }
-    newCompanyData[targetFatherKey].sortList.splice(sortIndex, 1);
-    newCompanyData[targetFatherKey].childrenAll.splice(childrenAllIndex, 1);
-    let treeRelationRes: any = await api.company.changeTreeCompanyRelation(obj);
+    validSelectedNodes.forEach((item: any) => {
+      obj.oldFatherOrgKeyArray.push(item.oldFather);
+      obj.sonOrgKeyArray.push(item.nodeKey);
+      if (dragInfo.placement === "in") {
+        obj.newFatherOrgKey = dragInfo.dropNodeId;
+        obj.childrenIndex =
+          newCompanyData[dragInfo.dropNodeId].sortList.length > 0
+            ? newCompanyData[dragInfo.dropNodeId].sortList.length - 1
+            : 0;
+      } else if (fatherKey) {
+        let nodeIndex = newCompanyData[fatherKey].sortList.indexOf(
+          dragInfo.dropNodeId
+        );
+        obj.newFatherOrgKey = fatherKey;
+        obj.childrenIndex =
+          dragInfo.placement === "up" ? nodeIndex : nodeIndex + 1;
+      }
+    });
+    console.log(obj);
+    let treeRelationRes: any = await api.company.batchSwitchFSOrg(obj);
     if (treeRelationRes.msg === "OK") {
-      setCompanyData(newCompanyData);
-      // setGridList(newGridList);
+      // if (groupMemberItem?.config?.treeStartId) {
+      //   getData(groupMemberItem.config.treeStartId);
+      // } else if (groupInfo.taskTreeRootCardKey) {
+      // getData(groupInfo.taskTreeRootCardKey);
+      getCompanyTree("", departmentType, groupInfo);
+      // }
     } else {
       dispatch(setMessage(true, treeRelationRes.msg, "error"));
     }
@@ -435,6 +501,7 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
                 showAvatar={true}
                 showMoreButton
                 startId={startId}
+                avatarRadius={13}
                 // selectedBackgroundColor="#E3E3E3"
                 defaultSelectedId={selectedId}
                 handleClickNode={(node: any) => {
@@ -456,6 +523,9 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
                 handleDrag={dragNode}
                 handleClickDot={clickDot}
                 handleShiftUpDown={editSortList}
+                handleMutiSelect={(nodeArray) => {
+                  setTargetNodeArray(nodeArray);
+                }}
               />
             ) : null}
           </Moveable>
@@ -523,7 +593,12 @@ const CompanyDepartment: React.FC<CompanyDepartmentProps> = (props) => {
         }}
         title={"删除节点"}
       >
-        是否删除该{departmentType === 2 ? "成员关联" : "项目关联"}
+        是否删除该
+        {companyObj?.orgType === 1
+          ? "节点"
+          : departmentType === 2
+          ? "成员关联"
+          : "项目关联"}
       </Modal>
       <Drawer
         visible={searchDialogShow}

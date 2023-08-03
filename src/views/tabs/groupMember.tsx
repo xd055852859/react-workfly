@@ -3,19 +3,28 @@ import "./groupMember.css";
 import { Checkbox, Tooltip, Button, Input } from "antd";
 import { QuestionOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
+import { MenuTree } from "tree-graph-react";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import _ from "lodash";
 import api from "../../services/api";
 
 import { setMessage } from "../../redux/actions/commonActions";
-import { getMember, getGroupMember } from "../../redux/actions/memberActions";
+import {
+  getMember,
+  getGroupMember,
+  getEnterpriseMember,
+} from "../../redux/actions/memberActions";
 
 import DropMenu from "../../components/common/dropMenu";
 
 import closePng from "../../assets/img/taskClose.png";
 import defaultPersonPng from "../../assets/img/defaultPerson.png";
+import defaultGroupPng from "../../assets/img/defaultGroup.png";
 import { useMount } from "../../hook/common";
+
+import Avatar from "../../components/common/avatar";
 const { Search } = Input;
+declare var window: Window;
 export interface GroupMemberProps {
   setMember: any;
   changeCount?: any;
@@ -34,38 +43,66 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
   const groupMemberArray = useTypedSelector(
     (state) => state.member.groupMemberArray
   );
+  const mainEnterpriseGroup = useTypedSelector(
+    (state) => state.auth.mainEnterpriseGroup
+  );
+  const enterpriseMemberArray = useTypedSelector(
+    (state) => state.member.enterpriseMemberArray
+  );
   const groupRole = useTypedSelector((state) => state.group.groupRole);
   const [mainMemberList, setMainMemberList] = useState<any>([]);
   const [searchMemberList, setSearchMemberList] = useState<any>([]);
   const [groupMemberList, setGroupMemberList] = useState<any>([]);
   const [joinMemberList, setJoinMemberList] = useState<any>([]);
+  const [searchEnterpriseMemberList, setSearchEnterpriseMemberList] =
+    useState<any>([]);
+  const [enterpriseMemberList, setEnterpriseMemberList] = useState<any>([]);
+
   const [memberList, setMemberList] = useState<any>([]);
   const [searchInput, setSearchInput] = useState("");
+  const [searchEnterpriseInput, setSearchEnterpriseInput] = useState("");
+
   const [searchType, setSearchType] = useState(false);
   const [roleVisible, setRoleVisible] = useState(false);
   const [chooseIndex, setChooseIndex] = useState(0);
   const [roleIndex, setRoleIndex] = useState<any>(null);
   const [roleHelpVisible, setRoleHelpVisible] = useState<any>(false);
+  const [selectedId, setSelectedId] = useState<any>(null);
+  const [startId, setStartId] = useState<any>(null);
 
   const [pos, setPos] = useState<any>([]);
   const [page, setPage] = React.useState(1);
   const [total, setTotal] = React.useState(0);
-  const roleTypeArr = ["项目管理", "管理员", "编辑", "作者", "项目成员"];
+  const [treeData, setTreeData] = useState<any>({});
+  const roleTypeArr = ["", "项目管理", "管理员", "编辑", "作者", "项目成员"];
   const limit = 15;
   let unDistory = useRef<any>(true);
-  
+
   useMount(() => {
     return () => {
       unDistory.current = false;
     };
   });
+
   useEffect(() => {
     if (groupKey) {
       let newMemberList: any = _.cloneDeep(groupMemberArray);
       setMemberList(_.sortBy(newMemberList, ["role"]));
     }
-  }, [groupKey, chooseIndex, groupMemberArray]);
-
+    //eslint-disable-next-line
+  }, [groupMemberArray]);
+  // useEffect(() => {
+  //   if (mainEnterpriseGroup?.mainEnterpriseGroupKey && !enterpriseMemberArray) {
+  //     dispatch(
+  //       getEnterpriseMember(
+  //         1,
+  //         mainEnterpriseGroup.mainEnterpriseGroupKey,
+  //         1,
+  //         1000
+  //       )
+  //     );
+  //   }
+  // }, [dispatch, mainEnterpriseGroup, enterpriseMemberArray]);
   const getJoinGroupList = useCallback(async () => {
     let res: any = await api.group.applyJoinGroupList(groupKey);
     if (unDistory.current) {
@@ -97,6 +134,31 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
   }, [memberArray, memberList, searchInput]);
 
   useEffect(() => {
+    if (enterpriseMemberArray && searchEnterpriseInput === "") {
+      setEnterpriseMemberList((prevEnterpriseMemberList) => {
+        console.log(memberList);
+        prevEnterpriseMemberList = _.sortBy(
+          enterpriseMemberArray.map((memberItem: any) => {
+            let newMemberIndex = _.findIndex(memberList, {
+              userId: memberItem.userId,
+            });
+            console.log(newMemberIndex);
+            if (newMemberIndex === -1) {
+              memberItem.checked = false;
+            } else {
+              memberItem.checked = true;
+            }
+            return memberItem;
+          }),
+          ["checked"]
+        );
+        // setSearchEnterpriseMemberList(_.sortBy(newEnterpriseMemberList, ["checked"]));
+        return [...prevEnterpriseMemberList];
+      });
+    }
+  }, [enterpriseMemberArray, searchEnterpriseInput, memberList]);
+
+  useEffect(() => {
     if (user && user._key && groupKey) {
       getJoinGroupList();
     }
@@ -108,6 +170,80 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
     }
   }, [searchInput]);
 
+  const getGroupTree = async () => {
+    let newTreeData: any = {};
+    let companyDepartmentRes: any = await api.company.getOrganizationTree({
+      enterpriseGroupKey: mainEnterpriseGroup.mainEnterpriseGroupKey,
+      type: 4,
+    });
+    if (unDistory.current) {
+      if (companyDepartmentRes.msg === "OK") {
+        let data = companyDepartmentRes.result;
+        for (let key in data) {
+          newTreeData[key] = {
+            _key: data[key]._key,
+            contract: false,
+            father: data[key].parentOrgKey,
+            name: data[key].name,
+            path: data[key].path1,
+            sortList: data[key].children,
+            enterpriseGroupKey: data[key].enterpriseGroupKey,
+            groupMemberKey: data[key].groupMemberKey,
+            orgType: data[key].orgType,
+            staffKey: data[key].staffKey,
+            // disabled: data[key].orgType === 2,
+            childrenAll: data[key].childrenAll,
+          };
+          if (data[key].orgType === 2) {
+            //?imageMogr2/auto-orient/thumbnail/80x
+            newTreeData[key].icon = data[key].avatar;
+          }
+          if (!data[key].parentOrgKey) {
+            newTreeData[key].icon = groupInfo.groupLogo
+              ? groupInfo.groupLogo
+              : defaultGroupPng;
+            setStartId(key);
+          }
+        }
+        // setSelectedId(nodeId);
+        setTreeData(newTreeData);
+      } else {
+        dispatch(setMessage(true, companyDepartmentRes.msg, "error"));
+      }
+    }
+  };
+  const chooseNode = (node) => {
+    setSelectedId(node._key);
+    let newMainMemberList = _.cloneDeep(mainMemberList);
+    let newMemberList = _.cloneDeep(memberList);
+    let newSearchMemberList = _.cloneDeep(searchMemberList);
+    let newSearchIndex = _.findIndex(newMemberList, {
+      userId: node.staffKey,
+    });
+    if (newSearchIndex !== -1) {
+      newMemberList.splice(newSearchIndex, 1);
+    } else {
+      newMemberList.push({
+        userId: node.staffKey,
+        nickName: node.name,
+        avatar: node.icon,
+        gender: 1,
+        role: groupInfo.defaultPower ? groupInfo.defaultPower : 5,
+      });
+    }
+    let searchIndex = _.findIndex(newSearchMemberList, { _key: node.staffKey });
+    if (searchIndex !== -1) {
+      newSearchMemberList[searchIndex].checked = true;
+    }
+    let index = _.findIndex(newMainMemberList, { _key: node.staffKey });
+    if (index !== -1) {
+      newMainMemberList[index].checked = true;
+    }
+    setMemberList([...newMemberList]);
+    setSearchMemberList([...newSearchMemberList]);
+    setMainMemberList([...newMainMemberList]);
+    setMember(newMemberList);
+  };
   const changeMember = (key: string, index: number) => {
     let newMainMemberList = _.cloneDeep(mainMemberList);
     let newMemberList = _.cloneDeep(memberList);
@@ -130,6 +266,16 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
       setGroupMemberList(newSearchMemberList);
     } else {
       if (newMainMemberList[index].checked) {
+        const memberIndex = _.findIndex(memberList, {
+          userId: newMainMemberList[index].userId,
+        });
+        if (
+          groupInfo.role > 2 ||
+          groupInfo.role > memberList[memberIndex].role
+        ) {
+          dispatch(setMessage(true, "权限不够，无法删除成员", "error"));
+          return;
+        }
         newMainMemberList[index].checked = false;
         let newSearchIndex = _.findIndex(newMemberList, {
           userId: newMainMemberList[index].userId,
@@ -139,7 +285,9 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
         }
       } else {
         newMainMemberList[index].checked = true;
-        newMainMemberList[index].role = groupInfo.defaultPower;
+        newMainMemberList[index].role = groupInfo.defaultPower
+          ? groupInfo.defaultPower
+          : 5;
         newMemberList.push(newMainMemberList[index]);
       }
       setGroupMemberList(newMainMemberList);
@@ -201,6 +349,7 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
       dispatch(setMessage(true, res.msg, "error"));
     }
   };
+
   const scrollSearchLoading = (e: any) => {
     let newPage = page;
     //文档内容实际高度（包括超出视窗的溢出部分）
@@ -218,6 +367,116 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
       getSearchPerson(newPage);
     }
   };
+
+  const changeEnterpriseMember = (key: string, index: number) => {
+    let newEnterpriseMemberList = _.cloneDeep(enterpriseMemberList);
+    let newMemberList = _.cloneDeep(memberList);
+    let newSearchEnterpriseMemberList = _.cloneDeep(searchEnterpriseMemberList);
+    if (searchInput !== "") {
+      let index = _.findIndex(newSearchEnterpriseMemberList, { _key: key });
+      if (newSearchEnterpriseMemberList[index].checked) {
+        newSearchEnterpriseMemberList[index].checked = false;
+        let newSearchIndex = _.findIndex(newMemberList, {
+          userId: newSearchEnterpriseMemberList[index].userId,
+        });
+        if (newSearchIndex !== -1) {
+          newMemberList.splice(newSearchIndex, 1);
+        }
+      } else {
+        newSearchEnterpriseMemberList[index].checked = true;
+        newSearchEnterpriseMemberList[index].role = groupInfo.defaultPower;
+        newMemberList.push(newSearchEnterpriseMemberList[index]);
+      }
+      setEnterpriseMemberList(newSearchEnterpriseMemberList);
+    } else {
+      if (newEnterpriseMemberList[index].checked) {
+        const memberIndex = _.findIndex(memberList, {
+          userId: newEnterpriseMemberList[index].userId,
+        });
+        if (
+          groupInfo.role > 2 ||
+          groupInfo.role > memberList[memberIndex].role
+        ) {
+          dispatch(setMessage(true, "权限不够，无法删除成员", "error"));
+          return;
+        }
+        newEnterpriseMemberList[index].checked = false;
+        let newSearchIndex = _.findIndex(newMemberList, {
+          userId: newEnterpriseMemberList[index].userId,
+        });
+        if (newSearchIndex !== -1) {
+          newMemberList.splice(newSearchIndex, 1);
+        }
+      } else {
+        newEnterpriseMemberList[index].checked = true;
+        newEnterpriseMemberList[index].role = groupInfo.defaultPower
+          ? groupInfo.defaultPower
+          : 5;
+        newMemberList.push(newEnterpriseMemberList[index]);
+      }
+      setEnterpriseMemberList(newEnterpriseMemberList);
+    }
+    setSearchEnterpriseMemberList(newSearchEnterpriseMemberList);
+    setEnterpriseMemberList(newEnterpriseMemberList);
+    setMemberList(newMemberList);
+    setMember(newMemberList);
+  };
+
+  // const searchEnterpriseMember = () => {
+  //   if (searchEnterpriseInput !== "") {
+  //     // this.getSearchList({ param: { name: this.searchInput }, type: 1 })
+  //     getSearchEnterprisePerson(page);
+  //   }
+  // };
+  const searchEnterprisePerson = (input?: string) => {
+    let newEnterpriseMemberArray = _.cloneDeep(enterpriseMemberArray);
+    let personInput = input ? input : searchEnterpriseInput;
+    let searchEnterprisePersonList: any = [];
+    searchEnterprisePersonList = newEnterpriseMemberArray.filter(
+      (item: any, index: number) => {
+        return (
+          item.nickName &&
+          item.nickName.toUpperCase().indexOf(personInput.toUpperCase()) !== -1
+        );
+      }
+    );
+    setSearchEnterpriseMemberList(searchEnterprisePersonList);
+    setEnterpriseMemberList(searchEnterprisePersonList);
+  };
+  // const getSearchEnterprisePerson = async (page: number) => {
+  //   let newEnterpriseMemberList = _.cloneDeep(enterpriseMemberList);
+  //   let newSearchEnterpriseMemberList: any = [];
+  //   if (page === 1) {
+  //     setSearchEnterpriseMemberList([]);
+  //   } else {
+  //     newSearchEnterpriseMemberList = _.cloneDeep(searchMemberList);
+  //   }
+  //   let res: any = await api.member.searchUserNew(searchInput, page, limit);
+  //   if (res.msg === "OK") {
+  //     res.result.forEach((searchItem: any) => {
+  //       searchItem.avatar = searchItem.avatar
+  //         ? searchItem.avatar
+  //         : defaultPersonPng;
+  //       let searchMemberIndex = _.findIndex(newEnterpriseMemberList, {
+  //         userId: searchItem.userId,
+  //       });
+  //       if (searchMemberIndex === -1) {
+  //         searchItem.checked = false;
+  //       } else {
+  //         searchItem.checked = true;
+  //       }
+  //       searchItem._key = searchItem.userId;
+  //       newSearchEnterpriseMemberList.push(searchItem);
+  //     });
+  //     setSearchEnterpriseMemberList(newSearchEnterpriseMemberList);
+  //     setEnterpriseMemberList(newSearchEnterpriseMemberList);
+  //     setTotal(res.totalNumber);
+  //     setSearchType(true);
+  //   } else {
+  //     dispatch(setMessage(true, res.msg, "error"));
+  //   }
+  // };
+
   const deleteMember = async (userId: number) => {
     let newMainMemberList = _.cloneDeep(mainMemberList);
     let newMemberList = _.cloneDeep(memberList);
@@ -289,10 +548,10 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
   };
   const changeRole = (roleIndex: number, index: number) => {
     let newMemberRoleList: any = _.cloneDeep(memberList);
-    if (roleIndex === 0) {
+    if (roleIndex === 1) {
       newMemberRoleList[0].role = 2;
     }
-    newMemberRoleList[index].role = roleIndex + 1;
+    newMemberRoleList[index].role = roleIndex;
     setMemberList(newMemberRoleList);
     setMember(newMemberRoleList);
     setRoleVisible(false);
@@ -306,14 +565,10 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
       userId: newMemberRoleList[index].userId,
     });
     if (memberIndex !== -1) {
-      if (roleIndex === 0) {
+      if (roleIndex === 1) {
         api.group.groupOwnerChange(groupKey, newMemberRoleList[index].userId);
       } else {
-        api.auth.setRole(
-          groupKey,
-          newMemberRoleList[index].userId,
-          roleIndex + 1
-        );
+        api.auth.setRole(groupKey, newMemberRoleList[index].userId, roleIndex);
       }
     }
   };
@@ -329,11 +584,11 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
       },
     ]);
     if (memberRes.msg === "OK") {
-      dispatch(setMessage(true, "通过审核成功", "success"));
+      dispatch(setMessage(true, "通过申请", "success"));
       newJoinMemberList.splice(joinIndex, 1);
       setJoinMemberList(newJoinMemberList);
       changeCount(newJoinMemberList.length);
-      dispatch(getGroupMember(groupKey));
+      dispatch(getGroupMember(groupKey, 4));
       api.group.deleteApplyJoinGroup(joinItem._key);
     } else {
       dispatch(setMessage(true, memberRes.msg, "error"));
@@ -343,7 +598,7 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
     let newJoinMemberList = _.cloneDeep(joinMemberList);
     let memberRes: any = await api.group.deleteApplyJoinGroup(joinItem._key);
     if (memberRes.msg === "OK") {
-      dispatch(setMessage(true, "拒绝审核成功", "success"));
+      dispatch(setMessage(true, "拒绝申请", "success"));
       newJoinMemberList.splice(joinIndex, 1);
       setJoinMemberList(newJoinMemberList);
     } else {
@@ -368,7 +623,47 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
         setSearchMemberList(newSearchMemberList);
         setGroupMemberList(newSearchMemberList);
       }
-      dispatch(getMember(mainGroupKey));
+      dispatch(getMember(mainGroupKey, 1));
+    } else {
+      dispatch(setMessage(true, memberRes.msg, "error"));
+    }
+  };
+  const addEnterpriseMember = async (
+    addItem: any,
+    addIndex: number,
+    type?: string
+  ) => {
+    let newSearchEnterpriseMemberList = _.cloneDeep(searchEnterpriseMemberList);
+    let newEnterpriseMemberList = _.cloneDeep(enterpriseMemberList);
+    let memberRes: any = await api.group.addGroupMember(mainGroupKey, [
+      {
+        userKey: addItem.userId,
+        nickName: addItem.nickName,
+        avatar: addItem.avatar,
+        gender: 0,
+        role: 5,
+      },
+    ]);
+    if (memberRes.msg === "OK") {
+      dispatch(setMessage(true, "添加好友成功", "success"));
+      if (!type) {
+        if (searchEnterpriseInput !== "") {
+          newSearchEnterpriseMemberList[addIndex].isFriend = true;
+          setSearchEnterpriseMemberList(newSearchEnterpriseMemberList);
+        } else {
+          newEnterpriseMemberList[addIndex].isFriend = true;
+          setEnterpriseMemberList(newEnterpriseMemberList);
+        }
+      }
+      dispatch(
+        getEnterpriseMember(
+          1,
+          mainEnterpriseGroup.mainEnterpriseGroupKey,
+          1,
+          1000
+        )
+      );
+      dispatch(getMember(mainGroupKey, 1));
     } else {
       dispatch(setMessage(true, memberRes.msg, "error"));
     }
@@ -390,12 +685,44 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
             >
               联系人({mainMemberList.length})
             </div>
+            {mainEnterpriseGroup?.mainEnterpriseGroupKey ? (
+              <div
+                onClick={() => {
+                  setChooseIndex(3);
+                }}
+                style={{
+                  borderBottom:
+                    chooseIndex === 3 ? "2px solid #1890ff" : "none",
+                  marginRight: "15px",
+                  cursor: "pointer",
+                }}
+              >
+                通讯录
+                {/* ({mainMemberList.length}) */}
+              </div>
+            ) : null}
+            {mainEnterpriseGroup?.mainEnterpriseGroupKey ? (
+              <div
+                onClick={() => {
+                  setChooseIndex(1);
+                  getGroupTree();
+                }}
+                style={{
+                  borderBottom:
+                    chooseIndex === 1 ? "2px solid #1890ff" : "none",
+                  cursor: "pointer",
+                  marginRight: "15px",
+                }}
+              >
+                组织树
+              </div>
+            ) : null}
             <div
               onClick={() => {
-                setChooseIndex(1);
+                setChooseIndex(2);
               }}
               style={{
-                borderBottom: chooseIndex === 1 ? "2px solid #1890ff" : "none",
+                borderBottom: chooseIndex === 2 ? "2px solid #1890ff" : "none",
                 cursor: "pointer",
                 position: "relative",
               }}
@@ -435,20 +762,17 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
                     <div className="group-member-item" key={"main" + mainIndex}>
                       <div
                         className="group-member-item-container"
-                        style={{ width: "80%" }}
+                        style={{ width: "calc(100% - 25px)" }}
                       >
                         <div className="group-member-img">
-                          <img
-                            src={
-                              mainItem.avatar
-                                ? mainItem.avatar +
-                                  "?imageMogr2/auto-orient/thumbnail/80x"
-                                : defaultPersonPng
-                            }
-                            alt=""
+                          <Avatar
+                            avatar={mainItem?.avatar}
+                            name={mainItem?.nickName}
+                            index={mainIndex}
+                            type={"person"}
                           />
                         </div>
-                        <div className="group-member-name">
+                        <div className="group-member-name toLong">
                           {mainItem.nickName}
                         </div>
                         {searchType && !mainItem.isMyMainGroupMember ? (
@@ -467,6 +791,13 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
                           changeMember(mainItem._key, mainIndex);
                         }}
                         checked={mainItem.checked}
+                        disabled={mainItem.userId === user._key}
+                        // disabled={
+                        //   groupInfo &&
+                        //   ((groupInfo.role >= groupInfo.defaultPower &&
+                        //     groupInfo.role) ||
+                        //     mainItem.userId === groupInfo.groupMaster)
+                        // }
                       />
                     </div>
                   );
@@ -474,24 +805,44 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
               </div>
             </React.Fragment>
           ) : null}
-          {chooseIndex === 1 ? (
+          {chooseIndex === 1 && treeData ? (
+            <div
+              className="group-member-container"
+              style={{ height: "calc(100% - 44px)" }}
+            >
+              <MenuTree
+                nodes={treeData}
+                uncontrolled={false}
+                showMoreButton
+                startId={startId}
+                defaultSelectedId={selectedId}
+                backgroundColor="#fff"
+                color="#333"
+                hoverColor="#fff"
+                disabled
+                handleClickNode={(node: any) => {
+                  if (node.orgType !== 1 && node.staffKey) {
+                    chooseNode(node);
+                  }
+                }}
+              />
+            </div>
+          ) : null}
+          {chooseIndex === 2 ? (
             <div className="group-member-container" style={{ height: "100%" }}>
               {joinMemberList.map((mainItem: any, mainIndex: number) => {
                 return (
                   <div className="group-member-item" key={"join" + mainIndex}>
                     <div className="group-member-item-container">
                       <div className="group-member-img">
-                        <img
-                          src={
-                            mainItem.avatar
-                              ? mainItem.avatar +
-                                "?imageMogr2/auto-orient/thumbnail/80x"
-                              : defaultPersonPng
-                          }
-                          alt=""
+                        <Avatar
+                          avatar={mainItem?.avatar}
+                          name={mainItem?.nickName}
+                          index={mainIndex}
+                          type={"person"}
                         />
                       </div>
-                      <div className="group-member-name">
+                      <div className="group-member-name toLong">
                         {mainItem.nickName}
                       </div>
                     </div>
@@ -518,6 +869,80 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
               })}
             </div>
           ) : null}
+          {chooseIndex === 3 ? (
+            <React.Fragment>
+              <div className="group-member-search">
+                <Search
+                  className="group-member-input"
+                  placeholder="搜索"
+                  onChange={(e) => {
+                    setSearchEnterpriseInput(e.target.value);
+                    searchEnterprisePerson(e.target.value);
+                  }}
+                  value={searchEnterpriseInput}
+                  onSearch={() => {
+                    // if (searchEnterpriseInput !== "") {
+                    //   searchEnterpriseMember();
+                    // }
+                    setSearchEnterpriseInput(searchEnterpriseInput);
+                    searchEnterprisePerson(searchEnterpriseInput);
+                  }}
+                  bordered={false}
+                />
+              </div>
+              <div className="group-member-container">
+                {enterpriseMemberList.map(
+                  (mainItem: any, mainIndex: number) => {
+                    return (
+                      <div
+                        className="group-member-item"
+                        key={"main" + mainIndex}
+                      >
+                        <div
+                          className="group-member-item-container"
+                          style={{ width: "calc(100% - 25px)" }}
+                        >
+                          <div className="group-member-img">
+                            <Avatar
+                              avatar={mainItem?.avatar}
+                              name={mainItem?.nickName}
+                              index={mainIndex}
+                              type={"person"}
+                            />
+                          </div>
+                          <div className="group-member-name toLong">
+                            {mainItem.nickName}
+                          </div>
+                          {!mainItem.isFriend ? (
+                            <div
+                              className="group-member-add"
+                              onClick={() => {
+                                addEnterpriseMember(mainItem, mainIndex);
+                              }}
+                            >
+                              + 好友
+                            </div>
+                          ) : null}
+                        </div>
+                        <Checkbox
+                          onChange={() => {
+                            changeEnterpriseMember(mainItem._key, mainIndex);
+                          }}
+                          checked={mainItem.checked}
+                          disabled={
+                            groupInfo &&
+                            ((groupInfo.role >= groupInfo.defaultPower &&
+                              groupInfo.role) ||
+                              mainItem.userId === groupInfo.groupMaster)
+                          }
+                        />
+                      </div>
+                    );
+                  }
+                )}
+              </div>
+            </React.Fragment>
+          ) : null}
         </div>
       </div>
       <div className="group-member-team">
@@ -525,13 +950,13 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
           项目权限设置
           <Tooltip title="权限说明">
             <Button
-              ghost
+              // ghost
               shape="circle"
               icon={<QuestionOutlined />}
               onClick={(e: any) => {
                 setRoleHelpVisible(true);
               }}
-              style={{ border: "0px" }}
+              style={{ border: "0px", marginLeft: "5px" }}
             />
           </Tooltip>
           <DropMenu
@@ -551,31 +976,28 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
             <div className="roleHelp-item">
               <div>管理员</div>
               <div>
-                <div>1.设置他人为编辑及以下权限</div>
-                <div>2.邀请进项目</div>
-                <div>3.增删频道</div>
-                <div>4.增删改项目任务</div>
+                <div>增删频道</div>
+                <div>增删改项目任务</div>
+                <div>编辑下级权限</div>
               </div>
             </div>
             <div className="roleHelp-item">
               <div>编辑</div>
               <div>
-                <div>1.增删频道</div>
-                <div>2.指派任务</div>
-                <div> 3.增、删、改自己及下级的任务</div>
+                <div>增删改项目任务</div>
               </div>
             </div>
             <div className="roleHelp-item">
               <div>作者</div>
               <div>
-                <div>1.指派任务</div>
-                <div>2.增、删、改自己指派的任务</div>
+                <div>增加任务</div>
+                <div>删、改自己指派的任务</div>
               </div>
             </div>
             <div className="roleHelp-item">
               <div>成员</div>
               <div>
-                <div>1.被指派任务</div>
+                <div>被指派任务</div>
               </div>
             </div>
           </DropMenu>
@@ -586,17 +1008,19 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
               <div className="group-member-item" key={"new" + newIndex}>
                 <div className="group-member-item-container">
                   <div className="group-member-img">
-                    <img
-                      src={
-                        newItem.avatar
-                          ? newItem.avatar +
-                            "?imageMogr2/auto-orient/thumbnail/80x"
-                          : defaultPersonPng
-                      }
-                      alt=""
+                    <Avatar
+                      avatar={newItem?.avatar}
+                      name={newItem?.nickName}
+                      index={newIndex}
+                      type={"person"}
                     />
                   </div>
-                  <div className="group-member-name">{newItem.nickName}</div>
+                  <div
+                    className="group-member-name toLong"
+                    style={{ width: "160px" }}
+                  >
+                    {newItem.nickName}
+                  </div>
                 </div>
                 <div
                   className="group-time-set"
@@ -628,12 +1052,12 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
                       }
                     }}
                   >
-                    {roleTypeArr[newItem.role - 1]}
+                    {roleTypeArr[newItem.role]}
                   </div>
                   <div className="group-time-close">
                     {groupRole > 0 &&
                     groupRole < 3 &&
-                    groupRole < newItem.role &&
+                    (groupRole < newItem.role || newItem.role === 0) &&
                     newItem.userId !== user._key ? (
                       <img
                         src={closePng}
@@ -670,7 +1094,7 @@ const GroupMember: React.FC<GroupMemberProps> = (props) => {
               {roleTypeArr.map((item: any, index: number) => {
                 return (
                   <React.Fragment key={"role" + index}>
-                    {index > 0 && (groupRole === 1 || groupRole < index + 1) ? (
+                    {index > 1 && (groupRole === 1 || groupRole < index) ? (
                       <div
                         onClick={() => {
                           changeRole(index, roleIndex);

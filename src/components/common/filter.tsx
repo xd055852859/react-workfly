@@ -1,10 +1,9 @@
 import React from 'react';
 import './filter.css';
 import DropMenu from './dropMenu';
-import { Avatar } from 'antd';
-import defaultPersonPng from '../../assets/img/defaultPerson.png';
-import defaultGroupPng from '../../assets/img/defaultGroup.png';
+
 import downArrowbPng from '../../assets/img/downArrowb.png';
+import Avatar from './avatar';
 interface FilterProps {
   visible: boolean;
   title?: any;
@@ -45,21 +44,17 @@ const Filter: React.FC<FilterProps> = (prop) => {
         // onMouseLeave={onClose}
         onClick={onOpen}
       >
-        {filterArray.length > 0 ? (
+        {filterArray.length > 0 && filterArray[filterIndex] ? (
           <div className="filter-menu-info">
             <Avatar
-              src={
+              avatar={
                 filterArray[filterIndex][filterItem[1]]
-                  ? filterIndex !== 0 &&
-                    filterArray[filterIndex][filterItem[1]].indexOf('data:') ===
-                      -1
-                    ? filterArray[filterIndex][filterItem[1]] +
-                      '?imageMogr2/auto-orient/thumbnail/80x'
-                    : filterArray[filterIndex][filterItem[1]]
-                  : defaultPngType === 0
-                  ? defaultPersonPng
-                  : defaultGroupPng
               }
+              name={filterArray[filterIndex][filterItem[0]]}
+              type={defaultPngType === 0
+                ? 'person'
+                : 'group'}
+              index={0}
               size={26}
             />
             <div className="filter-menu-name">
@@ -73,7 +68,7 @@ const Filter: React.FC<FilterProps> = (prop) => {
           dropStyle={filterItemStyle}
           onClose={onClose}
         >
-          {filterArray.map((item: any, index: number) => {
+          {filterArray.length > 0 && filterArray[filterIndex] ? filterArray.map((item: any, index: number) => {
             return (
               <div
                 className="filter-menu-info"
@@ -85,23 +80,20 @@ const Filter: React.FC<FilterProps> = (prop) => {
                 }}
               >
                 <Avatar
-                  src={
-                    item[filterItem[1]]
-                      ? filterIndex !== 0 &&
-                        item[filterItem[1]].indexOf('data:') === -1
-                        ? item[filterItem[1]] +
-                          '?imageMogr2/auto-orient/thumbnail/80x'
-                        : item[filterItem[1]]
-                      : defaultPngType === 0
-                      ? defaultPersonPng
-                      : defaultGroupPng
+                  avatar={
+                    item && item[filterItem[1]]
                   }
+                  name={filterArray[filterIndex][filterItem[0]]}
+                  type={defaultPngType === 0
+                    ? 'person'
+                    : 'group'}
+                  index={0}
                   size={26}
                 />
                 <div className="filter-menu-name">{item[filterItem[0]]}</div>
               </div>
             );
-          })}
+          }) : null}
         </DropMenu>
       </div>
     </div>

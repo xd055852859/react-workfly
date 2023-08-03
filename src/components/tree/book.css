@@ -1,4 +1,6 @@
 .book-button {
-  position: fixed;
-  z-index: 10;
+  /* position: fixed; */
+  /* position: absolute; */
+  right: 10px;
+  z-index: 1
 }

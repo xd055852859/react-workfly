@@ -10,17 +10,14 @@ module.exports = class webSocket {
     let { socketUrl, timeout = 0 } = this.param;
     // 检测当前浏览器是什么浏览器来决定用什么socket
     // if ('WebSocket' in window) {
-    //     console.log('WebSocket');
 
     this.socket = new WebSocket(socketUrl);
     // }
     // else if ('MozWebSocket' in window) {
-    //     console.log('MozWebSocket');
 
     //     this.socket = new MozWebSocket(socketUrl);
     // }
     // else {
-    //     console.log('SockJS');
 
     //     this.socket = new SockJS(socketUrl);
     // }
@@ -56,9 +53,9 @@ module.exports = class webSocket {
   // 关闭连接触发
   onclose = (e) => {
     this.isSucces = true; //关闭将标识符改为true
-    console.log('关闭socket收到的数据');
     let { socketClose } = this.param;
     socketClose && socketClose(e);
+    console.log("关闭")
     // 根据后端返回的状态码做操作
     // 我的项目是当前页面打开两个或者以上，就把当前以打开的socket关闭
     // 否则就20秒重连一次，直到重连成功为止
@@ -78,6 +75,7 @@ module.exports = class webSocket {
     // socket连接报错触发
     let { socketError } = this.param;
     this.socket = null;
+    console.log("错误")
     socketError && socketError(e);
   };
   sendMessage = (value) => {

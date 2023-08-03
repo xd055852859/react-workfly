@@ -94,7 +94,7 @@ function* getWorkingTableTask(action: any) {
       action.targetUKey,
       action.type2,
       action.finishPercentArray,
-      action.fileDay
+      action.isPath
     );
     if (res.msg === 'OK') {
       yield put(getWorkingTableSuccess(res.result));

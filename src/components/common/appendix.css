@@ -4,8 +4,14 @@
   height: 80px !important;
 }
 .ant-upload-list {
-  width: 100% !important;
+  width: 370px !important;
 }
 .ant-upload-span > a {
   width: 300px !important;
+}
+.ant-upload.ant-upload-drag .ant-upload{
+  padding:8px 0px !important;
+}
+.ant-upload.ant-upload-drag p.ant-upload-drag-icon .anticon{
+  font-size: 30px !important;
 }

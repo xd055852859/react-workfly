@@ -18,7 +18,7 @@ const ColumnChart: React.FC<ColumnChartProps> = (props) => {
       data,
       height: height,
       width: width,
-      isGroup: true,
+      isStack: true,
       xField: "name",
       yField: "number",
       seriesField: "type",
@@ -43,7 +43,7 @@ const ColumnChart: React.FC<ColumnChartProps> = (props) => {
         active: {
           style: {
             lineWidth: 0,
-            fillOpacity: 0.65
+            fillOpacity: 0.65,
           },
         },
       },
@@ -70,6 +70,7 @@ const ColumnChart: React.FC<ColumnChartProps> = (props) => {
       });
     }
   }, [data]);
+  
   return <div id={columnId}></div>;
 };
 ColumnChart.defaultProps = {};

@@ -1,6 +1,9 @@
+import { message } from "antd";
 import axios from "axios";
 import moment from "moment";
 import { getSearchParamValue } from "../services/util";
+import qs from "qs";
+declare var window: Window;
 const AUTH_URL = "https://baokudata.qingtime.cn/sgbh";
 const HOME_URL = "https://workingdata.qingtime.cn/sgbh";
 // const AUTH_URL = 'http://192.168.0.101:8529/_db/working/my_sgbh';
@@ -11,109 +14,192 @@ const SOCKET_URL = "https://workingdata.qingtime.cn";
 const PNG_URL = "https://timeosdata.qingtime.cn";
 // const API_URL = "http://192.168.1.108:8529/_db/timeOS/myOs"; let token:
 // string | null = localStorage.getItem('auth_token');
+
+//用于根据当前请求的信息，生成请求 Key；
+function generateReqKey(config) {
+  const { method, url, params, data } = config;
+  return [method, url, qs.stringify(params), qs.stringify(data)].join("&");
+}
+//用于把当前请求信息添加到pendingRequest对象中；
+const pendingRequest = new Map();
+function addPendingRequest(config) {
+  const requestKey = generateReqKey(config);
+  config.cancelToken =
+    config.cancelToken ||
+    new axios.CancelToken((cancel) => {
+      if (!pendingRequest.has(requestKey)) {
+        pendingRequest.set(requestKey, cancel);
+      }
+    });
+}
+//检查是否存在重复请求，若存在则取消已发的请求。
+
+function removePendingRequest(config) {
+  const requestKey = generateReqKey(config);
+  if (pendingRequest.has(requestKey)) {
+    const cancelToken = pendingRequest.get(requestKey);
+    cancelToken(requestKey);
+    pendingRequest.delete(requestKey);
+  }
+}
+
 let auth_token: string | null =
+  //@ts-ignore
   getSearchParamValue(window.location.search, "token") ||
   localStorage.getItem("token");
-// axios.defaults.headers.common['Cache-Control'] = 'no-store'
-// axios.defaults.timeout = 30000;
-// axios.interceptors.response.use(
-//   (response) => {
-//     return response;
-//   },
-//   (error) => {
-//     if (error.message.includes('timeout')) {
-//       // 判断请求异常信息中是否含有超时timeout字符串
-//       // console.log('错误回调', error);
-//       // alert('网络超时,数据获取失败');
-//       message.error('网络超时,数据获取失败', 2);
-//       return Promise.reject(error); // reject这个错误信息
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+
+axios.interceptors.request.use(
+  function (config) {
+    removePendingRequest(config); // 检查是否存在重复请求，若存在则取消已发的请求
+    addPendingRequest(config); // 把当前请求信息添加到pendingRequest对象中
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+axios.interceptors.response.use(
+  (response) => {
+    removePendingRequest(response.config);
+    // 从pendingRequest对象中移除请求
+    console.log(response.data.statusCode);
+    //@ts-ignore
+    if (response.data.statusCode == 701) {
+      // ElMessage.error("请登录");
+      message.error("请登录");
+      const redirect = `${window.location.protocol}//${window.location.host}`;
+      // window.location.href = `https://account.qingtime.cn?apphigh=27&redirect=${redirect}&logo=https://working.vip/page/logo2.svg`;
+      localStorage.clear();
+      window.open(`${redirect}/welcome`, "_self");
+    } else if (response.data.status === 201) {
+      console.log(response.data.msg);
+      // message.error(response.data.msg);
+    }
+    return response;
+  },
+  (error) => {
+    removePendingRequest(error.config || {}); // 从pendingRequest对象中移除请求
+    if (axios.isCancel(error)) {
+      console.log("已取消的重复请求：" + error.message);
+    } else {
+      // 添加异常处理
+    }
+    return Promise.reject(error);
+  }
+);
+
 const request = {
-  get(path: string, params?: object) {
-    return new Promise(async function (resolve, reject) {
-      try {
-        const response = await axios({
-          method: "get",
-          url: path,
+  get: (url, params) => {
+    // todo ping
+    return new Promise((resolve, reject) => {
+      axios
+        .get(url, {
           params: params,
-          headers: {
-            // 'Content-type': 'application/x-www-form-urlencoded',
-            token: auth_token,
-          },
+          headers: { token: auth_token },
+        })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+          reject(error);
         });
-        resolve(response.data);
-      } catch (error) {
-        reject(error);
-      }
     });
   },
-  post(path: string, params: object) {
-    return new Promise(async function (resolve, reject) {
-      try {
-        const response = await axios({
-          method: "post",
-          url: path,
-          data: params,
-          headers: {
-            token: auth_token,
-          },
+  post: (url, params, otherToken?: string) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(url, params, {
+          headers: { token: otherToken ? otherToken : auth_token },
+        })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+          reject(error);
         });
-        resolve(response.data);
-      } catch (error) {
-        reject(error);
-      }
     });
   },
-  patch(path: string, params: object) {
+  patch: (url, params) => {
     return new Promise(async function (resolve, reject) {
-      try {
-        const response = await axios({
-          method: "patch",
-          url: path,
-          data: params,
-          headers: {
-            token: auth_token,
-          },
+      axios
+        .patch(url, params, {
+          headers: { token: auth_token },
+        })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+          reject(error);
         });
-        resolve(response.data);
-      } catch (error) {
-        reject(error);
-      }
     });
   },
-  delete(path: string, params: object) {
+  delete: (url, params) => {
     return new Promise(async function (resolve, reject) {
-      try {
-        const response = await axios({
-          method: "delete",
-          url: path,
+      axios
+        .delete(url, {
           data: params,
-          headers: {
-            token: auth_token,
-          },
+          // paramsSerializer: params => {
+          //   return qs.stringify(params, { indices: false })
+          // }
+        })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+          reject(error);
         });
-        resolve(response.data);
-      } catch (error) {
-        reject(error);
-      }
     });
   },
 };
 const common = {
-  getWeather(lo: number, la: number) {
-    return request.get(HOME_URL + "/weather/weatherSingleNoToken", {
-      lo: lo,
-      la: la,
-      detail: 0,
-    });
+  // getWeather(lo: number, la: number) {
+  //   return request.get(HOME_URL + "/weather/weatherSingleNoToken", {
+  //     lo: lo,
+  //     la: la,
+  //     detail: 0,
+  //   });
+  // },
+  getWeather() {
+    return request.get("https://api.vvhan.com/api/weather",{});
   },
   getVersion(type: number) {
     return request.get(AUTH_URL + "/version/dangGuiAndroidVersion", {
       type: type,
     });
+  },
+  todayEnergyValueRanking() {
+    return request.post(HOME_URL + "/cardLog/todayEnergyValueRanking", {
+      token: auth_token,
+    });
+  },
+  getChartData(type: number, startTime: number, endTime: number) {
+    return request.post(HOME_URL + "/cardLog/energyValueStatistics", {
+      token: auth_token,
+      type: type,
+      startTime: startTime,
+      endTime: endTime,
+    });
+  },
+  createWorkingTreeNode(
+    workingToken: string,
+    nodeName: string,
+    groupKey: string
+  ) {
+    return request.post(
+      PNG_URL + "/node",
+      {
+        type: "doc",
+        docType: "knowledgebase",
+        name: nodeName,
+        appKey: "2146371795",
+        workflyOnlyKey: groupKey,
+      },
+      workingToken
+    );
   },
 };
 const auth = {
@@ -153,7 +239,8 @@ const auth = {
   getMessageList(
     curPage: number,
     perPage: number,
-    filterType: number,
+    filterType: number[],
+    type: number,
     isReceipt?: number
   ) {
     return request.post(HOME_URL + "/card/getNoticeList", {
@@ -161,6 +248,7 @@ const auth = {
       curPage: curPage,
       perPage: perPage,
       filterType: filterType,
+      type: type,
       isReceipt: isReceipt,
     });
   },
@@ -190,9 +278,10 @@ const auth = {
     return request.post(HOME_URL + "/card/getPrompt", { token: auth_token });
   },
   getUptoken() {
-    return request.get(HOME_URL + "/upTokenQiniu/getQiNiuUpToken", {
+    return request.get(AUTH_URL + "/upTokenQiniu/getQiNiuUpToken", {
       token: auth_token,
       type: 2,
+      bucketType: 3,
     });
   },
   getNote(targetUKey: string | number, startTime: number) {
@@ -321,7 +410,7 @@ const auth = {
     return request.get(PNG_URL + "/wallPaper", {
       style: "web",
       page: page,
-      limit: 54,
+      limit: 99,
     });
   },
   viewWallPapers(wallKey: string) {
@@ -417,7 +506,7 @@ const task = {
     targetUKey: string | number,
     type2: number,
     finishPercentArray: number[],
-    fileDay?: number
+    isPath?: number
   ) {
     return request.post(HOME_URL + "/card/allGroupTaskNew", {
       token: auth_token,
@@ -425,7 +514,7 @@ const task = {
       targetUKey: targetUKey,
       type2: type2,
       finishPercentArray: finishPercentArray,
-      fileDay: fileDay,
+      isPath: isPath ? isPath : 1,
       typeArray: [2, 6],
     });
   },
@@ -553,12 +642,22 @@ const task = {
         : moment().hour() > 17
         ? moment().add(1, "days").endOf("day").valueOf()
         : moment().endOf("day").valueOf(),
+      taskStartDate: moment().valueOf(),
       groupRole: params.groupRole,
       cardIndex: params.cardIndex ? params.cardIndex : 0,
       indexTree: params.indexTree ? params.indexTree : 0,
       labelKey: params.labelKey ? params.labelKey : null,
       parentCardKey: params.parentCardKey,
       extraData: params.extraData ? params.extraData : {},
+    });
+  },
+  addNormalTask(params: any) {
+    return request.post(HOME_URL + "/card", {
+      token: auth_token,
+      rootType: 0,
+      finishPercent: 0,
+      content: "",
+      ...params,
     });
   },
   deleteTask(cardKey: number | string, groupKey: number | string) {
@@ -568,17 +667,36 @@ const task = {
       groupKey: groupKey,
     });
   },
+  seniorDeleteTreeCard(cardKey: number | string, groupKey: number | string) {
+    return request.post(HOME_URL + "/card/seniorDeleteTreeCard", {
+      token: auth_token,
+      cardKey: cardKey,
+      groupKey: groupKey,
+    });
+  },
+
   getCardSearch(params: any) {
     return request.get(HOME_URL + "/card/searchCard", {
       token: auth_token,
       ...params,
     });
   },
-  addTaskLabel(groupKey: string, cardLabelName: number | string) {
+  getCardLast(params: any) {
+    return request.post(HOME_URL + "/card/getUpSertCardTime", {
+      token: auth_token,
+      ...params,
+    });
+  },
+  addTaskLabel(
+    groupKey: string,
+    cardLabelName: number | string,
+    executorKey: string
+  ) {
     return request.post(HOME_URL + "/card/addCardLabel", {
       token: auth_token,
       groupKey: groupKey,
       cardLabelName: cardLabelName,
+      executorKey: executorKey,
     });
   },
   changeTaskLabelName(labelKey: string, newLabelName: string) {
@@ -622,6 +740,15 @@ const task = {
       parentCardKey: parentCardKey ? parentCardKey : "",
     });
   },
+  //批量导入树任务
+
+  batchAddTreeCard(fatherCardKey: string, batchTitle: string) {
+    return request.post(HOME_URL + "/card/batchAddTreeCard", {
+      token: auth_token,
+      fatherCardKey: fatherCardKey,
+      batchTitle: batchTitle,
+    });
+  },
   changeTaskLabel(groupKey: string, cardKey: string, labelKey: string) {
     return request.patch(HOME_URL + "/card/setCardLabel", {
       token: auth_token,
@@ -644,12 +771,18 @@ const task = {
       ...labelObject,
     });
   },
-  getTaskHistory(cardKey: string, curPage: number, perPage: number) {
+  getTaskHistory(
+    cardKey: string,
+    curPage: number,
+    perPage: number,
+    isEnergyValue?: number
+  ) {
     return request.get(HOME_URL + "/cardLog/cardLogList", {
       token: auth_token,
       cardKey: cardKey,
       curPage: curPage,
       perPage: perPage,
+      isEnergyValue: isEnergyValue,
     });
   },
   getTaskComment(cardKey: string, curPage: number, perPage: number) {
@@ -694,10 +827,28 @@ const task = {
       endTime: endTime,
     });
   },
-  getTaskInfo(cardKey: string) {
-    return request.get(HOME_URL + "/card/cardDetail", {
+  getGroupDataTaskNew(
+    groupKey: string,
+    type: number,
+    creatorKey?: string,
+    executorKey?: string
+  ) {
+    return request.post(HOME_URL + "/card/getGroupCardList", {
       token: auth_token,
-      cardKey: cardKey,
+      groupKey: groupKey,
+      type: type,
+      creatorKey: creatorKey,
+      executorKey: executorKey,
+    });
+  },
+  getTaskInfo(cardKey: string) {
+    let obj: any = { cardKey: cardKey };
+    console.log("auth_token", auth_token);
+    if (auth_token && auth_token !== "null") {
+      obj.token = auth_token;
+    }
+    return request.get(HOME_URL + "/card/cardDetail", {
+      ...obj,
     });
   },
   //获取日程任务
@@ -707,6 +858,13 @@ const task = {
       targetUKey: targetUKey,
       startTime: startTime,
       endTime: endTime,
+    });
+  },
+  //获取任务
+  getCalendarCardList(params: any) {
+    return request.post(HOME_URL + "/card/getCalendarCardList", {
+      token: auth_token,
+      ...params,
     });
   },
   //获取日程详情
@@ -721,6 +879,12 @@ const task = {
     return request.post(HOME_URL + "/card/setEventFollowUser", {
       token: auth_token,
       ...params,
+    });
+  },
+  getCalendarGroup(targetUKey: string) {
+    return request.post(HOME_URL + "/group/getTogetherGroupInfo", {
+      token: auth_token,
+      targetUKey: targetUKey,
     });
   },
   //获取树任务
@@ -752,12 +916,10 @@ const task = {
       typeArray: typeArray ? typeArray : [2, 6],
     });
   },
-  getScheduleList(groupKeyArray: any, startTime: number, endTime: number) {
+  getScheduleList(parmas: any) {
     return request.post(HOME_URL + "/card/getScheduleList", {
       token: auth_token,
-      groupKeyArray: groupKeyArray,
-      startTime: startTime,
-      endTime: endTime,
+      ...parmas,
     });
   },
   createSchedule(params: any) {
@@ -765,6 +927,12 @@ const task = {
       token: auth_token,
       ...params,
       isWork: 2,
+    });
+  },
+  editSchedule(params: any) {
+    return request.post(HOME_URL + "/card/updateEventOrTaskNew", {
+      token: auth_token,
+      ...params,
     });
   },
   changeCircleSchedule(params: any) {
@@ -825,13 +993,19 @@ const task = {
     });
   },
   //访问文件列表
-  getVisitCardTime(groupKey: string, curPage: number, perPage: number) {
+  getVisitCardTime(
+    groupKey: string,
+    enterpriseGroupKey: string,
+    curPage: number,
+    perPage: number
+  ) {
     return request.post(HOME_URL + "/card/getVisitCardTime", {
       token: auth_token,
       groupKey: groupKey,
+      enterpriseGroupKey: enterpriseGroupKey,
       curPage: curPage,
       perPage: perPage,
-      typeArray: [10, 11, 12, 13, 14],
+      typeArray: [10, 11, 12, 13, 14, 15, 16],
     });
   },
   getCreateCardTime(groupKey: string, curPage: number, perPage: number) {
@@ -840,7 +1014,103 @@ const task = {
       groupKey: groupKey,
       curPage: curPage,
       perPage: perPage,
-      typeArray: [10, 11, 12, 13, 14],
+      typeArray: [10, 11, 12, 13, 14, 15, 16],
+    });
+  },
+  getTreeCollectDocList(curPage: number, perPage: number) {
+    return request.post(HOME_URL + "/card/getTreeCollectDocList", {
+      token: auth_token,
+      curPage: curPage,
+      perPage: perPage,
+    });
+  },
+  getCollectDocList(curPage: number, perPage: number) {
+    return request.post(HOME_URL + "/card/getCollectDocList", {
+      token: auth_token,
+      curPage: curPage,
+      perPage: perPage,
+    });
+  },
+  editAllTask(cardKeyArray: string[], patchData: any) {
+    return request.patch(HOME_URL + "/card/batchUpdateCard", {
+      token: auth_token,
+      cardKeyArray: cardKeyArray,
+      patchData: patchData,
+    });
+  },
+  deleteAllTask(cardKeyArray: string[], groupKey: string) {
+    return request.post(HOME_URL + "/card/batchDeleteTreeCard", {
+      token: auth_token,
+      cardKeyArray: cardKeyArray,
+      groupKey: groupKey,
+    });
+  },
+  followCard(cardKey: string, followKeyArray: string[]) {
+    return request.post(HOME_URL + "/followCard", {
+      token: auth_token,
+      cardKey: cardKey,
+      followKeyArray: followKeyArray,
+    });
+  },
+  //复制任务
+  cloneCard(
+    oldCardKey: string,
+    targetGroupKey: string,
+    targetLabelKey: string
+  ) {
+    return request.post(HOME_URL + "/card/cloneCard", {
+      token: auth_token,
+      oldCardKey: oldCardKey,
+      targetGroupKey: targetGroupKey,
+      targetLabelKey: targetLabelKey,
+    });
+  },
+  batchAddPicUrl(picData: any, urlArray: any) {
+    return request.post(HOME_URL + "/card/batchAddPicUrl", {
+      token: auth_token,
+      picData: picData,
+      urlArray: urlArray,
+    });
+  },
+  judgeUploadSpaceSize(groupKey: string, size: number) {
+    return request.post(HOME_URL + "/card/judgeUploadSpaceSize", {
+      token: auth_token,
+      groupKey: groupKey,
+      size: size,
+    });
+  },
+  upsertGroupCardVisitTime(
+    groupKey: string,
+    cardKey: string,
+    groupInfo: any,
+    cardInfo: any
+  ) {
+    return request.post(HOME_URL + "/card/upsertGroupCardVisitTime", {
+      token: auth_token,
+      groupKey: groupKey,
+      cardKey: cardKey,
+      groupInfo: groupInfo,
+      cardInfo: cardInfo,
+    });
+  },
+  getGroupCardVisitTimeList(groupKey?: string) {
+    return request.post(HOME_URL + "/card/getGroupCardVisitTimeList", {
+      token: auth_token,
+      groupKey: groupKey,
+    });
+  },
+  collectTask(cardKey: string, status: number) {
+    return request.post(HOME_URL + "/card/collectDoc", {
+      token: auth_token,
+      cardKey: cardKey,
+      status: status,
+    });
+  },
+  exportTree(nodeKey: string, type: string) {
+    return request.post(HOME_URL + "/card/exportTree", {
+      token: auth_token,
+      nodeKey: nodeKey,
+      type: type,
     });
   },
 };
@@ -925,11 +1195,16 @@ const group = {
       targetUidList: targetUidList,
     });
   },
-  addAllGroupMember(groupKey: string | null, newGroupMemberKeyArray: any) {
+  addAllGroupMember(
+    groupKey: string | null,
+    newGroupMemberKeyArray: any,
+    roleArray: any
+  ) {
     return request.post(HOME_URL + "/groupmember/addAndDeleteGroupMember", {
       token: auth_token,
       groupKey: groupKey,
       newGroupMemberKeyArray: newGroupMemberKeyArray,
+      roleArray: roleArray,
     });
   },
   deleteGroupMember(groupKey: string | null, targetUKeyList: any) {
@@ -973,13 +1248,26 @@ const group = {
   //设置默认执行者
   setLabelOrGroupExecutorKey(
     labelOrGroupKey: string | number,
-    executorKey: string | number,
+    executorKey: any,
     type: number
   ) {
     return request.post(HOME_URL + "/card/setLabelOrGroupExecutorKey", {
       token: auth_token,
       labelOrGroupKey: labelOrGroupKey,
       executorKey: executorKey,
+      type: type,
+    });
+  },
+  //设置默认关注者
+  setLabelOrGroupFollowUKeyArray(
+    labelOrGroupKey: string | number,
+    followUKeyArray: any,
+    type: number
+  ) {
+    return request.post(HOME_URL + "/card/setLabelOrGroupFollowUKeyArray", {
+      token: auth_token,
+      labelOrGroupKey: labelOrGroupKey,
+      followUKeyArray: followUKeyArray,
       type: type,
     });
   },
@@ -1065,7 +1353,7 @@ const group = {
       token: auth_token,
       type: type,
       curPage: curPage,
-      perPage: 9,
+      perPage: 10,
     });
   },
   clickPersonNumber(templateKey: string) {
@@ -1132,6 +1420,88 @@ const group = {
       property: property,
     });
   },
+  getCSGroupStatisticsInfo(customerServiceGroupKey: string) {
+    return request.post(
+      HOME_URL + "/customerService/getCSGroupStatisticsInfo ",
+      {
+        token: auth_token,
+        customerServiceGroupKey: customerServiceGroupKey,
+      }
+    );
+  },
+  getCustomServiceList(
+    customerServiceGroupKey: string,
+    curPage: number,
+    perPage: number
+  ) {
+    return request.post(HOME_URL + "/customerService/getCustomServiceList ", {
+      token: auth_token,
+      customerServiceGroupKey: customerServiceGroupKey,
+      curPage: curPage,
+      perPage: perPage,
+    });
+  },
+  getCustomList(
+    customerServiceGroupKey: string,
+    curPage: number,
+    perPage: number
+  ) {
+    return request.post(HOME_URL + "/customerService/getCustomList", {
+      token: auth_token,
+      customerServiceGroupKey: customerServiceGroupKey,
+      curPage: curPage,
+      perPage: perPage,
+    });
+  },
+  joinChatRoom(rocketChatGroupId: string) {
+    return request.post(HOME_URL + "/customerService/joinChatRoom", {
+      token: auth_token,
+      rocketChatGroupId: rocketChatGroupId,
+    });
+  },
+  getWorkOrderList(
+    customerServiceGroupKey: string,
+    curPage: number,
+    perPage: number
+  ) {
+    return request.post(HOME_URL + "/customerService/getWorkOrderList", {
+      token: auth_token,
+      customerServiceGroupKey: customerServiceGroupKey,
+      curPage: curPage,
+      perPage: perPage,
+    });
+  },
+  setCustomService(
+    customerServiceGroupKey: string,
+    targetUKey: string,
+    isCustomService: boolean
+  ) {
+    return request.post(HOME_URL + "/customerService/setCustomService ", {
+      token: auth_token,
+      customerServiceGroupKey: customerServiceGroupKey,
+      targetUKey: targetUKey,
+      isCustomService: isCustomService,
+    });
+  },
+  getCustomInfo(customerServiceGroupKey: string, targetUKey: string) {
+    return request.post(HOME_URL + "/customerService/getCustomInfo ", {
+      token: auth_token,
+      customerServiceGroupKey: customerServiceGroupKey,
+      targetUKey: targetUKey,
+    });
+  },
+  setCustomProperty(
+    customerServiceGroupKey: string,
+    targetUKey: string,
+    patchData: any
+  ) {
+    return request.post(HOME_URL + "/customerService/setCustomProperty ", {
+      token: auth_token,
+      customerServiceGroupKey: customerServiceGroupKey,
+      targetUKey: targetUKey,
+      patchData: patchData,
+    });
+  },
 };
 const company = {
   addUser(groupKey: string, userInfoArray: any) {
@@ -1179,8 +1549,9 @@ const company = {
     enterpriseGroupKey: string,
     curPage: number,
     perPage: number,
+    isStatus: number,
     searchCondition?: string,
-    currOrgKey?: any
+    currOrgKey?: any,
   ) {
     return request.post(HOME_URL + "/organization/getEnterpriseGroupList", {
       token: auth_token,
@@ -1188,6 +1559,7 @@ const company = {
       curPage: curPage,
       perPage: perPage,
       searchCondition: searchCondition,
+      isStatus: isStatus,
       currOrgKey: currOrgKey,
     });
   },
@@ -1208,11 +1580,16 @@ const company = {
       enterpriseGroupKey: enterpriseGroupKey,
     });
   },
-  getCompanyMemberList(enterpriseGroupKey: string, targetUKey: string) {
+  getCompanyMemberList(
+    enterpriseGroupKey: string,
+    targetUKey: string,
+    role?: number
+  ) {
     return request.post(HOME_URL + "/organization/getOrgMemberGroupRoleInfo", {
       token: auth_token,
       enterpriseGroupKey: enterpriseGroupKey,
       targetUKey: targetUKey,
+      role: role ? role : 1,
     });
   },
   getOrganizationTree(params: any) {
@@ -1344,7 +1721,9 @@ const company = {
     enterpriseGroupKey: string,
     isCare: number,
     curPage: number,
-    perPage: number
+    perPage: number,
+    sortType: number,
+    sortOrder: number
   ) {
     return request.post(
       HOME_URL + "/organization/getEnterpriseGroupGroupRankingList",
@@ -1354,6 +1733,8 @@ const company = {
         isCare: isCare,
         curPage: curPage,
         perPage: perPage,
+        sortType: sortType,
+        sortOrder: sortOrder,
       }
     );
   },
@@ -1361,7 +1742,9 @@ const company = {
     enterpriseGroupKey: string,
     isCare: number,
     curPage: number,
-    perPage: number
+    perPage: number,
+    sortType: number,
+    sortOrder: number
   ) {
     return request.post(
       HOME_URL + "/organization/getEnterpriseGroupUserRankingList",
@@ -1371,8 +1754,207 @@ const company = {
         isCare: isCare,
         curPage: curPage,
         perPage: perPage,
+        sortType: sortType,
+        sortOrder: sortOrder,
       }
     );
+  },
+  getEnterpriseGroupEnergyValueList(
+    enterpriseGroupKey: string,
+    startTime: number,
+    endTime: number,
+    curPage: number,
+    perPage: number,
+    groupKey?: string,
+    targetUKey?: string
+  ) {
+    return request.post(
+      HOME_URL + "/cardLog/getEnterpriseGroupEnergyValueList ",
+      {
+        token: auth_token,
+        enterpriseGroupKey: enterpriseGroupKey,
+        curPage: curPage,
+        perPage: perPage,
+        startTime: startTime,
+        endTime: endTime,
+        groupKey: groupKey,
+        targetUKey: targetUKey,
+      }
+    );
+  },
+  clearVitality(enterpriseGroupKey: string) {
+    return request.post(
+      HOME_URL + "/organization/clearEnterpriseGroupMemberNegativeEnergyValue",
+      {
+        token: auth_token,
+        enterpriseGroupKey: enterpriseGroupKey,
+      }
+    );
+  },
+  clearGroup(enterpriseGroupKey: string, targetUKey: string) {
+    return request.post(HOME_URL + "/organization/quitEnterpriseGroup", {
+      token: auth_token,
+      enterpriseGroupKey: enterpriseGroupKey,
+      targetUKey: targetUKey,
+    });
+  },
+  batchSwitchFSOrg(params: any) {
+    return request.post(HOME_URL + "/organization/batchSwitchFSOrg", {
+      token: auth_token,
+      ...params,
+    });
+  },
+};
+const okr = {
+  getOKRPeriodList(enterpriseGroupKey: string) {
+    return request.post(HOME_URL + "/okr/getOKRPeriodList", {
+      token: auth_token,
+      enterpriseGroupKey: enterpriseGroupKey,
+    });
+  },
+  getHistoryOKRList(enterpriseGroupKey: string) {
+    return request.post(HOME_URL + "/okr/getHistoryOKRList", {
+      token: auth_token,
+      enterpriseGroupKey: enterpriseGroupKey,
+    });
+  },
+  createNextMonthPeriod(enterpriseGroupKey: string) {
+    return request.post(HOME_URL + "/okr/createNextMonthPeriod", {
+      token: auth_token,
+      enterpriseGroupKey: enterpriseGroupKey,
+    });
+  },
+  getOKRUserList(enterpriseGroupKey: string, periodKey: string) {
+    return request.post(HOME_URL + "/okr/getOKRUserList", {
+      token: auth_token,
+      enterpriseGroupKey: enterpriseGroupKey,
+      periodKey: periodKey,
+    });
+  },
+  createOKR(params: any) {
+    return request.post(HOME_URL + "/okr/createOKR", {
+      token: auth_token,
+      ...params,
+    });
+  },
+  getOKRDetail(
+    enterpriseGroupKey: string,
+    periodKey: string,
+    targetUKey: string,
+    type: number,
+    currOKey?: string
+  ) {
+    return request.post(HOME_URL + "/okr/getOKRDetail", {
+      token: auth_token,
+      enterpriseGroupKey: enterpriseGroupKey,
+      periodKey: periodKey,
+      targetUKey: targetUKey,
+      type: type,
+      currOKey: currOKey,
+    });
+  },
+  upAlign(oKey: string, upLevelOKey: string, upLevelKRKey: string) {
+    return request.post(HOME_URL + "/okr/upAlign", {
+      token: auth_token,
+      oKey: oKey,
+      upLevelOKey: upLevelOKey,
+      upLevelKRKey: upLevelKRKey,
+    });
+  },
+  getSingleOKRDetail(oKey: string) {
+    return request.post(HOME_URL + "/okr/getSingleOKRDetail", {
+      token: auth_token,
+      oKey: oKey,
+    });
+  },
+  setKRProperty(krKey: string, patchData: any) {
+    return request.post(HOME_URL + "/okr/setKRProperty", {
+      token: auth_token,
+      krKey: krKey,
+      patchData: patchData,
+    });
+  },
+  createKR(oKey: string, krTitles: any) {
+    return request.post(HOME_URL + "/okr/createKR", {
+      token: auth_token,
+      oKey: oKey,
+      krTitles: krTitles,
+    });
+  },
+  updateOnlyOProperty(
+    oKey: string,
+    upLevelOKey: string,
+    upLevelKRKey: string,
+    patchData: any
+  ) {
+    return request.post(HOME_URL + "/okr/updateOnlyOProperty", {
+      token: auth_token,
+      oKey: oKey,
+      upLevelOKey: upLevelOKey,
+      upLevelKRKey: upLevelKRKey,
+      patchData: patchData,
+    });
+  },
+  deleteKR(krKey: string) {
+    return request.post(HOME_URL + "/okr/deleteKR", {
+      token: auth_token,
+      krKey: krKey,
+    });
+  },
+  deleteO(oKey: string) {
+    return request.post(HOME_URL + "/okr/deleteO", {
+      token: auth_token,
+      oKey: oKey,
+    });
+  },
+  getKRTaskList(krKey: string) {
+    return request.post(HOME_URL + "/okr/getKRTaskList", {
+      token: auth_token,
+      krKey: krKey,
+    });
+  },
+  cancelUpAlign(oKey: string) {
+    return request.post(HOME_URL + "/okr/cancelUpAlign", {
+      token: auth_token,
+      oKey: oKey,
+    });
+  },
+  cancelKRDownAlign(oKey: string, krKey: string) {
+    return request.post(HOME_URL + "/okr/cancelKRDownAlign", {
+      token: auth_token,
+      oKey: oKey,
+      krKey: krKey,
+    });
+  },
+  setOkrConfig(
+    enterpriseGroupKey: string,
+    monthLong: number,
+    isOpenYear: number
+  ) {
+    return request.post(HOME_URL + "/okr/setOkrConfig", {
+      token: auth_token,
+      enterpriseGroupKey: enterpriseGroupKey,
+      monthLong: monthLong,
+      isOpenYear: isOpenYear,
+    });
+  },
+  updateOOrKROrder(params) {
+    return request.post(HOME_URL + "/okr/updateOOrKROrder", {
+      token: auth_token,
+      ...params,
+    });
+  },
+  getOKRUserStatistics(
+    enterpriseGroupKey: string,
+    periodKey: string,
+    targetUKey: string
+  ) {
+    return request.post(HOME_URL + "/okr/getOKRUserStatistics", {
+      token: auth_token,
+      enterpriseGroupKey: enterpriseGroupKey,
+      periodKey: periodKey,
+      targetUKey: targetUKey,
+    });
   },
 };
 const thirdApi = {
@@ -1380,10 +1962,12 @@ const thirdApi = {
     return request.get("https://icondata.qingtime.cn/icon", {
       page: page,
       limit: 200,
+      order: "asc",
+      sortField: "createTime",
     });
   },
   searchThirdPng(page: number) {
-    return request.post("https://icondata.qingtime.cn/icon?page=1&limit=20", {
+    return request.post("https://icondata.qingtime.cn/icon", {
       page: page,
       limit: 20,
     });
@@ -1397,6 +1981,7 @@ export default {
   member,
   group,
   company,
+  okr,
   thirdApi,
   ROCKET_CHAT_URL,
   SOCKET_URL,

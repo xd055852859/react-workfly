@@ -1,12 +1,15 @@
 import React from "react";
 import "./groupTableTreeItem.css";
+
 interface GroupTableTreeItemProps {
   setTypeDialogShow: any;
   setTreeTypeVisible: any;
+  targetNode: any;
+  reflashNode: any;
 }
 
 const GroupTableTreeItem: React.FC<GroupTableTreeItemProps> = (props) => {
-  const { setTypeDialogShow, setTreeTypeVisible } = props;
+  const { setTypeDialogShow, setTreeTypeVisible, targetNode } = props;
   return (
     <div className="groupTableTreeItem">
       <div className="groupTableTreeItem-item">
@@ -34,6 +37,9 @@ const GroupTableTreeItem: React.FC<GroupTableTreeItemProps> = (props) => {
         onClick={() => {
           setTypeDialogShow(1);
         }}
+        onMouseEnter={() => {
+          setTreeTypeVisible(0);
+        }}
       >
         <div className="groupTableTreeItem-title">批量导入</div>
       </div>
@@ -50,31 +56,22 @@ const GroupTableTreeItem: React.FC<GroupTableTreeItemProps> = (props) => {
         onClick={() => {
           setTypeDialogShow(3);
         }}
-      >
-        <div className="groupTableTreeItem-title">打包节点</div>
-      </div>
-      {/* <div
-        className="groupTableTreeItem-item"
         onMouseEnter={() => {
-          setTypeDialogShow(0);
+          setTreeTypeVisible(0);
         }}
       >
-        <EditOutlined />
-        <div
-          className="groupTableTreeItem-title"
-          onMouseEnter={() => {
-            setTypeDialogShow(0);
-          }}
-        >
-          节点重命名
+        <div className="groupTableTreeItem-title">
+          {targetNode?.extraData?.pack ? "解包" : "打包"}节点
         </div>
-      </div> */}
+      </div>
       <div className="groupTableTreeItem-item">
-        {/* <DeleteOutline /> */}
         <div
           className="groupTableTreeItem-title"
           onClick={() => {
             setTypeDialogShow(4);
+          }}
+          onMouseEnter={() => {
+            setTreeTypeVisible(0);
           }}
         >
           删除节点

@@ -3,6 +3,7 @@
   position: relative;
   z-index: 1;
 }
+
 .tabs-tab-nav {
   width: 100%;
   height: 35px;
@@ -12,6 +13,7 @@
   position: relative;
   z-index: 5;
 }
+
 .tabs-tab-nav-item {
   /* width: 75px; */
   height: 100%;
@@ -22,9 +24,10 @@
   justify-content: center;
   cursor: pointer;
   font-size: 12px;
-  padding: 0px 5px;
+  padding: 0px 3px;
   box-sizing: border-box;
 }
+
 .search-icon,
 .sort-icon,
 .add-icon {
@@ -34,6 +37,14 @@
   right: 10px;
   cursor: pointer;
 }
+
+.search-icon:hover,
+.sort-icon:hover,
+.add-icon:hover {
+  width: 22px;
+  height: 22px;
+}
+
 .search-input-container {
   width: 310px;
   min-height: 35px;
@@ -47,30 +58,40 @@
   position: relative;
   z-index: 1;
   padding: 10px 0px;
+  box-sizing: border-box;
   /* padding: 0px 10px;
-  box-sizing: border-box; */
+ */
 }
+
+.search-input-container .ant-select-selector {
+  border: 0px !important;
+}
+
 .search-container {
-  width: 310px;
-  height: calc(100vh - 360px);
-  padding: 11px 14px;
+  width: 300px;
+  height: calc(100vh - 455px);
+  padding: 11px 8px;
   box-sizing: border-box;
   overflow: auto;
--webkit-overflow-scrolling:touch;
+  -webkit-overflow-scrolling: touch;
 }
+
 .search-input {
-  width: 90%;
+  width: calc(100% - 100px);
   height: 100%;
-  margin-left: 5%;
+  margin-left: 10px;
   border: 1px solid #d9d9d9;
-  border-radius: 8px;
+  border-radius: 2px;
 }
+
 .search-input .ant-input-group-addon {
   margin-right: 1px;
 }
+
 .search-input .ant-btn {
   border: 0px !important;
 }
+
 .search-icon-container {
   width: 18px;
   height: 100%;
@@ -83,16 +104,16 @@
 .personMember-item:hover {
   background-color: #f0f0f0;
 }
+
 /* .sort-icon {
   width: 14px;
   height: 18px;
   right: 40px;
 } */
 .add-icon {
-  width: 21px;
-  height: 21px;
-  right: 40px;
+  right: 32px;
 }
+
 .personMember {
   /* height: 100%; */
   width: 100%;
@@ -102,17 +123,20 @@
   padding: 20px 0px 10px 0px;
   box-sizing: border-box;
 }
+
 .personMember-search {
   width: 100%;
   height: 40px;
   margin-bottom: 10px;
 }
+
 .personMember-container {
   width: 100%;
   /* height: calc(100% - 50px); */
   /* overflow: auto;
 -webkit-overflow-scrolling:touch; */
 }
+
 .personMember-item {
   width: 100%;
   height: 38px;
@@ -123,12 +147,14 @@
   color: rgba(51, 51, 51, 1);
   line-height: 46px;
 }
+
 .personMember-item-title {
   width: 70%;
   height: 100%;
   display: flex;
   align-items: center;
 }
+
 .personMember-item-avatar {
   width: 34px;
   height: 34px;
@@ -136,11 +162,13 @@
   margin-right: 10px;
   flex-shrink: 0;
 }
+
 .personMember-item-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .personMember-item-button {
   width: 30%;
   height: 100%;
@@ -156,6 +184,7 @@
   display: flex;
   flex-wrap: wrap;
 }
+
 .tabs-sort-item {
   width: 100%;
   height: 30px;
@@ -164,10 +193,13 @@
   justify-content: center;
   cursor: pointer;
 }
+
 .tabs-sort-item:hover {
   background: #f0f0f0;
 }
+
 .personMember-item-name {
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -183,31 +215,36 @@
   align-items: center;
   justify-content: flex-end;
 }
+
 .addGroup-container {
   /* width: 300px; */
   /* height: 288px; */
   padding: 8px 16px;
   box-sizing: border-box;
 }
+
 .addGroup-item {
   width: 100%;
-  height: 60px;
+  height: 80px;
   display: flex;
   margin-bottom: 5px;
   cursor: pointer;
   position: relative;
   z-index: 1;
 }
+
 .addGroup-item-img {
   width: 25px;
   height: 25px;
   margin-right: 10px;
 }
+
 .addGroup-item-title {
   width: calc(100% - 35px);
   height: 100%;
 }
-.addGroup-item-title > div:nth-child(1) {
+
+.addGroup-item-title>div:nth-child(1) {
   width: 100%;
   height: 22px;
   font-size: 16px;
@@ -217,7 +254,8 @@
   line-height: 22px;
   margin-bottom: 5px;
 }
-.addGroup-item-title > div:nth-child(2) {
+
+.addGroup-item-title>div:nth-child(2) {
   width: 100%;
   height: 34px;
   font-size: 12px;
@@ -226,6 +264,40 @@
   color: #666666;
   line-height: 17px;
 }
+
 .tabs-search-box {
   top: 35px !important;
+}
+
+.tabs-file {
+  height: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 9px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+.tabs-file>div {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.addGroup-menu-item {
+  height: 300px
+}
+
+.groupCreate-box {
+  padding: 10px 5px;
+}
+
+
+.groupCreate-box .ant-menu-vertical>.ant-menu-submenu>.ant-menu-submenu-title {
+  height: 60px !important;
+  line-height: 60px !important;
 }

@@ -24,7 +24,6 @@ const UserCenter: React.FC<UserCenterProps> = (props) => {
   const { onClose } = props;
   const dispatch = useDispatch();
   const user = useTypedSelector((state) => state.auth.user);
-  const uploadToken = useTypedSelector((state) => state.auth.uploadToken);
   const token = useTypedSelector((state) => state.auth.token);
   const [avatar, setAvatar] = useState("");
   const [upImg, setUpImg] = useState<any>(null);
@@ -91,9 +90,14 @@ const UserCenter: React.FC<UserCenterProps> = (props) => {
 
     uploadFile.uploadImg(
       imgFile,
-      uploadToken,
       mimeType,
       function (url: string) {
+        // api.task.batchAddPicUrl(cardKey, {
+        //   type: "附件",
+        //   url: url,
+        //   userKey: user._key,
+        //   userName: user.profile.nickName,
+        // });
         dispatch(setMessage(true, "图片上传成功", "success"));
         setAvatar(url);
       }
@@ -204,6 +208,7 @@ const UserCenter: React.FC<UserCenterProps> = (props) => {
           value={birthday}
           onChange={handleDateChange}
           format={"YYYY-MM-DD"}
+          allowClear={false}
         />
       </div>
       <div className="user-button-info">
@@ -231,7 +236,7 @@ const UserCenter: React.FC<UserCenterProps> = (props) => {
         centered={true}
       >
         <Cropper
-          style={{ width: "100%", height: "95%" }}
+          style={{ width: "100%", height: "75vh" }}
           // preview=".uploadCrop"
           guides={true}
           src={upImg}

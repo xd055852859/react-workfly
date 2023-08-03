@@ -2,11 +2,13 @@
   width: 100%;
   height: calc(100vh - 68px);
   overflow: auto;
--webkit-overflow-scrolling:touch;
+  -webkit-overflow-scrolling: touch;
   padding: 5px 0px;
   box-sizing: border-box;
   z-index: 1;
+  font-weight: 500;
 }
+
 .contact::-webkit-scrollbar {
   width: 1.5px;
   height: 1.5px;
@@ -15,19 +17,22 @@
 .contact .menu-wrapper {
   background-color: transparent !important;
 }
+
 .contact-item {
   height: 45px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0px 9px;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   box-sizing: border-box;
   cursor: pointer;
 }
+
 .contact-item:hover {
   background: rgba(255, 255, 255, 0.34);
 }
+
 .contact-avatar {
   width: 27px;
   height: 27px;
@@ -35,11 +40,13 @@
   margin-right: 5px;
   flex-shrink: 0;
 }
+
 .contact-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .contact-online {
   width: 10px;
   height: 10px;
@@ -48,19 +55,31 @@
   left: 16px;
   bottom: 7px;
   z-index: 5;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 .contact-care-img,
-.contact-uncare-img {
-  width: 16px;
+.contact-uncare-img,
+.contact-uncare-button {
   height: 14.5px;
   display: flex;
   align-items: center;
   cursor: pointer;
   margin-left: 5px;
 }
+
+.contact-care-img,
+.contact-uncare-img {
+  width: 16px;
+}
+
 .contact-uncare-img {
   display: none;
 }
+
 .contact-item:hover .contact-uncare-img {
   display: flex;
 }
@@ -72,6 +91,7 @@
   position: relative;
   z-index: 1;
 }
+
 .contact-right {
   width: 25px;
   height: 25px;
@@ -86,6 +106,7 @@
   font-size: 12px;
   margin-top: 4px;
 }
+
 .contanct-time {
   width: 0;
   height: 0;
@@ -96,6 +117,7 @@
   top: -2px;
   right: -25px;
 }
+
 .contanct-time-hour {
   width: 10px;
   height: 10px;
@@ -109,6 +131,7 @@
   transform: scale(0.8);
   text-align: center;
 }
+
 .contanct-time-day {
   width: 10px;
   height: 10px;
@@ -120,41 +143,68 @@
   z-index: 3;
   text-align: center;
 }
+
 .contact-left-title {
-  width: calc(100% - 35px);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   flex-shrink: 0;
 }
+
 .contact::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
 }
+
 .contact-search {
-  width: calc(100% - 85px);
+  width: calc(100% - 140px);
   height: 35px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
   padding: 0px 9px;
   box-sizing: border-box;
-  position: absolute;
-  top: 10px;
-  right: 10px;
   border: 1px solid #dfdfdf;
   border-radius: 5px;
 }
+
+.contact-phone-search {
+  width: 100%;
+  height: 35px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 9px;
+  box-sizing: border-box;
+  border: 1px solid #dfdfdf;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
 .contact-search-input {
   width: calc(100% - 24px);
   height: 30px;
   border: 0px;
 }
+
+.contact-phone-search-input {
+  width: calc(100% - 24px);
+  height: 30px;
+  border: 0px;
+  color: #fff;
+  background-color: transparent;
+}
+
+.contact-phone-search-input::-webkit-input-placeholder {
+  /* WebKit browsers */
+  color: #fff;
+}
+
 .contact-search-button {
   height: 30px;
   margin-left: 10px;
   color: #fff;
 }
+
 .contact-icon-right {
   width: 75px;
   height: 100%;
@@ -162,6 +212,13 @@
   align-items: center;
   justify-content: flex-end;
 }
+
+.contact-box {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
 .contact-tree-path {
   width: 100%;
   height: 50px;
@@ -175,19 +232,34 @@
   padding: 0px 10px;
   box-sizing: border-box;
 }
+
 .contact-tree-path-item {
   cursor: pointer;
 }
+
 .contact-tree-path .MuiBreadcrumbs-separator {
   margin-left: 0px !important;
   margin-right: 0px !important;
 }
-.contact-tree-path .ant-breadcrumb > span {
+
+.contact-tree-path .ant-breadcrumb>span {
   color: #bfbfbf;
 }
-.contact-tree-path .ant-breadcrumb > span:last-child {
+
+.contact-tree-path .ant-breadcrumb>span:last-child {
   color: #fff;
 }
+
 .ant-breadcrumb-separator {
   color: #1890ff;
+}
+
+.contact-header {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 10px;
+  box-sizing: border-box;
 }

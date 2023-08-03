@@ -32,6 +32,7 @@ import work7Png from "../../assets/img/work7.png";
 import work8Png from "../../assets/img/work8.png";
 import work9Png from "../../assets/img/work9.png";
 import work10Png from "../../assets/img/work10.png";
+declare var window: Window 
 interface PhoneWelcomeProps {
   toLogin: Function;
   version: string;
@@ -118,7 +119,7 @@ const PhoneWelcome: React.FC<PhoneWelcomeProps> = (props) => {
               <div className="dropDown-box">
                 <Code
                   url={"https://itunes.apple.com/cn/app/id1516401175?ls=1&mt=8"}
-                  id={"ios"}
+                  id={"IOS"}
                 />
               </div>
             }
@@ -157,7 +158,7 @@ const PhoneWelcome: React.FC<PhoneWelcomeProps> = (props) => {
               <div className="dropDown-box">
                 <Code
                   url={"https://workingdownload.qingtime.cn/"}
-                  id={"android"}
+                  id={"Android"}
                 />
               </div>
             }
@@ -294,7 +295,9 @@ const PhoneWelcome: React.FC<PhoneWelcomeProps> = (props) => {
           {workImg.map((workItem, workIndex) => {
             return (
               <div className="workPage-item" key={"work" + workIndex}>
-                <img src={workItem} alt="" />
+                <div className="workPage-item-logo">
+                  <img src={workItem} alt="" />
+                </div>
                 <div
                   className="workPage-item-title"
                   style={{ fontSize: "10px" }}

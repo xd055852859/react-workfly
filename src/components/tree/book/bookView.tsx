@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./bookView.css";
-import { Avatar } from "antd";
 import { Catalog } from "tree-graph-react";
 import _ from "lodash";
 import moment from "moment";
+import Avatar from "../../common/avatar";
 
-import defaultPersonPng from "../../../assets/img/defaultPerson.png";
 interface BookViewProps {
   nodeObj: any;
   gridList: any;
@@ -31,26 +30,26 @@ const BookView: React.FC<BookViewProps> = (props) => {
             </div>
           );
         }
-        return prevInfoMap
+        return { ...prevInfoMap }
       });
     }
-  }, [nodeObj, gridList]);
-
+  }, [nodeObj, gridList,targetData]);
   useEffect(() => {
     if (nodeObj) {
       setInfo(
         <div className="bookView-person">
-          <div className="bookView-person-name">{`作者：${
-            targetData ? targetData.creatorName : ""
+          <div className="bookView-person-name">{`作者：${targetData ? targetData.creatorName : ""
             // user.profile.nickName
-          }`}</div>
+            }`}</div>
           <div className="bookView-person-avatar">
             <Avatar
-              src={
-                targetData.creatorAvatar
-                  ? targetData.creatorAvatar
-                  : defaultPersonPng
+              avatar={
+                targetData?.creatorAvatar
               }
+              name={targetData?.creatorName}
+              type={'person'}
+              index={0}
+              size={25}
             />
           </div>
         </div>

@@ -17,13 +17,14 @@ const HeaderMessage: React.FC<HeaderMessageProps> = (props) => {
       {visible ? (
         <div className="headerCreate" style={messageStyle}>
           <div className="headerCreate-mainTitle">
-            消息中心
+            消息
             <img
               src={closePng}
               onClick={() => {
                 onClose();
               }}
               style={{ height: '25px', width: '25px', cursor: 'pointer' }}
+              alt=""
             />
           </div>
           <MessageBoard type={'header'} />

@@ -61,7 +61,7 @@
 
 .contact-dialog-content {
   width: 100%;
-  height: calc(100% - 55px);
+  height: 100%;
   display: flex;
   flex-wrap: wrap;
   align-content: space-between;
@@ -73,9 +73,10 @@
 .contact-name-title {
   width: 80px;
   height: 42px;
-  line-height: 42px;
   margin-right: 10px;
   font-size: 14px;
+  display: flex;
+  align-items: center;
 }
 
 .contact-role {
@@ -119,42 +120,8 @@
   z-index: 5;
 }
 
-.defaultPng-container {
-  width: 100%;
-  height: 100%;
+.set-customService {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: flex-start;
-  padding: 10px;
-  box-sizing: border-box;
-  overflow: auto;
-}
-
-.defaultPng-container-item {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 5px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.defaultPng-container-item img {
-  width:80%;
-  height: 80%;
-  object-fit: cover;
-}
-.defaultPng-bigClose {
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  top: -1px;
-  right: -1px;
-  cursor: pointer;
-  transition: all 0.5s ease 0s;
-  z-index: 10;
-}
-.defaultPng-bigClose:hover {
-  width: 50px;
-  height: 50px;
+  align-items: center;
+  margin-top: 15px;
 }

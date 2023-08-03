@@ -4,7 +4,8 @@ import { useDispatch } from "react-redux";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import { getThemeBg } from "../../redux/actions/authActions";
 import { useMount } from "../../hook/common";
-interface RandomBgProps {}
+import moment from "moment";
+interface RandomBgProps { }
 
 const RandomBg: React.FC<RandomBgProps> = (props) => {
   const themeBg = useTypedSelector((state) => state.auth.themeBg);
@@ -29,46 +30,96 @@ const RandomBg: React.FC<RandomBgProps> = (props) => {
   });
 
   useEffect(() => {
-    if (themeBg && themeBg.length > 0) {
-      let step = 86400000;
+    if (themeBg && themeBg.length > 0 && theme.randomType) {
+      let todayTime: any = moment().startOf('days').valueOf();
+      let randomIndex = Math.floor(Math.random() * (themeBg.length - 1));
+      //eslint-disable-next-line
+      if (localStorage.getItem('todayTime')) {
+        todayTime = localStorage.getItem('todayTime')
+        todayTime = parseInt(todayTime);
+      }
+      let step = 3600000;
       if (randomRef.current) {
-        console.log("删除定时器");
         clearInterval(randomRef.current);
         randomRef.current = null;
-        console.log(randomRef.current);
       }
-      switch (theme?.randomType) {
-        case "1":
+      if (theme.randomType === '1' || theme.randomType === '2') {
+        if (theme.randomType === '1') {
           step = 60000;
-          break;
-        case "2":
-          step = 3600000;
-          break;
-        case "3":
-          step = 86400000;
-          break;
+        }
+        randomRef.current = setInterval(() => {
+          setImgIndex((prevIndex) => {
+            if (prevIndex === themeBg.length - 1) {
+              prevIndex = 0;
+            } else {
+              prevIndex = prevIndex + 1;
+            }
+            localStorage.setItem("imgIndex", prevIndex + "");
+            return prevIndex;
+          });
+        }, step);
       }
-      console.log(step);
-      randomRef.current = setInterval(() => {
-        console.log("???????????????????");
-        setImgIndex((prevIndex) => {
-          if (prevIndex === themeBg.length - 1) {
-            prevIndex = 0;
-          } else {
-            prevIndex = prevIndex + 1;
-          }
-          localStorage.setItem("imgIndex", prevIndex + "");
-          return prevIndex;
-        });
-      }, step);
+      if (theme.randomType === '3') {
+        if (moment().startOf('day').valueOf() !== todayTime) {
+          setImgIndex(randomIndex)
+          localStorage.setItem("randomIndex", randomIndex + "");
+        }
+      }
+      if (theme.randomType === '4') {
+        if (moment().startOf('week').valueOf() !== moment(todayTime).startOf('week').valueOf()) {
+          setImgIndex(randomIndex)
+          localStorage.setItem("randomIndex", randomIndex + "");
+        }
+      }
+      if (theme.randomType === '5') {
+        if (moment().startOf('month').valueOf() !== moment(todayTime).startOf('month').valueOf()) {
+          setImgIndex(randomIndex)
+          localStorage.setItem("randomIndex", randomIndex + "");
+        }
+      }
     }
-  }, [theme?.randomType, themeBg]);
+    //eslint-disable-next-line
+  }, [themeBg]);
+  useEffect(() => {
+    if (themeBg && themeBg.length > 0 && theme.randomType) {
+      let randomIndex = Math.floor(Math.random() * themeBg.length);
+      let step = 3600000;
+      if (randomRef.current) {
+        clearInterval(randomRef.current);
+        randomRef.current = null;
+      }
+      if (theme.randomType === '1' || theme.randomType === '2') {
+        if (theme.randomType === 1) {
+          step = 60000;
+        }
+        setImgIndex(randomIndex)
+        localStorage.setItem("randomIndex", randomIndex + "");
+        randomRef.current = setInterval(() => {
+          setImgIndex((prevIndex) => {
+            if (prevIndex === themeBg.length - 1) {
+              prevIndex = 0;
+            } else {
+              prevIndex = prevIndex + 1;
+            }
+            localStorage.setItem("imgIndex", prevIndex + "");
+            return prevIndex;
+          });
+        }, step);
+      }
+      if (theme.randomType === '3' || theme.randomType === '4' || theme.randomType === '5') {
+        setImgIndex(randomIndex)
+        localStorage.setItem("randomIndex", randomIndex + "");
+      }
+    }
+    //eslint-disable-next-line
+  }, [theme?.randomType]);
+
   return (
     <React.Fragment>
       {themeBg && themeBg.length > 0 ? (
         <div className="randomBg">
-          <img src={themeBg[imgIndex]?.url} alt=""/>
-          <img src={themeBg[imgIndex + 1]?.url}  alt=""/>
+          <img src={themeBg[imgIndex]?.url} alt="" />
+          <img src={themeBg[imgIndex + 1]?.url} alt="" />
         </div>
       ) : null}
     </React.Fragment>

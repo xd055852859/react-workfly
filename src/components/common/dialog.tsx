@@ -29,16 +29,14 @@ const Dialog: React.FC<dialogProp> = (prop) => {
     showMask,
     closePngState,
     unOut,
-    noAnimate,
+    // noAnimate,
   } = prop;
   const dialog = () => {
     return (
       <div
-        className={
-          showMask || noAnimate
-            ? 'dialog'
-            : 'dialog animate__animated animate__slideInRight'
-        }
+        className='dialog'
+        //     : 'dialog animate__animated animate__slideInRight'
+        // }
         style={dialogStyle}
         id="dialog"
       >
@@ -71,8 +69,8 @@ const Dialog: React.FC<dialogProp> = (prop) => {
               !footer
                 ? { height: '100%' }
                 : {
-                    overflow: 'auto',
-                  }
+                  overflow: 'auto',
+                }
             }
           >
             {children}

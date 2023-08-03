@@ -4,32 +4,36 @@
   position: relative;
   z-index: 3;
 }
+
 .workingTableContent {
   width: 100%;
   height: calc(100vh - 68px);
-  overflow: auto;
--webkit-overflow-scrolling:touch;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
 }
 
-.workingTable-addLabel,
-.workingTable-addLabel-input {
+.workingTable-addLabel {
+  width: 35px;
   height: 35px;
-  position: fixed;
-  bottom: 10px;
-  right: 11px;
+  position: absolute;
+  bottom: 15px;
+  left: 10px;
   z-index: 5;
   cursor: pointer;
   box-sizing: border-box;
   border: 0px;
 }
+
 .workingTable-addLabel-input {
   z-index: 10;
   border-radius: 5px;
 }
+
 .workingTable-addLabel {
   width: 35px;
 }
+
 .groupTableHeader-name-title-logo {
   width: 12px;
   height: 7px;

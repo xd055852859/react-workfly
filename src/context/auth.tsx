@@ -8,6 +8,7 @@ import {
 } from "../redux/actions/authActions";
 import {
   setFileKey,
+  setInviteKey,
   setCommonHeaderIndex,
 } from "../redux/actions/commonActions";
 import { setGroupKey } from "../redux/actions/groupActions";
@@ -15,33 +16,36 @@ import {
   setChooseKey,
   changeTaskInfoVisible,
 } from "../redux/actions/taskActions";
-
-const AuthContext =
-  React.createContext<
-    | {
-        paramsToken: string | null;
-        paramsgroupKey: string | null;
-        paramsShareKey: string | null;
-        paramsFileKey: string | null;
-        paramsShowType: string | null;
-        paramsCreateType: string | null;
-        deviceState: string;
-        deviceWidth: number;
-      }
-    | undefined
-  >(undefined);
+import moment from "moment";
+declare var window: Window 
+const AuthContext = React.createContext<
+  | {
+      paramsToken: string | null;
+      paramsgroupKey: string | null;
+      paramsShareKey: string | null;
+      paramsFileKey: string | null;
+      paramsShowType: string | null;
+      paramsCreateType: string | null;
+      deviceState: string;
+      deviceWidth: number;
+      todayState: boolean;
+      clockState: boolean;
+      deviceType: string | null;
+    }
+  | undefined
+>(undefined);
 
 AuthContext.displayName = "AuthContext";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useDispatch();
-
-  const paramsToken =
+  let paramsToken: any =
     getSearchParamValue(window.location.search, "token") ||
     localStorage.getItem("token");
   if (paramsToken) {
     dispatch(getUserInfo(paramsToken));
   }
+
   const paramsgroupKey =
     getSearchParamValue(window.location.search, "groupKey") ||
     localStorage.getItem("groupKey");
@@ -50,16 +54,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const paramsHeaderIndex = localStorage.getItem("headerIndex");
-  if (
+  if (getSearchParamValue(window.location.search, "groupKey")) {
+    dispatch(setCommonHeaderIndex(3));
+  } else if (
     paramsHeaderIndex &&
     paramsHeaderIndex !== "2" &&
-    paramsHeaderIndex !== "5"
+    paramsHeaderIndex !== "5" &&
+    paramsHeaderIndex !== "20"
   ) {
     dispatch(setCommonHeaderIndex(parseInt(paramsHeaderIndex)));
-  } else if (paramsgroupKey) {
-    dispatch(setCommonHeaderIndex(3));
   } else {
     dispatch(setCommonHeaderIndex(1));
+  }
+
+  const paramsFileKey =
+    getSearchParamValue(window.location.search, "fileKey") ||
+    localStorage.getItem("fileKey");
+  if (paramsFileKey) {
+    dispatch(setFileKey(paramsFileKey));
+    localStorage.setItem("fileKey", paramsFileKey);
   }
 
   const paramsShareKey =
@@ -68,15 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   if (paramsShareKey) {
     dispatch(setChooseKey(paramsShareKey));
     dispatch(changeTaskInfoVisible(true));
-    localStorage.removeItem("shareKey");
-  }
-
-  const paramsFileKey =
-    getSearchParamValue(window.location.search, "fileKey") ||
-    localStorage.getItem("fileKey");
-  if (paramsFileKey) {
-    dispatch(setFileKey(paramsFileKey));
-    localStorage.removeItem("fileKey");
+    // localStorage.removeItem("shareKey");
   }
 
   const paramsShowType =
@@ -86,18 +91,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const paramsCreateType =
     getSearchParamValue(window.location.search, "createType") ||
     localStorage.getItem("createType");
+
+  const paramInviteKey =
+    getSearchParamValue(window.location.search, "inviteKey") ||
+    localStorage.getItem("inviteKey");
+  if (paramInviteKey) {
+    dispatch(setInviteKey(paramInviteKey));
+    localStorage.setItem("inviteKey", paramInviteKey);
+  }
+  const paramsUserKey = localStorage.getItem("userKey");
+  if (paramsUserKey) {
+    dispatch(setUserKey(paramsUserKey));
+  }
+  const deviceType = getSearchParamValue(window.location.search, "deviceType");
   if (
     !paramsCreateType &&
     getSearchParamValue(window.location.search, "token") &&
     !paramsFileKey &&
-    !paramsShowType
+    !paramsShowType &&
+    deviceType !== "tool"
   ) {
     dispatch(changeMusic(6));
-  }
-
-  const paramsUserKey = localStorage.getItem("userKey");
-  if (paramsUserKey) {
-    dispatch(setUserKey(paramsUserKey));
   }
   const clientWidth = document.documentElement.clientWidth;
   let deviceState = "";
@@ -114,9 +128,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   } else if (clientWidth > 768) {
     deviceState = "sm";
     deviceWidth = (document.documentElement.clientWidth - 300) * 0.5;
-  } else if (clientWidth <= 768) {
+  } else if (clientWidth > 500) {
     deviceState = "xs";
     deviceWidth = document.documentElement.clientWidth - 250;
+  } else if (clientWidth <= 500) {
+    deviceState = "xxs";
+    deviceWidth = document.documentElement.clientWidth - 250;
+  }
+  let todayTime: any = localStorage.getItem("todayTime");
+  let todayState = true;
+  let clockState = true;
+  if (+todayTime === moment().startOf("days").valueOf()) {
+    todayState = false;
+    if (localStorage.getItem("clockState") === "false") {
+      clockState = false;
+    }
+  } else {
+    localStorage.setItem("todayTime", moment().startOf("days").valueOf() + "");
+    localStorage.setItem("clockState", "true");
+    todayState = true;
+    clockState = true;
   }
   //   deviceState === "xl"
   //     ? (document.documentElement.clientWidth - 350) *
@@ -137,6 +168,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         paramsCreateType,
         deviceState,
         deviceWidth,
+        todayState,
+        clockState,
+        deviceType,
       }}
     />
   );

@@ -16,6 +16,7 @@ function* getUser(action: any) {
   try {
     const res = yield call(api.auth.getUserInfo, action.token);
     if (res.msg === 'OK') {
+      res.result.saveState = action.saveState
       yield put(getUserInfoSuccess(res.result));
     } else {
       yield put(Failed(res));

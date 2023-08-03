@@ -11,7 +11,7 @@ import { setMessage } from "../../redux/actions/commonActions";
 import { setTheme } from "../../redux/actions/authActions";
 
 import allSvg from "../../assets/svg/all.svg";
-interface HeaderFilterProps {}
+interface HeaderFilterProps { }
 
 const HeaderFilter: React.FC<HeaderFilterProps> = (prop) => {
   const taskArray = useTypedSelector((state) => state.task.taskArray);
@@ -290,6 +290,7 @@ const HeaderFilter: React.FC<HeaderFilterProps> = (prop) => {
           width: "228px",
           minHeight: "300px",
           top: "38px",
+          maxHeight: "calc(100vh - 200px)"
         }}
         filterStyle={{ padding: "0px 18px" }}
         filterIndex={executorIndex}
@@ -312,6 +313,7 @@ const HeaderFilter: React.FC<HeaderFilterProps> = (prop) => {
           width: "228px",
           minHeight: "300px",
           top: "38px",
+          maxHeight: "calc(100vh - 200px)"
         }}
         filterStyle={{ padding: "0px 18px" }}
         filterIndex={creatorIndex}

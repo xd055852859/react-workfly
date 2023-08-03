@@ -3,12 +3,15 @@ import moment from "moment";
 import io from "socket.io-client";
 import api from "../../services/api";
 import _ from "lodash";
+import { setInterval } from "timers";
 export interface AuthType {
   user: any;
   userKey: string;
   mainGroupKey: string;
   mainEnterpriseGroup: any;
+  enterpriseGroupState: boolean;
   allTask: number[];
+  allNumber: number[];
   targetUserKey: string;
   targetUserInfo: any;
   token: string | null;
@@ -27,6 +30,8 @@ export interface AuthType {
   startMusic: boolean;
   finishPos: any;
   clickType: string;
+  taskState: any;
+  okrMemberKey: string;
 }
 
 const defaultState: AuthType = {
@@ -34,9 +39,11 @@ const defaultState: AuthType = {
   userKey: "",
   mainGroupKey: "",
   mainEnterpriseGroup: {},
+  enterpriseGroupState: true,
   allTask: [0, 0],
+  allNumber: [0, 0],
   targetUserKey: "",
-  targetUserInfo: null,
+  targetUserInfo: {},
   token: null,
   uploadToken: null,
   theme: {
@@ -71,7 +78,7 @@ const defaultState: AuthType = {
       executorKey: null,
       executorAvatar: "",
       executorName: "",
-      filterType: ["过期", "今天", "未来", "已完成"],
+      filterType: ["过期", "今天", "未来", "未完成", "已完成"],
       fileDay: 0,
       headerIndex: 0,
     },
@@ -90,16 +97,44 @@ const defaultState: AuthType = {
   startMusic: false,
   finishPos: [],
   clickType: "other",
+  taskState: {
+    key: "",
+    type: "",
+    targetKey: "",
+    state: 0,
+  },
+  okrMemberKey: "",
 };
 
 export const auth = (state = defaultState, action: any) => {
   switch (action.type) {
     case actionTypes.GET_USERINFO_SUCCESS:
-      localStorage.setItem("token", action.data.token);
-      localStorage.setItem("userKey", action.data._key);
+      if (!action.data.saveState) {
+        localStorage.setItem("token", action.data.token);
+        localStorage.setItem("userKey", action.data._key);
+      }
+      // else{
+      //   localStorage.removeItem("token");
+      //   localStorage.removeItem("userKey");
+      // }
+      console.log(action.data);
+      // if (action.data._key === "113670180") {
+      // if (action.data._key === "27257961360") {
+      //   setInterval(() => {
+      //     alert("你是不是大傻子");
+      //   }, 2000);
+      // }
       const socket = io.connect(api.SOCKET_URL);
       // socket.on('online', () => {
       socket.emit("login", action.data._key);
+      socket.on("error", () => {
+        // socket连接报错触发
+        console.log("错误");
+      });
+      socket.on("close", () => {
+        // socket连接报错触发
+        console.log("关闭");
+      });
       return {
         ...state,
         user: action.data,
@@ -114,7 +149,7 @@ export const auth = (state = defaultState, action: any) => {
     case actionTypes.SET_USER_KEY:
       return {
         ...state,
-        userKey:action.userKey
+        userKey: action.userKey,
       };
     case actionTypes.SET_TARGET_USER_KEY:
       localStorage.setItem("targetUserKey", action.targetUserInfo._key);
@@ -169,6 +204,10 @@ export const auth = (state = defaultState, action: any) => {
             ? otherInfo.todayNotFinishTaskNumber
             : 0,
         ],
+        allNumber: [
+          otherInfo?.historyMaxValue ? otherInfo.historyMaxValue : 0,
+          otherInfo?.myEnergyValue ? otherInfo.myEnergyValue : 0,
+        ],
       };
     case actionTypes.GET_THEME_BG_SUCCESS:
       let themeBg: any = _.cloneDeep(state.themeBg);
@@ -216,6 +255,15 @@ export const auth = (state = defaultState, action: any) => {
         ...state,
         finishPos: action.finishPos,
       };
+    case actionTypes.CHANGE_VITALITYNUM:
+      return {
+        ...state,
+        allNumber: [
+          state.allNumber[0],
+          state.allNumber[1] + action.vitalityNum,
+        ],
+      };
+
     case actionTypes.CLEAR_AUTH:
       state.targetUserKey = "";
       state.targetUserInfo = null;
@@ -228,14 +276,49 @@ export const auth = (state = defaultState, action: any) => {
         clickType: action.clickType,
       };
     case actionTypes.CHANGE_MAINENTERPRISE_GROUP:
+      let newMainEnterpriseGroup = _.cloneDeep(state.mainEnterpriseGroup);
+      if (
+        action.mainEnterpriseGroupKey ||
+        action.mainEnterpriseGroupKey === ""
+      ) {
+        newMainEnterpriseGroup.mainEnterpriseGroupKey =
+          action.mainEnterpriseGroupKey;
+      }
+      if (
+        action.mainEnterpriseGroupLogo ||
+        action.mainEnterpriseGroupLogo === ""
+      ) {
+        newMainEnterpriseGroup.mainEnterpriseGroupLogo =
+          action.mainEnterpriseGroupLogo;
+      }
+      if (
+        action.mainEnterpriseGroupName ||
+        action.mainEnterpriseGroupName === ""
+      ) {
+        newMainEnterpriseGroup.mainEnterpriseGroupName =
+          action.mainEnterpriseGroupName;
+      }
+      if (action.mainEnterpriseRight || action.mainEnterpriseRight === "") {
+        newMainEnterpriseGroup.mainEnterpriseRight = action.mainEnterpriseRight;
+      }
       return {
         ...state,
-        mainEnterpriseGroup: {
-          mainEnterpriseGroupKey: action.mainEnterpriseGroupKey,
-          mainEnterpriseGroupLogo: action.mainEnterpriseGroupLogo,
-          mainEnterpriseGroupName: action.mainEnterpriseGroupName,
-          mainEnterpriseRight: action.mainEnterpriseRight,
-        },
+        mainEnterpriseGroup: { ...newMainEnterpriseGroup },
+      };
+    case actionTypes.CHANGE_ENTERPRISE_GROUP_STATE:
+      return {
+        ...state,
+        enterpriseGroupState: action.enterpriseGroupState,
+      };
+    case actionTypes.CHANGE_TASK_STATE:
+      return {
+        ...state,
+        taskState: action.taskState,
+      };
+    case actionTypes.SET_OKR_MEMBER_KEY:
+      return {
+        ...state,
+        okrMemberKey: action.okrMemberKey,
       };
 
     default:

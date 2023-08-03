@@ -11,18 +11,17 @@ interface CommentProps {
 const Comment: React.FC<CommentProps> = (prop) => {
   const { commentItem, commentClick, commentIndex } = prop;
 
-  const time = moment(commentItem.createTime).format("MM-DD hh:mm");
+  const time = moment(commentItem.createTime).format("YYYY-MM-DD HH:mm");
   return (
     <div className="commentItem">
       <div className="commentItem-avatar">
-        <div className="commentItem-avatar-img">
-          <Avatar
-            name={commentItem.etc.name}
-            avatar={commentItem.etc.avatar}
-            type={"person"}
-            index={commentIndex}
-          />
-        </div>
+        <Avatar
+          name={commentItem.etc.name}
+          avatar={commentItem.etc.avatar}
+          type={"person"}
+          index={commentIndex}
+          size={34}
+        />
       </div>
       <div className="commentItem-content">
         <div className="commentItem-content-title">

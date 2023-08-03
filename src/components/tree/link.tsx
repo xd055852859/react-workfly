@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import "./link.css";
-import { Input, Button } from "antd";
+import { Input } from "antd";
 
 import Iframeview from "../common/iframeview";
 interface LinkProps {
   targetData: any;
   hideUrl?: boolean;
   onChange?: any;
+  setContent?: any;
 }
 
 let timer: NodeJS.Timeout;
 const Link: React.FC<LinkProps> = (props) => {
-  const { targetData, onChange } = props;
+  const { targetData, setContent } = props;
   const [value, setValue] = useState("");
   const [url, seturl] = useState("");
 
@@ -33,6 +34,7 @@ const Link: React.FC<LinkProps> = (props) => {
     setValue(value);
     timer = setTimeout(() => {
       seturl(value);
+      setContent(value);
     }, 1000);
   }
 
@@ -53,15 +55,6 @@ const Link: React.FC<LinkProps> = (props) => {
           value={value}
           onChange={(e: any) => handleChange(e.target.value)}
         />
-        <Button
-          type="primary"
-          style={{ color: "#fff" }}
-          onClick={() => {
-            onChange(url);
-          }}
-        >
-          保存
-        </Button>
       </div>
       {/* ) : null} */}
 

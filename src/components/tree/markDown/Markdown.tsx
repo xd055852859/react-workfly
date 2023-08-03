@@ -4,12 +4,12 @@ import MarkdownViewer from './MarkdownViewer';
 
 interface CompanyPersonProps {
   targetData: any;
-  onChange: any;
   editable: any;
+  setContent:any
 }
 
 const Markdown: React.FC<CompanyPersonProps> = (props) => {
-  const { targetData, onChange, editable } = props;
+  const { targetData, setContent, editable } = props;
 
   return (
     <React.Fragment>
@@ -18,7 +18,7 @@ const Markdown: React.FC<CompanyPersonProps> = (props) => {
           nodeKey={targetData._key}
           title={targetData ? targetData.title : '新标题'}
           data={targetData.content}
-          onChange={onChange}
+          setContent={setContent}
         />
       ) : (
         <MarkdownViewer

@@ -11,11 +11,11 @@ interface MarkdownEditorProps {
   nodeKey?: string;
   data?: any;
   title?: string;
-  onChange?: any;
+  setContent?: any;
 }
 
 const MarkdownEditor: React.FC<MarkdownEditorProps> = (props) => {
-  const { data, title, onChange } = props;
+  const { data, title, setContent } = props;
 
   const [input, setInput] = useState(
     data || `# ${title}\n请输入正文\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n`
@@ -27,8 +27,9 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = (props) => {
     );
   }, [data, title]);
   useEffect(() => {
-    onChange(input);
-  }, [input,onChange]);
+    setContent(input)
+    //eslint-disable-next-line
+  }, [input]);
   return (
     <div className="markDownEditor">
       <div className="markDownEditorWrapper">
@@ -44,7 +45,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = (props) => {
             onBeforeChange={(editor, data, value) => {
               setInput(value);
             }}
-            // onChange={(editor, metadata, value) => {}}
+          // onChange={(editor, metadata, value) => {}}
           />
         ) : null}
       </div>

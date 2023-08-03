@@ -42,6 +42,11 @@ export const group = (state = defaultState, action: any) => {
         groupInfo: action.data,
         groupRole: action.data.role,
       };
+    case actionTypes.CHANGE_LOCAL_GROUP_INFO:
+      return {
+        ...state,
+        groupInfo: action.groupInfo,
+      };
     case actionTypes.CHANGE_GROUP_INFO_SUCCESS:
       return {
         ...state,

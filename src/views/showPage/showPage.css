@@ -8,6 +8,7 @@
   position: relative;
   z-index: 1;
 }
+
 .showPage-clock {
   width: 100%;
   height: 100%;
@@ -17,18 +18,21 @@
   justify-content: center;
   flex-wrap: wrap;
 }
+
 .showPage-timepoint {
   width: 100%;
-  height: 580px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   /* zoom: 0.9; */
 }
+
 .showPage-timepoint .react-clock-container {
   zoom: 0.9;
 }
+
 .showPage {
   width: 365px;
   height: 100%;
@@ -36,8 +40,9 @@
   top: 0px;
   right: 0px;
   padding: 0px 10px;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(255, 255, 255, 0.1);
 }
+
 .showPage-bg1 {
   position: absolute;
   top: 0;
@@ -46,6 +51,7 @@
   right: 0;
   z-index: -1;
 }
+
 .showPage-bg2 {
   content: "";
   position: absolute;
@@ -61,6 +67,7 @@
   background-size: cover;
   background-attachment: fixed;
 }
+
 .showPage-b {
   content: "";
   position: absolute;
@@ -74,6 +81,7 @@
   background-color: rgba(0, 0, 0, 0.27);
   /* background-image: url('https://cdn-icare.qingtime.cn/1596679987203_画板备份10.jpg'); */
 }
+
 .showPage-time {
   width: 500px;
   height: 500px;
@@ -100,6 +108,7 @@
   position: absolute;
   bottom: 30px;
 }
+
 .showPage-time-prompt {
   width: 100%;
   /* height: 25px; */
@@ -108,11 +117,13 @@
   text-align: center;
   bottom: 15px;
 }
+
 .showPage-time-subtitle-top {
   font-size: 25px;
   margin-bottom: 5px;
 }
-.showPage-time-subtitle > div {
+
+.showPage-time-subtitle>div {
   text-align: center;
 }
 
@@ -134,10 +145,12 @@
   color: #333;
   overflow: hidden;
 }
+
 .showPage-set-container {
   width: 100%;
   height: 100%;
 }
+
 .showPage-set-title {
   width: 100%;
   font-size: 16px;
@@ -147,31 +160,37 @@
   justify-content: space-between;
   cursor: pointer;
 }
+
 .showPage-task-title {
   height: 50px;
   width: 100%;
   display: flex;
   align-items: center;
 }
+
 .showPage-task-menu {
   width: 100%;
   height: 25px;
   display: flex;
   margin-bottom: 5px;
 }
+
 .showPage-task-menu-item {
   cursor: pointer;
 }
+
 .showPage-task-container {
   height: calc(100% - 80px);
   width: 100%;
 }
+
 .showPage-timeos-container {
   width: 100%;
   height: calc(100% - 80px);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
+
 .contentHeader-set-container {
   width: 528px;
   height: 100%;
@@ -181,21 +200,25 @@
   left: 0px;
   z-index: 5;
 }
+
 .showPage-set-time {
   display: flex;
   align-items: center;
 }
+
 .showPage-set-time img {
   width: 20px;
   height: 20px;
   margin-right: 5px;
 }
+
 .showPage-container .contentHeader-set-left {
   width: 260px;
   height: 100%;
   padding: 8px 10px;
   box-sizing: border-box;
 }
+
 .showPage-input {
   width: 300px;
   height: 35px;
@@ -212,6 +235,7 @@
   justify-content: space-between;
   z-index: 5;
 }
+
 .showPage-button {
   width: 100%;
   display: flex;
@@ -220,8 +244,10 @@
   justify-content: center;
   z-index: 3;
   flex-shrink: 0;
-  margin-top: 10px;
+  position: absolute;
+  bottom: 50px;
 }
+
 .showPage-input input {
   height: 100%;
   border: 0px;
@@ -229,9 +255,11 @@
   flex: 1;
   color: #fff;
 }
+
 .showPage-input input::-webkit-input-placeholder {
   color: #eee;
 }
+
 .showPage-input-img {
   height: 35px;
   width: 35px;
@@ -241,22 +269,27 @@
   margin-right: 5px;
   cursor: pointer;
 }
+
 .showPage-input-img img {
   height: 20px;
 }
+
 .showPage-input::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.6);
 }
+
 .showPage-weather {
   display: flex;
   position: absolute;
   top: 15px;
   background-color: transparent;
 }
+
 .showPage-weather-item {
   height: 200px;
   padding: 0px 15px;
 }
+
 .showPage-weather-item-top {
   height: 12px;
   font-size: 9px;
@@ -267,6 +300,7 @@
   text-align: center;
   text-shadow: 0px 1px 2px rgba(94, 94, 94, 0.5);
 }
+
 .showPage-weather-item-bottom {
   height: 55px;
   font-size: 28px;
@@ -277,29 +311,35 @@
   text-shadow: 0px 1px 2px rgba(94, 94, 94, 0.5);
   display: flex;
 }
+
 .showPage-weather-item-img {
   width: 55px;
   height: 55px;
 }
+
 .showPage-weather-item-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .showPage-weather-icon {
   transform: scale(0.6);
   margin-bottom: 23px;
 }
+
 .showPage-bigLogo {
   width: 120px;
   height: 50px;
   margin-right: 15px;
   cursor: pointer;
 }
+
 .showPage-bigLogo img {
   width: 100%;
   height: 100%;
 }
+
 .bg {
   width: 260px;
   height: 100%;
@@ -309,6 +349,7 @@
 -webkit-overflow-scrolling:touch; */
   position: relative;
 }
+
 .showPage-button-item {
   width: 50px;
   height: 50px;
@@ -319,6 +360,7 @@
   position: relative;
   z-index: 1;
 }
+
 .showPage-button-close {
   position: absolute;
   top: 3px;
@@ -327,12 +369,15 @@
   cursor: pointer;
   display: none;
 }
+
 .showPage-button-item:hover .showPage-button-close {
   display: flex;
 }
+
 .showPage-button-item:hover {
   background-color: #d3d3d3;
 }
+
 .showPage-fileContainer {
   width: calc(100% - 375px);
   height: 100%;
@@ -343,6 +388,7 @@
   left: 0px;
   z-index: 30;
 }
+
 @keyframes setRight {
   from {
     right: 0px;

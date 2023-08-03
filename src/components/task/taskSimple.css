@@ -1,0 +1,55 @@
+.taskSimple {
+  display: inline-block;
+}
+.taskSimple-top,
+.taskSimple-bottom {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.taskSimple-top-left,
+.taskSimple-top-left > div,
+.taskSimple-top-right,
+.taskSimple-bottom > div {
+  display: flex;
+  align-items: center;
+}
+.taskSimple-top-left {
+  width: calc(100% - 70px);
+}
+.taskSimple-top-right {
+  width: 70px;
+  justify-content: flex-end;
+}
+.taskSimple-top-left > div {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+  flex-shrink: 0;
+}
+.taskSimple-top-left > div:nth-child(1) {
+  width: 45px;
+  font-size: 12px;
+}
+.taskSimple-top-left > div:nth-child(2) {
+  width: 150px;
+  font-size: 12px;
+}
+.taskSimple-top-left > div:nth-child(3),
+.taskSimple-top-left > div:nth-child(4) {
+  width: 30px;
+  height: 24px;
+  font-size: 12px;
+}
+.taskSimple-top .taskItem-day {
+  margin: 0px !important;
+}
+.taskSimple-top-left > div:nth-child(5) {
+  flex: 1;
+}
+.taskSimple-bottom > div:nth-child(1) {
+  width: 260px;
+  font-size: 12px;
+  color: #A1ACB7;
+}

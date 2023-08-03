@@ -1,6 +1,6 @@
-import React from 'react';
-import ClickOutSide from './clickOutside';
-import './dropMenu.css';
+import React from "react";
+import ClickOutSide from "./clickOutside";
+import "./dropMenu.css";
 interface dropMenuProp {
   children: any;
   visible: boolean;
@@ -25,28 +25,28 @@ const DropMenu: React.FC<dropMenuProp> = (prop) => {
     <React.Fragment>
       {visible ? (
         <ClickOutSide onClickOutside={onClose ? onClose : () => {}}>
-          <div
-            className="dropMenu"
-            style={dropStyle}
-            onMouseLeave={() => {
-              if (closeType === 1) {
-                onClose();
-              }
-            }}
-          >
-            {title ? (
-              <div className="dropMenu-title">
-                {title}
-                {showCloseIcon ? <div></div> : null}
-              </div>
-            ) : null}
             <div
-              className="dropMenu-info"
-              style={{ height: title ? 'calc(100% - 53px)' : '100%' }}
+              className="dropMenu"
+              style={dropStyle}
+              onMouseLeave={() => {
+                if (closeType === 1) {
+                  onClose();
+                }
+              }}
             >
-              {children}
+              {title ? (
+                <div className="dropMenu-title">
+                  {title}
+                  {showCloseIcon ? <div></div> : null}
+                </div>
+              ) : null}
+              <div
+                className="dropMenu-info"
+                style={{ height: title ? "calc(100% - 53px)" : "100%" }}
+              >
+                {children}
+              </div>
             </div>
-          </div>
         </ClickOutSide>
       ) : null}
     </React.Fragment>

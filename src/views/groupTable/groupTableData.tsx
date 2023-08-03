@@ -9,11 +9,14 @@ import api from "../../services/api";
 
 import { setMessage } from "../../redux/actions/commonActions";
 
+import Empty from "../../components/common/empty";
 import Loading from "../../components/common/loading";
 import emptyData from "../../assets/svg/emptyData.svg";
 import ColumnChart from "../../components/common/chart/columnChart";
 import ChordChart from "../../components/common/chart/chordChart";
+
 import { useMount } from "../../hook/common";
+import Task from "../../components/task/task";
 
 interface GroupTableDataProps {}
 
@@ -27,6 +30,7 @@ const GroupTableData: React.FC<GroupTableDataProps> = (prop) => {
   const [taskState, setTaskState] = useState(0);
   const [columnData, setColumnData] = useState<any>(null);
   const [chordData, setChordData] = useState<any>(null);
+  const [chartDataList, setChartDataList] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [clientHeight, setClientHeight] = useState(0);
   const [pointIndex, setPointIndex] = useState(0);
@@ -34,7 +38,7 @@ const GroupTableData: React.FC<GroupTableDataProps> = (prop) => {
   const dataRef: React.RefObject<any> = useRef();
   const chartRef = useRef<HTMLDivElement>(null);
   let unDistory = useRef<any>(true);
-  
+
   useMount(() => {
     setClientHeight(document.body.clientHeight - 68);
     return () => {
@@ -144,18 +148,19 @@ const GroupTableData: React.FC<GroupTableDataProps> = (prop) => {
     [formatDay]
   );
   const handleChart = useCallback((taskState: number, groupData: any) => {
-    const startTime = moment(new Date()).startOf("day").valueOf();
+    // const startTime = moment(new Date()).startOf("day").valueOf();
     const endTime = moment(new Date()).endOf("day").valueOf();
-    const startTaskTime = moment(new Date())
-      .subtract(1, "days")
-      .startOf("day")
-      .valueOf();
+    // const startTaskTime = moment(new Date())
+    //   .subtract(1, "days")
+    //   .startOf("day")
+    //   .valueOf();
     const endTaskTime = moment(new Date())
       .subtract(1, "days")
       .endOf("day")
       .valueOf();
     let data: any = [];
     let newData: any = {};
+    let newDataKey: any = {};
     let XYLeftData: any = {};
     let XYRightData: any = {};
     let columnData: any = [];
@@ -164,12 +169,16 @@ const GroupTableData: React.FC<GroupTableDataProps> = (prop) => {
       switch (taskState) {
         case 0:
           state =
-            item.taskEndDate >= startTaskTime &&
-            item.taskEndDate <= endTaskTime &&
-            item.finishPercent === 1;
+            (moment(item.taskEndDate).endOf("day").valueOf() === endTaskTime &&
+              item.finishPercent === 1) ||
+            (moment(item.taskStartDate).endOf("day").valueOf() ===
+              endTaskTime &&
+              item.finishPercent === 1);
           break;
         case 1:
-          state = item.taskEndDate >= startTime && item.taskEndDate <= endTime;
+          state =
+            moment(item.taskEndDate).endOf("day").valueOf() === endTime ||
+            moment(item.taskStartDate).endOf("day").valueOf() === endTime;
           break;
         case 2:
           state = item.finishPercent === 0;
@@ -187,6 +196,8 @@ const GroupTableData: React.FC<GroupTableDataProps> = (prop) => {
       ) {
         if (!newData[item.creatorName + "-" + item.executorName]) {
           newData[item.creatorName + "-" + item.executorName] = 1;
+          newDataKey[item.creatorName + "-" + item.executorName] =
+            item.creatorKey + "-" + item.executorKey;
         } else {
           newData[item.creatorName + "-" + item.executorName] =
             newData[item.creatorName + "-" + item.executorName] + 1;
@@ -212,14 +223,22 @@ const GroupTableData: React.FC<GroupTableDataProps> = (prop) => {
       }
     });
     for (let key in newData) {
-      let keyArr = key.split("-");
-      data.push({ from: keyArr[0], to: keyArr[1], value: newData[key] });
+      let nameArr = key.split("-");
+      let keyArr = newDataKey[key].split("-");
+      data.push({
+        from: nameArr[0],
+        to: nameArr[1],
+        value: newData[key],
+        fromKey: keyArr[0],
+        toKey: keyArr[1],
+      });
     }
     for (let key in XYLeftData) {
       columnData.push({
         type: "执行力",
         number: XYLeftData[key].num,
         name: XYLeftData[key].item.executorName,
+        key: XYLeftData[key].item.executorKey,
       });
     }
     for (let key in XYRightData) {
@@ -227,20 +246,20 @@ const GroupTableData: React.FC<GroupTableDataProps> = (prop) => {
         type: "创造力",
         number: XYRightData[key].num,
         name: XYRightData[key].item.creatorName,
+        key: XYRightData[key].item.creatorKey,
       });
     }
-    columnData = _.sortBy(columnData, ["number"]).reverse();
+
+    // columnData = _.sortBy(columnData, ["number"]).reverse();
     setChordData(data);
     setColumnData(columnData);
   }, []);
   const getGroupData = useCallback(
     async (taskState: number) => {
       setLoading(true);
-      let dataRes: any = await api.task.getGroupDataTask(
+      let dataRes: any = await api.task.getGroupDataTaskNew(
         groupKey,
-        [0, 1],
-        null,
-        moment().add(1, "days").startOf("day").valueOf()
+        taskState + 1
       );
       if (unDistory.current) {
         if (dataRes.msg === "OK") {
@@ -271,6 +290,29 @@ const GroupTableData: React.FC<GroupTableDataProps> = (prop) => {
 
   const addZero = (num: number) => {
     return num > 9 ? num + "" : "0" + num;
+  };
+  const changeTableData = async (creatorName: string, executorName: string) => {
+    let fromKey: string = "";
+    let toKey: string = "";
+    chordData.forEach((item) => {
+      if (item.from === creatorName && item.to === executorName) {
+        fromKey = item.fromKey;
+        toKey = item.toKey;
+      }
+    });
+    let dataRes: any = await api.task.getGroupDataTaskNew(
+      groupKey,
+      taskState + 1,
+      fromKey,
+      toKey
+    );
+    if (unDistory.current) {
+      if (dataRes.msg === "OK") {
+        setChartDataList(dataRes.result);
+      } else {
+        dispatch(setMessage(true, dataRes.msg, "error"));
+      }
+    }
   };
   //   let obj = {
   //     left: 0,
@@ -464,24 +506,33 @@ const GroupTableData: React.FC<GroupTableDataProps> = (prop) => {
           {groupInfo ? groupInfo.groupName : ""} 任务排行榜
         </div>
         {/* <div className="chart-div" id="chartdiv"></div> */}
+
         {chordData && chartRef?.current ? (
           chordData.length > 0 ? (
-            <ChordChart
-              data={chordData}
-              height={chartRef.current.offsetHeight - 40}
-              width={chartRef.current.offsetWidth - 40}
-              chordId={"chord" + groupKey}
-            />
-          ) : (
-            <div
-              style={{
-                height: chartRef.current.offsetHeight - 40,
-                width: chartRef.current.offsetWidth - 40,
-              }}
-              className="box-center"
-            >
-              <img src={emptyData} alt="" />
+            <div className="choose-container-chordChart">
+              <div className="choose-container-item-left">
+                <ChordChart
+                  data={chordData}
+                  height={chartRef.current.offsetHeight - 40}
+                  width={chartRef.current.offsetWidth - 40}
+                  chordId={"chord" + groupKey}
+                  onClick={changeTableData}
+                />
+              </div>
+              <div className="choose-container-item-right">
+                {chartDataList.map((taskItem: any, taskIndex: number) => {
+                  return (
+                    <Task
+                      taskItem={taskItem}
+                      key={"task" + taskIndex}
+                      // timeSetStatus={taskIndex > item.length - 3}
+                    />
+                  );
+                })}
+              </div>
             </div>
+          ) : (
+            <Empty />
           )
         ) : null}
       </div>

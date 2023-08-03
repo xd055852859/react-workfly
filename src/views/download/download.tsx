@@ -13,7 +13,10 @@ import logoPng from "./img/logo.png";
 import workingPng from "./img/working.png";
 import iphone0Svg from "./img/iphone0.svg";
 import iphone1Svg from "./img/iphone1.svg";
-import iphone2Svg from "./img/iphone2.svg";
+import googlePng from "../../assets/img/google.png";
+import downPng from "../../assets/img/down.png";
+import learnSvg from "../../assets/svg/learn.svg";
+
 import mac0Png from "./img/mac0.png";
 import mac1Png from "./img/mac1.png";
 import mac2Png from "./img/mac2.png";
@@ -30,15 +33,34 @@ import icon2Svg from "./img/icon2.svg";
 import icon3Svg from "./img/icon3.svg";
 import icon4Svg from "./img/icon4.svg";
 import icon5Svg from "./img/icon5.svg";
+import { useAuth } from "../../context/auth";
 interface DownloadProps {}
 
 const Download: React.FC<DownloadProps> = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const year = moment().year();
+  const { deviceType } = useAuth();
+  const [codeShow, setCodeshow] = useState<any>(3);
   const [download, setDownload] = useState<any>([
     { t: "IOS", u: "https://itunes.apple.com/cn/app/id1516401175?ls=1&mt=8" },
     { t: "Android", u: "" },
+    {
+      t: "Google",
+      u: "https://chrome.google.com/webstore/detail/workfly/hbbdkhcbgemlcmnjmplhpekmohfdobde",
+    },
+    {
+      t: "本地下载",
+      u: "https://workingdata.qingtime.cn/workingExtensions.zip",
+    },
+    // {
+    //   t: "桌面端",
+    //   u: "https://ttdazidata.qingtime.cn/cheerchat/cheerchat-2.23.2.dmg",
+    // },
+    // {
+    //   t: "桌面端",
+    //   u: "  https://ttdazidata.qingtime.cn/cheerchat/cheerchat-setup-2.23.3.exe",
+    // },
   ]);
   const titles = [
     {
@@ -72,7 +94,7 @@ const Download: React.FC<DownloadProps> = (props) => {
       url: "https://cdn-icare.qingtime.cn/091AA4A8.jpg",
     },
   ];
-  const iphoneArray = [iphone0Svg, iphone1Svg, iphone2Svg];
+  const iphoneArray = [iphone0Svg, iphone1Svg, googlePng, downPng];
   const macArray = [mac0Png, mac1Png, mac2Png, mac3Png];
   const iconObj = {
     pngArray: [icon0Png, icon1Png, icon2Png, icon3Png, icon4Png, icon5Png],
@@ -89,7 +111,6 @@ const Download: React.FC<DownloadProps> = (props) => {
         "https://workingversion.qingtime.cn/Working_QingTime_" +
         versionRes.result.versionName +
         ".apk";
-      console.log(newDownload);
       setDownload(newDownload);
     } else {
       dispatch(setMessage(true, versionRes.msg, "error"));
@@ -107,7 +128,7 @@ const Download: React.FC<DownloadProps> = (props) => {
                 history.push("/home/basic/content");
               }}
             />
-            <a
+            {/* <a
               href="http://extension.workfly.cn"
               target="_blank"
               rel="noreferrer"
@@ -120,7 +141,7 @@ const Download: React.FC<DownloadProps> = (props) => {
               rel="noreferrer"
             >
               洽洽官网
-            </a>
+            </a> */}
           </div>
         </div>
         <div className="home_box">
@@ -129,22 +150,35 @@ const Download: React.FC<DownloadProps> = (props) => {
             {download[1].u
               ? download.map((item: any, index: number) => {
                   return (
-                    <a
-                      key={"icon" + index}
-                      href={item.u}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <img
-                        className="phone_icon"
-                        src={iphoneArray[index]}
-                        alt=""
-                      />
-                      <p>{item.t}</p>
-                      <div className="qrcode" id={"qrcode" + index}>
-                        <Code url={item.u} id={item.t} />
-                      </div>
-                    </a>
+                    <React.Fragment>
+                      {(deviceType === "mobel" && index < 2) ||
+                      deviceType !== "mobel" ? (
+                        <a
+                          key={"icon" + index}
+                          href={item.u}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <img
+                            className="phone_icon"
+                            src={iphoneArray[index]}
+                            alt=""
+                            onClick={() => {
+                              setCodeshow(index);
+                            }}
+                            onMouseEnter={() => {
+                              setCodeshow(index);
+                            }}
+                          />
+                          <p>{item.t}</p>
+                          {index < 2 && index === codeShow ? (
+                            <div className="qrcode" id={"qrcode" + index}>
+                              <Code url={item.u} id={item.t} />
+                            </div>
+                          ) : null}
+                        </a>
+                      ) : null}
+                    </React.Fragment>
                   );
                 })
               : null}
@@ -154,6 +188,16 @@ const Download: React.FC<DownloadProps> = (props) => {
           ©{year} 江苏时光信息科技有限公司 Qingtime All Rights Reserved
           苏ICP备15006448号-6
         </p>
+        <div
+          className="learn_button"
+          onClick={() => {
+            window.open(
+              "https://working.cn/home/qdoc/docEditor?key=2103298859&tag 《如何手工安装workfly插件》"
+            );
+          }}
+        >
+          <img src={learnSvg} alt="" /> 如何手工安装workfly插件
+        </div>
       </div>
       <div className="h1080 multiple_devices_wrap">
         <p>适配多种设备</p>

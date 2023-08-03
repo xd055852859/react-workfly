@@ -41,7 +41,7 @@ const VitalityIcon: React.FC<VitalityProps> = (props) => {
     width: string,
     height: string
   ) => {
-    let dom:any = [];
+    let dom: any = [];
     if (vitalityDirection === 'vertical') {
       if (num > 0) {
         dom.push(
@@ -57,7 +57,7 @@ const VitalityIcon: React.FC<VitalityProps> = (props) => {
               className="vitalityIcon-img"
               style={{ width: width, height: height }}
             >
-              <img src={src} alt=""/>
+              <img src={src} alt="" />
             </span>
             <span className="vitalityIcon-title">{num}</span>
           </span>
@@ -71,7 +71,7 @@ const VitalityIcon: React.FC<VitalityProps> = (props) => {
             style={{ width: width, height: height }}
             key={'horizontal' + i}
           >
-            <img src={src}  alt=""/>
+            <img src={src} alt="" />
           </span>
         );
       }
@@ -113,7 +113,7 @@ const VitalityIcon: React.FC<VitalityProps> = (props) => {
             className="vitalityIcon-img"
             style={{ width: '20px', height: '20px' }}
           >
-            <img src={crySvg}  alt=""/>
+            <img src={crySvg} alt="" />
           </span>
         </span>
       )}

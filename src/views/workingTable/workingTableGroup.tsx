@@ -15,7 +15,7 @@ import TaskNav from "../../components/taskNav/taskNav";
 import format from "../../components/common/format";
 import { usePrevious } from "../../hook/common";
 
-import defaultGroupPng from "../../assets/img/defaultGroup.png";
+import Avatar from "../../components/common/avatar";
 const WorkingTableGroup: React.FC = (prop) => {
   const { deviceWidth } = useAuth();
   const user = useTypedSelector((state) => state.auth.user);
@@ -48,7 +48,8 @@ const WorkingTableGroup: React.FC = (prop) => {
           user._key === targetUserInfo._key ? 4 : 2,
           targetUserInfo._key,
           1,
-          [0, 1, 2, 10]
+          [0, 1, 2, 10],
+          2
         )
       );
     }
@@ -214,7 +215,7 @@ const WorkingTableGroup: React.FC = (prop) => {
     });
     let batchRes: any = await api.task.batchTaskArray(cardKeyArray);
     if (batchRes.msg === "OK") {
-      dispatch(changeMusic(4));
+      dispatch(changeMusic(10));
       dispatch(setMessage(true, "归档成功", "success"));
       if (headerIndex === 1) {
         dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10]));
@@ -224,7 +225,8 @@ const WorkingTableGroup: React.FC = (prop) => {
             user._key === targetUserInfo._key ? 4 : 2,
             targetUserInfo._key,
             1,
-            [0, 1, 2, 10]
+            [0, 1, 2, 10],
+            2
           )
         );
       }
@@ -262,7 +264,7 @@ const WorkingTableGroup: React.FC = (prop) => {
           <div key={"mainGroup" + index}>
             <div
               className="workingTableLabel-container-item"
-              style={{ width:deviceWidth, height: "100%", flexShrink: 0 }}
+              style={{ width: deviceWidth, height: "100%", flexShrink: 0 }}
               key={"group" + index}
               id={"workingTableGroup" + index}
             >
@@ -272,13 +274,11 @@ const WorkingTableGroup: React.FC = (prop) => {
                     className="workingTableLabel-info-groupLogo"
                     style={{ borderRadius: "5px" }}
                   >
-                    <img
-                      src={
-                        item.groupObj.groupLogo
-                          ? item.groupObj.groupLogo
-                          : defaultGroupPng
-                      }
-                      alt=""
+                    <Avatar
+                      avatar={item?.groupObj?.groupLogo}
+                      name={item?.groupObj?.groupName}
+                      type={"group"}
+                      index={index}
                     />
                   </div>
                   <div style={{ color: "#fff" }}>{item.groupObj.groupName}</div>

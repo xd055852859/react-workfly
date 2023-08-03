@@ -1,0 +1,61 @@
+.okr {
+  width: 100%;
+  height: 100%;
+}
+
+.okr-box {
+  width: 100%;
+  height: calc(100% - 68px);
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  background-color: #eff3f5;
+  padding: 15px;
+  box-sizing: border-box;
+  overflow: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.okr-header {
+  width: 100%;
+  height: 68px;
+  padding: 0px 26px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  font-size: 16px;
+}
+
+.okrTable-oLogo {
+  width: 45px;
+  height: 25px;
+  line-height: 25px;
+  border-radius: 10px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.okr-dropmenu-name {
+  width: 100%;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  padding: 0px 8px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.okr-dropmenu-name:hover {
+  background-color: #f0f0f0;
+}
+.calendar-name .ant-progress-text {
+  color: #fff !important;
+}

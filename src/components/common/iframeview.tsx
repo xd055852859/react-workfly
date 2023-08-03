@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Loading from './loading';
-
+declare var window: Window 
 interface IframeviewProps {
   uri: string;
 }

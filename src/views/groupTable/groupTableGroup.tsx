@@ -5,7 +5,7 @@ import "./groupTableGroup.css";
 import api from "../../services/api";
 import _ from "lodash";
 import { useTypedSelector } from "../../redux/reducer/RootState";
-import { Input, Button, Modal } from "antd";
+import { Input, Button, Modal, Tooltip } from "antd";
 import { GlobalOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { useAuth } from "../../context/auth";
@@ -19,12 +19,21 @@ import format from "../../components/common/format";
 import Task from "../../components/task/task";
 import TaskNav from "../../components/taskNav/taskNav";
 import Loading from "../../components/common/loading";
+import Avatar from "../../components/common/avatar";
+import DropMenu from "../../components/common/dropMenu";
 
+import checkPersonPng from "../../assets/img/checkPerson.png";
 import defaultPerson from "../../assets/img/defaultPerson.png";
 import taskAddPng from "../../assets/img/contact-add.png";
+import IconFont from "../../components/common/iconFont";
 
-const { TextArea } = Input;
-const GroupTableGroup: React.FC = (prop) => {
+const { TextArea, Search } = Input;
+interface GroupTableGroupProps {
+  setFinishPercent?: any;
+  setFinishNumber?: any;
+}
+const GroupTableGroup: React.FC<GroupTableGroupProps> = (prop) => {
+  const { setFinishPercent, setFinishNumber } = prop;
   const { deviceWidth } = useAuth();
   const user = useTypedSelector((state) => state.auth.user);
   const labelArray = useTypedSelector((state) => state.task.labelArray);
@@ -32,6 +41,10 @@ const GroupTableGroup: React.FC = (prop) => {
   const groupKey = useTypedSelector((state) => state.group.groupKey);
   const groupInfo = useTypedSelector((state) => state.group.groupInfo);
   const mainGroupKey = useTypedSelector((state) => state.auth.mainGroupKey);
+  const groupMemberArray = useTypedSelector(
+    (state) => state.member.groupMemberArray
+  );
+
   const [groupTaskArray, setGroupTaskArray] = useState<any>([]);
   const [taskNumber] = useState(() => {
     return Math.ceil((document.documentElement.offsetHeight - 128) / 70);
@@ -39,6 +52,8 @@ const GroupTableGroup: React.FC = (prop) => {
   const [taskLoadInfo, setTaskLoadInfo] = useState<any>([]);
   const [taskNameArr, setTaskNameArr] = useState<any>([]);
   const [labelExecutorArray, setLabelExecutorArray] = useState<any>([]);
+  const [labelFollowArray, setLabelFollowArray] = useState<any>([]);
+
   // const [labelIndex, setLabelIndex] = useState<any>(null);
   const [labelVisible, setLabelVisible] = useState(false);
   const [addLabelInput, setAddLabelInput] = useState("");
@@ -49,10 +64,17 @@ const GroupTableGroup: React.FC = (prop) => {
   const [chooseLabelKey, setChooseLabelKey] = useState("");
   const [moveState, setMoveState] = useState(false);
   const [urlInput, setUrlInput] = useState("");
+  const [defaultItem, setDefaultItem] = useState<any>({});
+  const [defaultKey, setDefaultKey] = useState<any>(null);
+
+  const [avatarVisible, setAvatarVisible] = useState(false);
+  const [searchMemberInput, setSearchMemberInput] = useState("");
+  const [searchMemberArray, setSearchMemberArray] = useState<any>([]);
   const filterObject = useTypedSelector((state) => state.task.filterObject);
   const dispatch = useDispatch();
   const containerRef: React.RefObject<any> = useRef();
   const labelIndex = useRef<any>();
+  const { deviceType } = useAuth();
   useMount(() => {
     setLoading(true);
   });
@@ -67,6 +89,7 @@ const GroupTableGroup: React.FC = (prop) => {
     (labelArray: any, taskArray: any, filterObject: any) => {
       let taskNameArr: any = [];
       let labelExecutorArray: any = [];
+      let labelFollowArray: any = [];
       let groupTaskArray: any = [];
 
       let finishPercentArray1: any = [];
@@ -74,12 +97,22 @@ const GroupTableGroup: React.FC = (prop) => {
       let finishPercentArray10: any = [];
       labelArray.forEach((item: any, index: any) => {
         groupTaskArray[index] = [];
+        labelFollowArray[index] = [];
         taskNameArr.push({ name: item.cardLabelName, key: item._key });
         labelExecutorArray.push({
           executorKey: item.executorKey,
           executorAvatar: item.executorAvatar,
           executorNickName: item.executorNickName,
         });
+        if (item.followUserList) {
+          item.followUserList.forEach((followItem, followIndex) => {
+            labelFollowArray[index].push({
+              _key: followItem._key,
+              name: followItem.name,
+              avatar: followItem.avatar,
+            });
+          });
+        }
       });
 
       taskArray.forEach((item: any) => {
@@ -128,22 +161,48 @@ const GroupTableGroup: React.FC = (prop) => {
           }
         }
       });
+      let allTaskNumber = 0;
+      let finishTaskNumber = 0;
       groupTaskArray = groupTaskArray.map((item: any, index: number) => {
+        item = _.cloneDeep(format.formatFilter(item, filterObject));
         if (finishPercentArray1[index]) {
+          finishPercentArray1[index] = _.cloneDeep(
+            format.formatFilter(finishPercentArray1[index], filterObject)
+          );
           item.push(...finishPercentArray1[index]);
+          finishTaskNumber =
+            finishTaskNumber + finishPercentArray1[index].length;
         }
         if (finishPercentArray2[index]) {
+          finishPercentArray2[index] = _.cloneDeep(
+            format.formatFilter(finishPercentArray2[index], filterObject)
+          );
           item.push(...finishPercentArray2[index]);
+          finishTaskNumber =
+            finishTaskNumber + finishPercentArray2[index].length;
         }
         if (finishPercentArray10[index]) {
+          finishPercentArray10[index] = _.cloneDeep(
+            format.formatFilter(finishPercentArray10[index], filterObject)
+          );
           item.push(...finishPercentArray10[index]);
         }
-        return _.cloneDeep(format.formatFilter(item, filterObject));
+        allTaskNumber = allTaskNumber + item.length;
+        return item;
       });
+
+      setFinishPercent(
+        !isNaN(finishTaskNumber / allTaskNumber)
+          ? parseFloat((finishTaskNumber / allTaskNumber).toFixed(1))
+          : 0
+      );
+      setFinishNumber(allTaskNumber - finishTaskNumber);
       setGroupTaskArray(groupTaskArray);
       setTaskNameArr(taskNameArr);
       setLabelExecutorArray(labelExecutorArray);
+      setLabelFollowArray(labelFollowArray);
     },
+    //eslint-disable-next-line
     []
   );
   useEffect(() => {
@@ -162,6 +221,25 @@ const GroupTableGroup: React.FC = (prop) => {
     }
   }, [groupTaskArray, taskNumber]);
 
+  useEffect(() => {
+    if (searchMemberInput) {
+      setSearchMemberArray((prevSearchMemberArray) => {
+        prevSearchMemberArray = groupMemberArray.filter(
+          (item: any, index: number) => {
+            return (
+              item.nickName &&
+              item.nickName
+                .toUpperCase()
+                .indexOf(searchMemberInput.toUpperCase()) !== -1
+            );
+          }
+        );
+        return [...prevSearchMemberArray];
+      });
+    } else {
+      setSearchMemberArray(groupMemberArray);
+    }
+  }, [searchMemberInput, groupMemberArray]);
   const reorder = (list: any, startIndex: number, endIndex: number) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
@@ -325,7 +403,7 @@ const GroupTableGroup: React.FC = (prop) => {
     });
     let batchRes: any = await api.task.batchTaskArray(cardKeyArray);
     if (batchRes.msg === "OK") {
-      dispatch(changeMusic(4));
+      dispatch(changeMusic(10));
       dispatch(setMessage(true, "归档成功", "success"));
       dispatch(getGroupTask(3, groupKey, "[0,1,2,10]"));
     } else {
@@ -338,7 +416,15 @@ const GroupTableGroup: React.FC = (prop) => {
 
     if (addLabelInput !== "") {
       // let labelRes: any = await api.group.setLabelOrder(groupKey, labelOrder);
-      let labelRes: any = await api.task.addTaskLabel(groupKey, addLabelInput);
+      if (addLabelInput.indexOf("_") !== -1) {
+        dispatch(setMessage(true, "请勿输入 _ 为特殊字符", "error"));
+        return;
+      }
+      let labelRes: any = await api.task.addTaskLabel(
+        groupKey,
+        addLabelInput,
+        defaultKey
+      );
       if (labelRes.msg === "OK") {
         newTaskNameArr.splice(labelIndex.current, 0, {
           name: addLabelInput,
@@ -352,10 +438,21 @@ const GroupTableGroup: React.FC = (prop) => {
         setTaskNameArr(newTaskNameArr);
         await api.group.setLabelOrder(groupKey, labelOrder);
         dispatch(getGroupTask(3, groupKey, "[0,1,2,10]"));
+        // let newGroupInfo = _.cloneDeep(groupInfo);
+        // newGroupInfo.labelInfo.push({
+        //   labelKey: labelRes.result._key,
+        //   labelName: labelRes.result.cardLabelName,
+        //   taskType: labelRes.result.taskType,
+        // });
+        // newGroupInfo.labelOrder.push(labelRes.result._key);
+        // dispatch(changeLocalGroupInfo(newGroupInfo));
         setLabelVisible(false);
       } else {
         dispatch(setMessage(true, labelRes.msg, "error"));
       }
+    } else {
+      dispatch(setMessage(true, "请输入频道名", "error"));
+      return;
     }
   };
   const changeLabelAvatar = async (item: any, index: number) => {
@@ -367,6 +464,7 @@ const GroupTableGroup: React.FC = (prop) => {
     };
     setLabelExecutorArray(newLabelExecutorArray);
   };
+
   const addTask = async (groupInfo: any, labelInfo: any) => {
     let obj = {};
     if (addInput === "") {
@@ -565,6 +663,8 @@ const GroupTableGroup: React.FC = (prop) => {
                                       taskNavTask={
                                         groupTaskArray[taskNameindex]
                                       }
+                                      followList={labelFollowArray}
+                                      changeFollowList={setLabelFollowArray}
                                     />
                                   </div>
                                 </React.Fragment>
@@ -618,7 +718,9 @@ const GroupTableGroup: React.FC = (prop) => {
                                     }}
                                     style={{ width: "100%" }}
                                     onKeyDown={(e: any) => {
-                                      if (e.keyCode === 13 && !loading) {
+                                      if (e.shiftKey && e.keyCode === 13) {
+                                        setAddInput(e.target.value + "\n");
+                                      } else if (e.keyCode === 13 && !loading) {
                                         e.preventDefault();
                                         addTask(
                                           groupInfo,
@@ -632,35 +734,37 @@ const GroupTableGroup: React.FC = (prop) => {
                                   className="taskItem-plus-button"
                                   style={{ marginTop: "10px" }}
                                 >
-                                  <div className="taskNav-url">
-                                    <Button
-                                      type="primary"
-                                      shape="circle"
-                                      icon={<GlobalOutlined />}
-                                      ghost
-                                      style={{ border: "0px", color: "#fff" }}
-                                      onClick={() => {
-                                        setMoveState(true);
-                                      }}
-                                    />
+                                  {deviceType !== "tool" ? (
+                                    <div className="taskNav-url">
+                                      <Button
+                                        type="primary"
+                                        shape="circle"
+                                        icon={<GlobalOutlined />}
+                                        ghost
+                                        style={{ border: "0px", color: "#fff" }}
+                                        onClick={() => {
+                                          setMoveState(true);
+                                        }}
+                                      />
 
-                                    <Input
-                                      className="taskNav-url-input"
-                                      value={urlInput}
-                                      onChange={(e: any) => {
-                                        setUrlInput(e.target.value);
-                                      }}
-                                      placeholder="请输入链接地址"
-                                      style={
-                                        moveState
-                                          ? {
-                                              animation: "urlOut 500ms",
-                                              animationFillMode: "forwards",
-                                            }
-                                          : {}
-                                      }
-                                    />
-                                  </div>
+                                      <Input
+                                        className="taskNav-url-input"
+                                        value={urlInput}
+                                        onChange={(e: any) => {
+                                          setUrlInput(e.target.value);
+                                        }}
+                                        placeholder="请输入链接地址"
+                                        style={
+                                          moveState
+                                            ? {
+                                                animation: "urlOut 500ms",
+                                                animationFillMode: "forwards",
+                                              }
+                                            : {}
+                                        }
+                                      />
+                                    </div>
+                                  ) : null}
                                   <Button
                                     ghost
                                     onClick={() => {
@@ -716,6 +820,7 @@ const GroupTableGroup: React.FC = (prop) => {
                                         //   taskInfoitem.length > 4 &&
                                         //   index > taskInfoitem.length - 3
                                         // }
+                                        type="customService"
                                         taskIndex={
                                           labelArray[taskInfoindex] &&
                                           labelArray[
@@ -726,6 +831,14 @@ const GroupTableGroup: React.FC = (prop) => {
                                               ].cardOrder.indexOf(item._key)
                                             : 0
                                         }
+                                        taskStyle={{
+                                          // background: snapshot.isDragging
+                                          //   ? "rgba(188,255,238,0.7)"
+                                          //   : "rgb(255,255,255)",
+                                          transform: snapshot.isDragging
+                                            ? "rotate(10deg)"
+                                            : "rotate(0deg)",
+                                        }}
                                       />
                                     ) : null}
                                   </div>
@@ -758,7 +871,116 @@ const GroupTableGroup: React.FC = (prop) => {
               onChange={(e) => {
                 setAddLabelInput(e.target.value);
               }}
+              onKeyDown={(e) => {
+                if (e.keyCode === 13) {
+                  addLabel();
+                  setLabelVisible(false);
+                }
+              }}
             />
+            <div
+              className="default-member"
+              onClick={() => {
+                setAvatarVisible(true);
+              }}
+            >
+              <Avatar
+                avatar={defaultItem.avatar}
+                name={defaultItem.nickName}
+                type={"person"}
+                size={25}
+                index={0}
+              />
+              <span style={{ marginLeft: "5px" }}>{defaultItem.nickName}</span>
+              <DropMenu
+                visible={avatarVisible}
+                dropStyle={{
+                  width: "80%",
+                  height: "350px",
+                  top: "155px",
+                  color: "#333",
+                }}
+                onClose={() => {
+                  setAvatarVisible(false);
+                }}
+                title={"设置默认执行人"}
+              >
+                <div className="defaultExecutor-search">
+                  <Search
+                    placeholder="请输入执行人名称"
+                    value={searchMemberInput}
+                    autoComplete="off"
+                    onChange={(e) => {
+                      setSearchMemberInput(e.target.value);
+                    }}
+                    allowClear={false}
+                    style={{ width: "calc(100% - 40px)", height: "30px" }}
+                  />
+                  <Tooltip title="清除执行人">
+                    <Button
+                      size="large"
+                      shape="circle"
+                      style={{ border: "0px" }}
+                      ghost
+                      icon={
+                        <IconFont
+                          type="icon-saoba1"
+                          style={{ fontSize: "25px" }}
+                        />
+                      }
+                      onClick={() => {
+                        setDefaultItem({});
+                        setDefaultKey(null);
+                        setAvatarVisible(false);
+                      }}
+                    />
+                  </Tooltip>
+                </div>
+                <div className="defaultExecutor-info">
+                  {searchMemberArray
+                    ? searchMemberArray.map(
+                        (groupMemberItem: any, groupMemberIndex: number) => {
+                          return (
+                            <div
+                              key={"groupMember" + groupMemberIndex}
+                              className="defaultExecutor-info-item"
+                              style={{ justifyContent: "space-between" }}
+                              onClick={() => {
+                                setDefaultItem(groupMemberItem);
+                                setDefaultKey(groupMemberItem.userId);
+                                setAvatarVisible(false);
+                              }}
+                            >
+                              <div className="defaultExecutor-info-left">
+                                <Avatar
+                                  avatar={groupMemberItem?.avatar}
+                                  name={groupMemberItem?.nickName}
+                                  type={"person"}
+                                  index={0}
+                                  size={30}
+                                />
+                                <span style={{ marginLeft: "5px" }}>
+                                  {groupMemberItem.nickName}
+                                </span>
+                              </div>
+                              {defaultKey === groupMemberItem.userId ? (
+                                <img
+                                  src={checkPersonPng}
+                                  alt=""
+                                  style={{
+                                    width: "20px",
+                                    height: "12px",
+                                  }}
+                                />
+                              ) : null}
+                            </div>
+                          );
+                        }
+                      )
+                    : null}
+                </div>
+              </DropMenu>
+            </div>
           </Modal>
         </div>
       ) : null}

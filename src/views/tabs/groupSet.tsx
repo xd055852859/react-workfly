@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import "./groupSet.css";
 import { useDispatch } from "react-redux";
 import { Checkbox, Input, Radio, Select } from "antd";
+
 import { useMount } from "../../hook/common";
 
 import Cropper from "react-cropper";
-import api from "../../services/api";
 
 import { setMessage } from "../../redux/actions/commonActions";
 import { useTypedSelector } from "../../redux/reducer/RootState";
@@ -17,7 +17,7 @@ import Dialog from "../../components/common/dialog";
 
 import plusPng from "../../assets/img/contact-plus.png";
 import editImgPng from "../../assets/img/editImg.png";
-import bigCloseSvg from "../../assets/svg/bigClose.svg";
+import LogoModel from "../../components/common/logoModal";
 const { TextArea } = Input;
 const { Option } = Select;
 interface GroupSetProps {
@@ -29,21 +29,18 @@ interface GroupSetProps {
 const GroupSet: React.FC<GroupSetProps> = (props) => {
   const { saveGroupSet, type, groupInfo } = props;
   const dispatch = useDispatch();
-  const uploadToken = useTypedSelector((state) => state.auth.uploadToken);
 
   // const groupInfo = useTypedSelector((state) => state.group.groupInfo);
   const groupRole = useTypedSelector((state) => state.group.groupRole);
-  const mainEnterpriseGroup = useTypedSelector(
-    (state) => state.auth.mainEnterpriseGroup
-  );
-  const [groupName, setGroupName] = useState("");
-  const [enterprise, setEnterprise] = useState(false);
+  const [groupName, setGroupName] = useState("新项目");
   const [statisticsSonGroupEnergy, setStatisticsSonGroupEnergy] =
     useState(false);
   const [groupDesc, setGroupDesc] = useState("");
-  const [groupLogo, setGroupLogo] = useState("");
+  const [groupLogo, setGroupLogo] = useState(
+    "https://cdn-icare.qingtime.cn/1622592874328.svg"
+  );
   const [modelUrl, setModelUrl] = useState("");
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [joinType, setJoinType] = useState("1");
   const [password, setPassword] = useState("");
   const [question, setQuestion] = useState("");
@@ -53,11 +50,10 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
   const [defaultPowerVisible, setDefaultPowerVisible] = useState(false);
   const [defaultPngVisible, setDefaultPngVisible] = useState(false);
   const [photoVisible, setPhotoVisible] = useState<any>(false);
-  const [upImg, setUpImg] = useState<any>(null);
-  const [thirdPngList, setThirdPngList] = useState<any>([]);
-  const [thirdPngPage, setThirdPngPage] = useState<number>(1);
-  const [thirdPngTotal, setThirdPngTotal] = useState<number>(0);
 
+  const [upImg, setUpImg] = useState<any>(null);
+
+  const [isCustomService, setIsCustomService] = useState<boolean>(false);
   const setRef: React.RefObject<any> = useRef();
   const cropperRef = useRef<HTMLImageElement>(null);
   const roleArray = [
@@ -87,7 +83,6 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
       setGroupDesc(groupInfo.groupDesc ? groupInfo.groupDesc : "");
       setGroupLogo(groupInfo.groupLogo ? groupInfo.groupLogo : "");
       setModelUrl(groupInfo.modelUrl ? groupInfo.modelUrl : "");
-      setEnterprise(groupInfo.enterprise === 2 ? true : false);
       setStatisticsSonGroupEnergy(
         groupInfo.statisticsSonGroupEnergy
           ? groupInfo.statisticsSonGroupEnergy
@@ -106,6 +101,9 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
       );
       setIsLinkJoin(groupInfo.isLinkJoin ? groupInfo.isLinkJoin : false);
       setDefaultPower(groupInfo.defaultPower ? groupInfo.defaultPower : 5);
+      setIsCustomService(
+        groupInfo.isCustomService ? groupInfo.isCustomService : false
+      );
     }
   }, [type, groupInfo]);
   const changeGroupName = (e: any) => {
@@ -116,12 +114,6 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
     setGroupName(newGroupName);
     setGroupSet("groupName", newGroupName);
   };
-  const changeEnterprise = (e: any) => {
-    let newEnterprise = e.target.checked;
-    setEnterprise(newEnterprise);
-    setGroupSet("enterprise", newEnterprise ? 2 : 1);
-  };
-
   const changeGroupDesc = (e: any) => {
     let newGroupDesc = e.target.value;
     setGroupDesc(newGroupDesc);
@@ -129,13 +121,15 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
   };
   const changeOpen = (e: any) => {
     let newIsOpen = e.target.checked;
-    if (!newIsOpen) {
-      setJoinType("1");
-    } else {
-      setJoinType("0");
-    }
+    // let newJoinType = joinType;
+    // if (!newIsOpen) {
+    //   newJoinType = "1";
+    // } else {
+    //   newJoinType = "0";
+    // }
     setIsOpen(newIsOpen);
     setGroupSet("isOpen", newIsOpen);
+    // setGroupSet("joinType", parseInt(newJoinType));
   };
   const changeJoinType = (e: any) => {
     let newJoinType = e.target.value;
@@ -164,6 +158,7 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
     setGroupSet("defaultPower", newDefaultPower);
     setDefaultPowerVisible(false);
   };
+
   // const uploadImg = (e: any) => {
   //   let mimeType = ['image/png', 'image/jpeg'];
   //   let item = {};
@@ -225,7 +220,6 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
 
     uploadFile.uploadImg(
       imgFile,
-      uploadToken,
       mimeType,
       function (url: string) {
         dispatch(setMessage(true, "图片上传成功", "success"));
@@ -251,6 +245,7 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
   //     };
   //   };
   // };
+
   const setGroupSet = (type: string, value: any) => {
     let obj: any = {
       groupName: groupName,
@@ -264,194 +259,120 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
       isHasPassword: isHasPassword,
       isLinkJoin: isLinkJoin,
       defaultPower: defaultPower,
-      enterprise: enterprise ? 2 : 1,
       statisticsSonGroupEnergy: statisticsSonGroupEnergy,
+      isCustomService: isCustomService,
     };
     obj[type] = value;
     saveGroupSet(obj);
   };
-  const getDefaultPng = async (page) => {
-    let res: any = await api.thirdApi.getThirdRandomPng(page);
-    // if (isArray(res)) {
-    //   setThirdPngList(res);
-    // }
-    if (res.msg === "OK") {
-      setThirdPngList((prevThirdPngList) => {
-        if (page === 1) {
-          prevThirdPngList = [];
-        }
-        return [...prevThirdPngList, ...res.data];
-      });
-      setThirdPngTotal(res.totalNum);
-    } else {
-      dispatch(setMessage(true, "获取图片失败", "error"));
-    }
-  };
-  const scrollDefaultPng = (e: any) => {
-    console.log(e);
-    let page = thirdPngPage;
-    //文档内容实际高度（包括超出视窗的溢出部分）
-    let scrollHeight = e.target.scrollHeight;
-    //滚动条滚动距离
-    let scrollTop = e.target.scrollTop;
-    //窗口可视范围高度
-    let height = e.target.clientHeight;
-    console.log(height + scrollTop);
-    console.log(scrollHeight);
-    if (
-      height + scrollTop >= scrollHeight &&
-      thirdPngList.length < thirdPngTotal
-    ) {
-      page = page + 1;
-      setThirdPngPage(page);
-      getDefaultPng(page);
-    }
-  };
-  return (
-    <div className="contact-dialog-content" ref={setRef}>
-      <div className="contact-dialog-info">
-        <div className="contact-dialog-container">
-          <div className="contact-name-content" style={{ marginBottom: "5px" }}>
-            <div className="contact-name-title">项目图标</div>
-            <div
-              className="contact-dialog-logo"
-              onClick={() => {
-                if ((groupRole === 1 && type === "设置") || type === "创建") {
-                  setDefaultPngVisible(true);
-                  getDefaultPng(1);
-                }
-              }}
-              style={{ border: groupLogo ? 0 : "1px solid #d9d9d9" }}
-            >
-              <img src={plusPng} className="contact-dialog-add" alt="" />
-              <img src={editImgPng} className="contact-dialog-icon" alt="" />
-              {groupLogo ? (
-                <img
-                  src={groupLogo}
-                  className="contact-dialog-groupLogo"
-                  alt=""
-                />
-              ) : null}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={chooseImg}
-                onClick={(e: any) => {
-                  e.stopPropagation();
-                }}
-                className="upload-img"
-                disabled={groupRole !== 1 && type === "设置"}
-              />
-              <DropMenu
-                visible={defaultPngVisible}
-                dropStyle={{
-                  position: "fixed",
-                  width: "100vw",
-                  height: "100vh",
-                  top: "0px",
-                  left: "0px",
-                  zIndex: "10",
-                }}
-                onClose={() => {
-                  setDefaultPngVisible(false);
-                }}
-              >
-                <div
-                  className="defaultPng-container"
-                  onScroll={scrollDefaultPng}
-                >
-                  {thirdPngList
-                    ? thirdPngList.map(
-                        (thirdPngItem: any, thirdPngIndex: number) => {
-                          return (
-                            <div
-                              className="defaultPng-container-item"
-                              key={"defaultPng" + thirdPngIndex}
-                            >
-                              <img
-                                src={thirdPngItem.url}
-                                alt=""
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setGroupLogo(thirdPngItem.url);
-                                  setGroupSet("groupLogo", thirdPngItem.url);
-                                  setDefaultPngVisible(false);
-                                }}
-                              />
-                            </div>
-                            // <ImagePng
-                            //   width={200}
-                            //   src={thirdPngItem.urls.thumb}
-                            //   preview={{
-                            //     src: thirdPngItem.urls.full,
-                            //   }}
-                            // />
-                          );
-                        }
-                      )
-                    : null}
-                </div>
-                <img
-                  src={bigCloseSvg}
-                  alt=""
-                  className="defaultPng-bigClose"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setDefaultPngVisible(false);
-                  }}
-                />
-              </DropMenu>
-            </div>
-          </div>
 
-          <div className="contact-name-content" style={{ marginBottom: "5px" }}>
-            <div className="contact-name-title">项目名称</div>
-            <Input
-              // required
-              placeholder="请输入项目名称"
-              style={{ width: "calc(100% - 90px)" }}
-              value={groupName}
-              onChange={changeGroupName}
-              disabled={groupRole !== 1 && type === "设置"}
-            />
-          </div>
-          <div className="contact-name-content">
-            <div className="contact-name-title">项目属性</div>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Checkbox
-                checked={isOpen}
-                onChange={changeOpen}
-                disabled={groupRole !== 1 && type === "设置"}
-              >
-                全平台可见
-              </Checkbox>
-            </div>
-            {!(
-              type === "创建" && mainEnterpriseGroup?.mainEnterpriseGroupKey
-            ) && !(type === "设置" && groupInfo?.enterpriseGroupKey) ? (
+  return (
+    <React.Fragment>
+      <div className="contact-dialog-content" ref={setRef}>
+        <div className="contact-dialog-info">
+          <div className="contact-dialog-container">
+            {type !== "企业" ? (
+              <React.Fragment>
+                <div
+                  className="contact-name-content"
+                  style={{ marginBottom: "5px" }}
+                >
+                  <div className="contact-name-title">项目图标</div>
+                  <div
+                    className="contact-dialog-logo"
+                    onClick={() => {
+                      if (
+                        ((groupRole === 1 || groupRole === 2) &&
+                          type === "设置") ||
+                        type === "创建"
+                      ) {
+                        setDefaultPngVisible(true);
+                      }
+                    }}
+                    style={{ border: groupLogo ? 0 : "1px solid #d9d9d9" }}
+                  >
+                    <img
+                      src={editImgPng}
+                      className="contact-dialog-icon"
+                      alt=""
+                    />
+                    {groupLogo ? (
+                      groupLogo.indexOf("https") !== -1 ? (
+                        <img
+                          src={groupLogo}
+                          className="contact-dialog-groupLogo"
+                          alt=""
+                        />
+                      ) : (
+                        <div style={{ fontSize: "50px" }}>{groupLogo}</div>
+                      )
+                    ) : (
+                      <img
+                        src={plusPng}
+                        className="contact-dialog-add"
+                        alt=""
+                      />
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={chooseImg}
+                      onClick={(e: any) => {
+                        e.stopPropagation();
+                      }}
+                      className="upload-img"
+                      disabled={
+                        groupRole !== 1 && groupRole !== 2 && type === "设置"
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div
+                  className="contact-name-content"
+                  style={{ marginBottom: "5px" }}
+                >
+                  <div className="contact-name-title">项目名称</div>
+                  <Input
+                    // required
+                    placeholder="请输入项目名称"
+                    style={{ width: "calc(100% - 90px)" }}
+                    value={groupName}
+                    onChange={changeGroupName}
+                    disabled={
+                      groupRole !== 1 && groupRole !== 2 && type === "设置"
+                    }
+                  />
+                </div>
+              </React.Fragment>
+            ) : null}
+
+            <div className="contact-name-content">
+              <div className="contact-name-title">项目属性</div>
               <div style={{ display: "flex", alignItems: "center" }}>
                 <Checkbox
-                  checked={enterprise}
-                  onChange={changeEnterprise}
-                  disabled={groupRole !== 1 && type === "设置"}
+                  checked={isOpen}
+                  onChange={changeOpen}
+                  disabled={
+                    groupRole !== 1 && groupRole !== 2 && type === "设置"
+                  }
                 >
-                  企业项目
+                  全平台可见
                 </Checkbox>
               </div>
-            ) : null}
-          </div>
-          <div className="contact-name-content">
-            <div className="contact-name-title">项目简介</div>
-            <TextArea
-              autoSize={{ minRows: 3 }}
-              placeholder="请输入项目描述"
-              style={{ width: "calc(100% - 90px)", fontSize: "12px" }}
-              value={groupDesc}
-              onChange={changeGroupDesc}
-              disabled={groupRole !== 1 && type === "设置"}
-            />
-          </div>
-          {/* <div className="contact-name-content" style={{ height: '250px' }}>
+            </div>
+            <div className="contact-name-content">
+              <div className="contact-name-title">项目简介</div>
+              <TextArea
+                autoSize={{ minRows: 3 }}
+                placeholder="请输入项目描述"
+                style={{ width: "calc(100% - 90px)", fontSize: "12px" }}
+                value={groupDesc}
+                onChange={changeGroupDesc}
+                disabled={groupRole !== 1 && groupRole !== 2 && type === "设置"}
+              />
+            </div>
+            {/* <div className="contact-name-content" style={{ height: '250px' }}>
             <div className="contact-name-title">项目概念图</div>
             <div className="contact-model">
               <img
@@ -481,111 +402,131 @@ const GroupSet: React.FC<GroupSetProps> = (props) => {
               />
             </div>
           </div> */}
-          <div className="contact-name-content">
-            <div className="contact-name-title">默认权限</div>
-            <Select
-              style={{ width: 120 }}
-              onChange={(value: number) => {
-                if ((groupRole === 1 && type === "设置") || type === "创建") {
+            <div className="contact-name-content">
+              <div className="contact-name-title">新群成员默认权限</div>
+              <Select
+                style={{ width: 120 }}
+                onChange={(value: number) => {
                   changeRole(value);
-                }
-              }}
-              value={defaultPower}
-              getPopupContainer={() => setRef.current}
-            >
-              {roleArray.map((roleItem: any, roleIndex: number) => {
-                return (
-                  <Option value={roleItem.role} key={"role" + roleIndex}>
-                    {roleItem.name}
-                  </Option>
-                );
-              })}
-            </Select>
-            <DropMenu
-              visible={defaultPowerVisible}
-              dropStyle={{
-                width: "300px",
-                height: "100px",
-                top: "40px",
-                left: "100px",
-              }}
-              onClose={() => {
-                setDefaultPowerVisible(false);
-              }}
-            >
-              <div className="contact-role"></div>
-            </DropMenu>
-          </div>
-          <div className="contact-name-content">
-            <div className="contact-name-title">项目特性</div>
-            <Radio.Group onChange={changeJoinType} value={joinType}>
-              {isOpen ? (
-                <Radio value="0" disabled={groupRole !== 1 && type === "设置"}>
-                  开放加入
+                }}
+                value={defaultPower}
+                getPopupContainer={() => setRef.current}
+                disabled={groupRole !== 1 && groupRole !== 2 && type === "设置"}
+              >
+                {roleArray.map((roleItem: any, roleIndex: number) => {
+                  return (
+                    <Option value={roleItem.role} key={"role" + roleIndex}>
+                      {roleItem.name}
+                    </Option>
+                  );
+                })}
+              </Select>
+              <DropMenu
+                visible={defaultPowerVisible}
+                dropStyle={{
+                  width: "300px",
+                  height: "100px",
+                  top: "40px",
+                  left: "100px",
+                }}
+                onClose={() => {
+                  setDefaultPowerVisible(false);
+                }}
+              >
+                <div className="contact-role"></div>
+              </DropMenu>
+            </div>
+            <div className="contact-name-content">
+              <div className="contact-name-title">项目特性</div>
+              <Radio.Group onChange={changeJoinType} value={joinType}>
+                {isOpen ? (
+                  <Radio
+                    value="0"
+                    disabled={
+                      groupRole !== 1 && groupRole !== 2 && type === "设置"
+                    }
+                  >
+                    开放加入
+                  </Radio>
+                ) : null}
+                <Radio
+                  value="1"
+                  disabled={
+                    groupRole !== 1 && groupRole !== 2 && type === "设置"
+                  }
+                >
+                  审核加入
                 </Radio>
-              ) : null}
-              <Radio value="1" disabled={groupRole !== 1 && type === "设置"}>
-                审核加入
-              </Radio>
-            </Radio.Group>
-          </div>
-          <div className="contact-name-content">
-            <div className="contact-name-title">加入方式</div>
+              </Radio.Group>
+            </div>
+            <div className="contact-name-content">
+              <div className="contact-name-title">加入方式</div>
 
-            <Checkbox
-              checked={isHasPassword}
-              onChange={changeIsPassword}
-              disabled={groupRole !== 1 && type === "设置"}
-            >
-              口令加入
-            </Checkbox>
-            {isHasPassword ? (
-              <React.Fragment>
-                <Input
-                  placeholder="请输入口令问题"
-                  style={{ margin: "0px 10px", width: "180px" }}
-                  value={question}
-                  onChange={changeQuestion}
-                  disabled={groupRole !== 1 && type === "设置"}
-                />
-                <Input
-                  placeholder="请输入口令"
-                  style={{ width: "150px" }}
-                  value={password}
-                  onChange={changePassword}
-                  disabled={groupRole !== 1 && type === "设置"}
-                />
-              </React.Fragment>
-            ) : null}
+              <Checkbox
+                checked={isHasPassword}
+                onChange={changeIsPassword}
+                disabled={groupRole !== 1 && groupRole !== 2 && type === "设置"}
+              >
+                口令加入
+              </Checkbox>
+              {isHasPassword ? (
+                <React.Fragment>
+                  <Input
+                    placeholder="请输入口令问题"
+                    style={{ margin: "0px 10px", width: "180px" }}
+                    value={question}
+                    onChange={changeQuestion}
+                    disabled={
+                      groupRole !== 1 && groupRole !== 2 && type === "设置"
+                    }
+                  />
+                  <Input
+                    placeholder="请输入口令"
+                    style={{ width: "150px" }}
+                    value={password}
+                    onChange={changePassword}
+                    disabled={
+                      groupRole !== 1 && groupRole !== 2 && type === "设置"
+                    }
+                  />
+                </React.Fragment>
+              ) : null}
+            </div>
           </div>
         </div>
+        <Dialog
+          visible={photoVisible}
+          onClose={() => {
+            setPhotoVisible(false);
+          }}
+          onOK={() => {
+            uploadImg();
+            setPhotoVisible(false);
+          }}
+          title={"选择图片"}
+          dialogStyle={{
+            width: "500px",
+            height: "95vh",
+          }}
+        >
+          <Cropper
+            style={{ width: "100%", height: "75vh" }}
+            // preview=".uploadCrop"
+            guides={true}
+            src={upImg}
+            ref={cropperRef}
+            // aspectRatio={16 / 9}
+            preview=".img-preview"
+          />
+        </Dialog>
       </div>
-      <Dialog
-        visible={photoVisible}
-        onClose={() => {
-          setPhotoVisible(false);
-        }}
-        onOK={() => {
-          uploadImg();
-          setPhotoVisible(false);
-        }}
-        title={"选择图片"}
-        dialogStyle={{
-          width: "500px",
-          height: "500px",
-        }}
-      >
-        <Cropper
-          style={{ width: "100%", height: "95%" }}
-          // preview=".uploadCrop"
-          guides={true}
-          src={upImg}
-          ref={cropperRef}
-          // aspectRatio={16 / 9}
-          preview=".img-preview"
-        />
-      </Dialog>
-    </div>
+      <LogoModel
+        setGroupLogo={setGroupLogo}
+        visible={defaultPngVisible}
+        changeVisible={setDefaultPngVisible}
+        type={type}
+      />
+    </React.Fragment>
   );
 };
 export default GroupSet;

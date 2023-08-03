@@ -18,10 +18,11 @@ import IconFont from "../../components/common/iconFont";
 
 import defaultPersonPng from "../../assets/img/defaultPerson.png";
 
+
 interface CompanyEditProps {
   targetUser: any;
   setTargetUser: any;
-  setChangeState: Function;
+  // setChangeState: Function;
   clearState: boolean;
   rows?: any;
   setRows?: any;
@@ -33,7 +34,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
   const {
     targetUser,
     setTargetUser,
-    setChangeState,
+    // setChangeState,
     clearState,
     rows,
     setRows,
@@ -41,7 +42,6 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
     setUserVisible,
   } = props;
   const dispatch = useDispatch();
-  const uploadToken = useTypedSelector((state) => state.auth.uploadToken);
   const groupRole = useTypedSelector((state) => state.group.groupRole);
   const groupKey = useTypedSelector((state) => state.group.groupKey);
   const [targetUserInfo, setTargetUserInfo] = useState<any>(null);
@@ -57,12 +57,12 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
   const [lunarBirthday, setLunarBirthday] = useState("");
   const [emergencyContact, setEmergencyContact] = useState("");
   const [emergencyContactTel, setEmergencyContactTel] = useState("");
-  const [post, setPost] = useState("");
-  const [department1, setDepartment1] = useState("");
-  const [department2, setDepartment2] = useState("");
-  const [department3, setDepartment3] = useState("");
-  const [department4, setDepartment4] = useState("");
-  const [department5, setDepartment5] = useState("");
+  // const [post, setPost] = useState("");
+  // const [department1, setDepartment1] = useState("");
+  // const [department2, setDepartment2] = useState("");
+  // const [department3, setDepartment3] = useState("");
+  // const [department4, setDepartment4] = useState("");
+  // const [department5, setDepartment5] = useState("");
   const [deleteDialogShow, setDeleteDialogShow] = useState(false);
   const cropperRef = useRef<HTMLImageElement>(null);
   useMount(() => {
@@ -71,9 +71,9 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
       setAvatar(targetUser.avatar ? targetUser.avatar : defaultPersonPng);
       setNickName(targetUser.nickName ? targetUser.nickName : "");
       setGender(
-        targetUser.gender === "男" || targetUser.gender === "0" ? "0" : "1"
+        targetUser.gender === "男" || targetUser.gender === "0" || targetUser.gender === 0 ? "0" : "1"
       );
-      setBirthday(moment(targetUser.birthday));
+      setBirthday(targetUser.birthday.valueOf() !== 'Invalid date' ? moment(targetUser.birthday) : moment());
       setEmail(targetUser.email ? targetUser.email : "");
       setAddress(targetUser.address ? targetUser.address : "");
       setEmergencyContact(
@@ -88,11 +88,11 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
       setTargetUserInfo(targetUser);
     } else {
       setTargetUserInfo({
-        department1: "",
-        department2: "",
-        department3: "",
-        department4: "",
-        department5: "",
+        // department1: "",
+        // department2: "",
+        // department3: "",
+        // department4: "",
+        // department5: "",
         nickName: "",
         mobileArea: "+86",
         mobile: "",
@@ -121,18 +121,18 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
       setEmergencyContact("");
       setEmergencyContactTel("");
       setLunarBirthday("");
-      setPost("");
-      setDepartment1("");
-      setDepartment2("");
-      setDepartment3("");
-      setDepartment4("");
-      setDepartment5("");
+      // setPost("");
+      // setDepartment1("");
+      // setDepartment2("");
+      // setDepartment3("");
+      // setDepartment4("");
+      // setDepartment5("");
       setTargetUserInfo({
-        department1: "",
-        department2: "",
-        department3: "",
-        department4: "",
-        department5: "",
+        // department1: "",
+        // department2: "",
+        // department3: "",
+        // department4: "",
+        // department5: "",
         nickName: "",
         mobileArea: "+86",
         mobile: "",
@@ -165,7 +165,6 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
 
     uploadFile.uploadImg(
       imgFile,
-      uploadToken,
       mimeType,
       function (url: string) {
         dispatch(setMessage(true, "图片上传成功", "success"));
@@ -202,7 +201,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
     fileReader.readAsDataURL(e.target.files[0]);
   };
   const changeTargetUser = (value: any, type: string) => {
-    setChangeState(true);
+    // setChangeState(true);
     let newTargetUser: any = _.cloneDeep(targetUserInfo);
     newTargetUser[type] = value;
     setTargetUserInfo(newTargetUser);
@@ -255,10 +254,10 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
             changeTargetUser(e.target.value, "nickName");
           }}
           style={{ width: "calc(100% - 85px)" }}
-          allowClear={true}
+          allowClear={false}
         />
       </div>
-      {!targetUser || !targetUser._key ? (
+      {/* {!targetUser || !targetUser._key ? (
         <React.Fragment>
           <div className="companyEdit-input">
             <div className="companyEdit-input-title">部门1</div>
@@ -269,7 +268,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
                 changeTargetUser(e.target.value, "department1");
               }}
               style={{ width: "calc(100% - 85px)" }}
-              allowClear={true}
+              allowClear={false}
             />
           </div>
           {department1 ? (
@@ -282,7 +281,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
                   changeTargetUser(e.target.value, "department2");
                 }}
                 style={{ width: "calc(100% - 85px)" }}
-                allowClear={true}
+                allowClear={false}
               />
             </div>
           ) : null}
@@ -296,7 +295,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
                   changeTargetUser(e.target.value, "department3");
                 }}
                 style={{ width: "calc(100% - 85px)" }}
-                allowClear={true}
+                allowClear={false}
               />
             </div>
           ) : null}
@@ -310,7 +309,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
                   changeTargetUser(e.target.value, "department4");
                 }}
                 style={{ width: "calc(100% - 85px)" }}
-                allowClear={true}
+                allowClear={false}
               />
             </div>
           ) : null}
@@ -324,7 +323,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
                   changeTargetUser(e.target.value, "department5");
                 }}
                 style={{ width: "calc(100% - 85px)" }}
-                allowClear={true}
+                allowClear={false}
               />
             </div>
           ) : null}
@@ -337,12 +336,12 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
                 changeTargetUser(e.target.value, "post");
               }}
               style={{ width: "calc(100% - 85px)" }}
-              allowClear={true}
+              allowClear={false}
             />
           </div>
         </React.Fragment>
-      ) : null}
-      <div className="companyEdit-input">
+      ) : null} */}
+      {/* <div className="companyEdit-input">
         <div className="companyEdit-input-title">性别</div>
         <Radio.Group
           onChange={(e: any) => {
@@ -354,7 +353,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
           <Radio value="0">男</Radio>
           <Radio value="1">女</Radio>
         </Radio.Group>
-      </div>
+      </div> */}
       <div className="companyEdit-input">
         <div className="companyEdit-input-title">
           <Badge dot offset={[10, 0]}>
@@ -368,13 +367,13 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
             changeTargetUser(e.target.value, "email");
           }}
           style={{ width: "calc(100% - 85px)" }}
-          allowClear={true}
+          allowClear={false}
         />
       </div>
       <div className="companyEdit-input">
         {/* <div className="user-title">生日</div> */}
         <div className="companyEdit-input-title">生日</div>
-        <DatePicker value={birthday} onChange={handleDateChange} />
+        <DatePicker value={birthday ? birthday : moment()} onChange={handleDateChange} allowClear={false} />
       </div>
       {!targetUser || !targetUser._key ? (
         <div className="companyEdit-input">
@@ -390,7 +389,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
               changeTargetUser(e.target.value, "mobile");
             }}
             style={{ width: "calc(100% - 85px)" }}
-            allowClear={true}
+            allowClear={false}
           />
         </div>
       ) : null}
@@ -403,7 +402,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
             changeTargetUser(e.target.value, "address");
           }}
           style={{ width: "calc(100% - 85px)" }}
-          allowClear={true}
+          allowClear={false}
         />
       </div>
       <div className="companyEdit-input">
@@ -415,7 +414,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
             changeTargetUser(e.target.value, "lunarBirthday");
           }}
           style={{ width: "calc(100% - 85px)" }}
-          allowClear={true}
+          allowClear={false}
         />
       </div>
       <div className="companyEdit-input">
@@ -427,7 +426,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
             changeTargetUser(e.target.value, "emergencyContact");
           }}
           style={{ width: "calc(100% - 85px)" }}
-          allowClear={true}
+          allowClear={false}
         />
       </div>
       <div className="companyEdit-input">
@@ -439,7 +438,7 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
             changeTargetUser(e.target.value, "emergencyContactTel");
           }}
           style={{ width: "calc(100% - 85px)" }}
-          allowClear={true}
+          allowClear={false}
         />
       </div>
       {targetUser?._key && groupRole && groupRole < targetUser?.role ? (
@@ -467,9 +466,11 @@ const CompanyEdit: React.FC<CompanyEditProps> = (props) => {
           setPhotoVisible(false);
         }}
         title={"选择图片"}
+        centered={true}
+        destroyOnClose={true}
       >
         <Cropper
-          style={{ width: "100%", height: "95%" }}
+          style={{ width: "100%", height: "75vh" }}
           guides={true}
           src={upImg}
           ref={cropperRef}

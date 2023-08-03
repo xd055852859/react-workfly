@@ -165,7 +165,7 @@ const traditionalDate = {
     }
     this.cYear = 1921 + m;
     this.cMonth = k - n + 1;
-    this.cDay = total;
+    this.cDay = total ;
     if (k === 12) {
       if (this.cMonth === Math.floor(this.calendarData[m] / 0x10000) + 1) {
         this.cMonth = 1 - this.cMonth;

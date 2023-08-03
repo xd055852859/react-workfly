@@ -29,7 +29,7 @@ export const uploadImage = (uptoken, file, overwrite, callback) => {
       console.log('---上传失败---', err);
     },
     complete(res) {
-      const domain = 'https://cdn-icare.qingtime.cn/';
+      const domain = 'https://workfly.qingtime.cn/';
       const url = domain + encodeURIComponent(res.key);
       callback(url);
     },
@@ -97,7 +97,7 @@ export const uploadImg = (uptoken, file, overwrite) => {
           console.log('---上传失败---', err);
         },
         complete(res) {
-          const domain = 'https://cdn-icare.qingtime.cn/';
+          const domain = 'https://workfly.qingtime.cn/';
           const url = domain + encodeURIComponent(res.key);
           resolve(url);
         },

@@ -18,6 +18,7 @@ import commentPng from "../../assets/img/comment.png";
 import reportIcon from "../../assets/svg/reportIcon.svg";
 import defaultPersonPng from "../../assets/img/defaultPerson.png";
 import { useMount } from "../../hook/common";
+import Avatar from "../../components/common/avatar";
 export interface WorkingReportProps {
   headerType?: boolean;
 }
@@ -52,7 +53,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
 
   const commentLimit = 10;
   let unDistory = useRef<any>(true);
-  
+
   useMount(() => {
     return () => {
       unDistory.current = false;
@@ -79,12 +80,12 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
       }
     }
     //eslint-disable-next-line
-  }, [user, targetUserInfo, taskArray,workingTaskArray,headerIndex, headerType]);
+  }, [user, targetUserInfo, taskArray, workingTaskArray, headerIndex, headerType]);
 
   useEffect(() => {
     if (user && user._key && headerType) {
       dispatch(
-        getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10], theme.fileDay)
+        getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10], 2)
       );
     }
   }, [headerType, dispatch, theme.fileDay, user]);
@@ -95,10 +96,10 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
         if (prevPersonObj) {
           if (
             prevPersonObj[
-              moment(taskInfo.taskEndDate).endOf("day").valueOf()
+            moment(taskInfo.taskEndDate).endOf("day").valueOf()
             ] &&
             prevPersonObj[moment(taskInfo.taskEndDate).endOf("day").valueOf()][
-              taskInfo.executorKey
+            taskInfo.executorKey
             ]
           ) {
             prevPersonObj[moment(taskInfo.taskEndDate).endOf("day").valueOf()][
@@ -115,7 +116,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
           if (
             prevPersonObj[moment(taskInfo.createTime).endOf("day").valueOf()] &&
             prevPersonObj[moment(taskInfo.createTime).endOf("day").valueOf()][
-              taskInfo.creatorKey
+            taskInfo.creatorKey
             ]
           ) {
             prevPersonObj[moment(taskInfo.createTime).endOf("day").valueOf()][
@@ -389,20 +390,20 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
           personItem[personKey].executorArray.length > 0
             ? personItem[personKey].executorArray[0].executorAvatar
               ? personItem[personKey].executorArray[0].executorAvatar +
-                "?imageMogr2/auto-orient/thumbnail/80x"
+              "?imageMogr2/auto-orient/thumbnail/80x"
               : defaultPersonPng
             : personItem[personKey].creatorArray.length > 0
-            ? personItem[personKey].creatorArray[0].creatorAvatar +
+              ? personItem[personKey].creatorArray[0].creatorAvatar +
               "?imageMogr2/auto-orient/thumbnail/80x"
-            : defaultPersonPng;
+              : defaultPersonPng;
         let name =
           personItem[personKey].executorArray.length > 0
             ? personItem[personKey].executorArray[0].executorName
               ? personItem[personKey].executorArray[0].executorName
               : ""
             : personItem[personKey].creatorArray.length > 0
-            ? personItem[personKey].creatorArray[0].creatorName
-            : "";
+              ? personItem[personKey].creatorArray[0].creatorName
+              : "";
         personItem[personKey].executorArray.forEach((item: any) => {
           if (item.finishPercent > 0) {
             executorNum++;
@@ -429,9 +430,9 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                   <div
                     key={"date" + taskIndex}
                     className="diary-container-item"
-                    // onClick={() => {
-                    //   setDiaryIndex(diaryIndex);
-                    // }}
+                  // onClick={() => {
+                  //   setDiaryIndex(diaryIndex);
+                  // }}
                   >
                     <Task taskItem={taskItem} reportState={true} />
                   </div>
@@ -445,9 +446,9 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                   <div
                     key={"date" + taskIndex}
                     className="diary-container-item"
-                    // onClick={() => {
-                    //   setDiaryIndex(diaryIndex);
-                    // }}
+                  // onClick={() => {
+                  //   setDiaryIndex(diaryIndex);
+                  // }}
                   >
                     <Task taskItem={taskItem} reportState={true} />
                   </div>
@@ -543,82 +544,82 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
             <div className="diary-menu-container">
               {personObj
                 ? Object.keys(_.cloneDeep(personObj)).map(
-                    (item: any, index: number) => {
-                      return (
-                        <React.Fragment key={"date" + index}>
-                          {diaryKey !== "全部" ? (
-                            <div
-                              className="diary-menu-item"
-                              onClick={() => {
-                                chooseDiary(item);
-                              }}
-                              style={{
-                                backgroundColor:
-                                  diaryIndex === item
-                                    ? "rgb(229, 231, 234)"
-                                    : "",
-                                fontWeight:
-                                  moment(parseInt(item))
-                                    .startOf("day")
-                                    .valueOf() ===
+                  (item: any, index: number) => {
+                    return (
+                      <React.Fragment key={"date" + index}>
+                        {diaryKey !== "全部" ? (
+                          <div
+                            className="diary-menu-item"
+                            onClick={() => {
+                              chooseDiary(item);
+                            }}
+                            style={{
+                              backgroundColor:
+                                diaryIndex === item
+                                  ? "rgb(229, 231, 234)"
+                                  : "",
+                              fontWeight:
+                                moment(parseInt(item))
+                                  .startOf("day")
+                                  .valueOf() ===
                                   moment().startOf("day").valueOf()
-                                    ? "bold"
-                                    : "normal",
-                              }}
-                            >
-                              <span>{formatTime(parseInt(item))[1]}</span>
-                              <span> {formatTime(parseInt(item))[0]}</span>
-                              <span>
-                                {personObj[item].allcreatorNum === 0
-                                  ? ""
-                                  : personObj[item].creatorNum +
-                                    " / " +
-                                    personObj[item].allcreatorNum}
-                              </span>
-                              <span>
-                                {personObj[item].allexecutorNum === 0
-                                  ? ""
-                                  : personObj[item].executorNum +
-                                    " / " +
-                                    personObj[item].allexecutorNum}
-                              </span>
-                            </div>
-                          ) : (
-                            <a
-                              href={"#diaryall" + index}
-                              className="diary-menu-item"
-                              style={{
-                                fontWeight:
-                                  moment(parseInt(item))
-                                    .startOf("day")
-                                    .valueOf() ===
+                                  ? "bold"
+                                  : "normal",
+                            }}
+                          >
+                            <span>{formatTime(parseInt(item))[1]}</span>
+                            <span> {formatTime(parseInt(item))[0]}</span>
+                            <span>
+                              {personObj[item].allcreatorNum === 0
+                                ? ""
+                                : personObj[item].creatorNum +
+                                " / " +
+                                personObj[item].allcreatorNum}
+                            </span>
+                            <span>
+                              {personObj[item].allexecutorNum === 0
+                                ? ""
+                                : personObj[item].executorNum +
+                                " / " +
+                                personObj[item].allexecutorNum}
+                            </span>
+                          </div>
+                        ) : (
+                          <a
+                            href={"#diaryall" + index}
+                            className="diary-menu-item"
+                            style={{
+                              fontWeight:
+                                moment(parseInt(item))
+                                  .startOf("day")
+                                  .valueOf() ===
                                   moment().startOf("day").valueOf()
-                                    ? "bold"
-                                    : "normal",
-                              }}
-                            >
-                              <span>{formatTime(parseInt(item))[1]}</span>
-                              <span>{formatTime(parseInt(item))[0]}</span>
-                              <span>
-                                {personObj[item].allcreatorNum === 0
-                                  ? ""
-                                  : personObj[item].creatorNum +
-                                    " / " +
-                                    personObj[item].allcreatorNum}
-                              </span>
-                              <span>
-                                {personObj[item].allexecutorNum === 0
-                                  ? ""
-                                  : personObj[item].executorNum +
-                                    " / " +
-                                    personObj[item].allexecutorNum}
-                              </span>
-                            </a>
-                          )}
-                        </React.Fragment>
-                      );
-                    }
-                  )
+                                  ? "bold"
+                                  : "normal",
+                            }}
+                          >
+                            <span>{formatTime(parseInt(item))[1]}</span>
+                            <span>{formatTime(parseInt(item))[0]}</span>
+                            <span>
+                              {personObj[item].allcreatorNum === 0
+                                ? ""
+                                : personObj[item].creatorNum +
+                                " / " +
+                                personObj[item].allcreatorNum}
+                            </span>
+                            <span>
+                              {personObj[item].allexecutorNum === 0
+                                ? ""
+                                : personObj[item].executorNum +
+                                " / " +
+                                personObj[item].allexecutorNum}
+                            </span>
+                          </a>
+                        )}
+                      </React.Fragment>
+                    );
+                  }
+                )
                 : null}
             </div>
           </div>
@@ -653,7 +654,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                       {headerIndex === 1 || headerType ? (
                         <React.Fragment>
                           {parseInt(diaryIndex) <
-                          moment().startOf("day").valueOf() ? (
+                            moment().startOf("day").valueOf() ? (
                             <Button
                               type="primary"
                               onClick={() => {
@@ -684,9 +685,9 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                         <div
                           key={"date" + taskIndex}
                           className="diary-container-item"
-                          // onClick={() => {
-                          //   setDiaryIndex(diaryIndex);
-                          // }}
+                        // onClick={() => {
+                        //   setDiaryIndex(diaryIndex);
+                        // }}
                         >
                           <Task taskItem={taskItem} reportState={true} />
                         </div>
@@ -700,9 +701,9 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                         <div
                           key={"date" + taskIndex}
                           className="diary-container-item"
-                          // onClick={() => {
-                          //   setDiaryIndex(diaryIndex);
-                          // }}
+                        // onClick={() => {
+                        //   setDiaryIndex(diaryIndex);
+                        // }}
                         >
                           <Task taskItem={taskItem} reportState={true} />
                         </div>
@@ -745,7 +746,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                                   formatTime(
                                     parseInt(
                                       Object.keys(_.cloneDeep(personObj))[
-                                        personIndex
+                                      personIndex
                                       ]
                                     )
                                   )[1]
@@ -761,7 +762,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                                   formatTime(
                                     parseInt(
                                       Object.keys(_.cloneDeep(personObj))[
-                                        personIndex
+                                      personIndex
                                       ]
                                     )
                                   )[0] +
@@ -782,7 +783,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
               )}
 
               {(headerIndex !== 3 || headerType) &&
-              parseInt(diaryIndex) < moment().startOf("day").valueOf() ? (
+                parseInt(diaryIndex) < moment().startOf("day").valueOf() ? (
                 <React.Fragment>
                   <h2>二、工作日志</h2>
                   <div className="diary-content-pn">
@@ -951,17 +952,17 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
             style={
               moveState === "top"
                 ? {
-                    animation: "rightTop 500ms",
-                    // animationFillMode: 'forwards',
-                    height: "40px",
-                  }
+                  animation: "rightTop 500ms",
+                  // animationFillMode: 'forwards',
+                  height: "40px",
+                }
                 : moveState === "bottom"
-                ? {
+                  ? {
                     animation: "rightBottom 500ms",
                     height: "100%",
                     // animationFillMode: 'forwards',
                   }
-                : { height: "100%" }
+                  : { height: "100%" }
             }
           >
             <Tooltip title="选择项目成员">
@@ -976,48 +977,53 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
             </Tooltip>
             {personArray.length > 0
               ? personArray.map((item: any, index: number) => {
-                  return (
-                    <React.Fragment key={"person" + index}>
-                      {index === 0 ? (
-                        <div
-                          className="diary-avatar"
-                          onClick={() => {
-                            choosePerson(item.key);
-                          }}
-                          style={
-                            item.key === diaryKey
-                              ? {
-                                  backgroundColor: "#1890ff",
-                                  color: "#fff",
-                                }
-                              : {}
+                return (
+                  <React.Fragment key={"person" + index}>
+                    {index === 0 ? (
+                      <div
+                        className="diary-avatar"
+                        onClick={() => {
+                          choosePerson(item.key);
+                        }}
+                        style={
+                          item.key === diaryKey
+                            ? {
+                              backgroundColor: "#1890ff",
+                              color: "#fff",
+                            }
+                            : {}
+                        }
+                      >
+                        全部
+                      </div>
+                    ) : (
+                      <div
+                        className="diary-avatar"
+                        onClick={() => {
+                          choosePerson(item.key);
+                        }}
+                        style={
+                          item.key === diaryKey
+                            ? {
+                              border: "2px solid #1890ff",
+                            }
+                            : {}
+                        }
+                      >
+                        <Avatar
+                          avatar={
+                            item?.avatar
                           }
-                        >
-                          全部
-                        </div>
-                      ) : (
-                        <div
-                          className="diary-avatar"
-                          onClick={() => {
-                            choosePerson(item.key);
-                          }}
-                          style={
-                            item.key === diaryKey
-                              ? {
-                                  border: "2px solid #1890ff",
-                                }
-                              : {}
-                          }
-                        >
-                          <img
-                            src={item.avatar ? item.avatar : defaultPersonPng}
-                            alt=""
-                          />
-                        </div>
-                      )}
-                    </React.Fragment>
-                  );
-                })
+                          name={item?.nickName}
+                          index={0}
+                          type={'person'}
+
+                        />
+                      </div>
+                    )}
+                  </React.Fragment>
+                );
+              })
               : null}
           </div>
         ) : null}

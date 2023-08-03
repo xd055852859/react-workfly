@@ -1,6 +1,6 @@
-import React, {useEffect } from 'react';
+import React, { useEffect } from "react";
 // import './userCenter.css';
-import QRCode from 'qrcode';
+import QRCode from "qrcode";
 interface CodeProps {
   url: string;
   id: string;
@@ -11,18 +11,18 @@ const Code: React.FC<CodeProps> = (props) => {
   useEffect(() => {
     if (url) {
       QRCode.toCanvas(
-        document.getElementById('canvas' + id),
+        document.getElementById("canvas" + id),
         url,
         function (error) {
           if (error) console.error(error);
-          console.log('success!');
         }
       );
     }
-  }, [url,id]);
+  }, [url, id]);
   return (
     <div>
-      <canvas id={'canvas' + id}></canvas>
+      <canvas id={"canvas" + id}></canvas>
+      {id === "Android" ? <div>请使用浏览器打开</div> : null}
     </div>
   );
 };

@@ -1,34 +1,39 @@
 export const actionTypes = {
-  GET_USERINFO: 'GET_USERINFO',
-  GET_USERINFO_SUCCESS: 'GET_USERINFO_SUCCESS',
-  GET_MAIN_GROUP_KEY: 'GET_MAIN_GROUP_KEY',
-  GET_MAIN_GROUP_KEY_SUCCESS: 'GET_MAIN_GROUP_KEY_SUCCESS',
-  SET_USER_KEY: 'SET_USER_KEY',
-  SET_TARGET_USER_KEY: 'SET_TARGET_USER_KEY',
-  GET_TARGET_USERINFO: 'GET_TARGET_USERINFO',
-  GET_TARGET_USERINFO_SUCCESS: 'GET_TARGET_USERINFO_SUCCESS',
-  GET_THEME: 'GET_THEME',
-  GET_THEME_SUCCESS: 'GET_THEME_SUCCESS',
-  GET_THEME_BG: 'GET_THEME_BG',
-  GET_THEME_BG_SUCCESS: 'GET_THEME_BG_SUCCESS',
-  SET_THEME_BG_PAGE: 'SET_THEME_BG_PAGE',
-  SET_THEME: 'SET_THEME',
-  SET_THEME_LOCAL:'SET_THEME_LOCAL',
-  SET_THEME_SUCCESS: 'SET_THEME_SUCCESS',
-  SET_UPLOAD_TOKEN: 'SET_UPLOAD_TOKEN',
-  GET_UPLOAD_TOKEN: 'GET_UPLOAD_TOKEN',
-  GET_UPLOAD_TOKEN_SUCCESS: 'GET_UPLOAD_TOKEN_SUCCESS',
-  CHANGE_MUSIC_NUMBER: 'CHANGE_MUSIC_NUMBER',
-  CHANGE_MOVE: 'CHANGE_MOVE',
-  CLEAR_AUTH: 'CLEAR_AUTH',
-  SET_CLICK_TYPE: 'SET_CLICK_TYPE',
-  CHANGE_MAINENTERPRISE_GROUP: 'CHANGE_MAINENTERPRISE_GROUP',
+  GET_USERINFO: "GET_USERINFO",
+  GET_USERINFO_SUCCESS: "GET_USERINFO_SUCCESS",
+  GET_MAIN_GROUP_KEY: "GET_MAIN_GROUP_KEY",
+  GET_MAIN_GROUP_KEY_SUCCESS: "GET_MAIN_GROUP_KEY_SUCCESS",
+  SET_USER_KEY: "SET_USER_KEY",
+  SET_TARGET_USER_KEY: "SET_TARGET_USER_KEY",
+  GET_TARGET_USERINFO: "GET_TARGET_USERINFO",
+  GET_TARGET_USERINFO_SUCCESS: "GET_TARGET_USERINFO_SUCCESS",
+  GET_THEME: "GET_THEME",
+  GET_THEME_SUCCESS: "GET_THEME_SUCCESS",
+  GET_THEME_BG: "GET_THEME_BG",
+  GET_THEME_BG_SUCCESS: "GET_THEME_BG_SUCCESS",
+  SET_THEME_BG_PAGE: "SET_THEME_BG_PAGE",
+  SET_THEME: "SET_THEME",
+  SET_THEME_LOCAL: "SET_THEME_LOCAL",
+  SET_THEME_SUCCESS: "SET_THEME_SUCCESS",
+  SET_UPLOAD_TOKEN: "SET_UPLOAD_TOKEN",
+  GET_UPLOAD_TOKEN: "GET_UPLOAD_TOKEN",
+  GET_UPLOAD_TOKEN_SUCCESS: "GET_UPLOAD_TOKEN_SUCCESS",
+  CHANGE_MUSIC_NUMBER: "CHANGE_MUSIC_NUMBER",
+  CHANGE_MOVE: "CHANGE_MOVE",
+  CHANGE_VITALITYNUM: "CHANGE_VITALITYNUM",
+  CLEAR_AUTH: "CLEAR_AUTH",
+  SET_CLICK_TYPE: "SET_CLICK_TYPE",
+  CHANGE_MAINENTERPRISE_GROUP: "CHANGE_MAINENTERPRISE_GROUP",
+  CHANGE_ENTERPRISE_GROUP_STATE: "CHANGE_ENTERPRISE_GROUP_STATE",
+  CHANGE_TASK_STATE: "CHANGE_TASK_STATE",
+  SET_OKR_MEMBER_KEY:"SET_OKR_MEMBER_KEY"
 };
 
-export function getUserInfo(token: string | null) {
+export function getUserInfo(token: string | null, saveState?: boolean) {
   return {
     type: actionTypes.GET_USERINFO,
     token: token,
+    saveState: saveState,
   };
 }
 
@@ -159,6 +164,13 @@ export function changeMove(finishPos: any) {
     finishPos,
   };
 }
+export function changeVitalityNum(vitalityNum: any) {
+  return {
+    type: actionTypes.CHANGE_VITALITYNUM,
+    vitalityNum,
+  };
+}
+
 export function clearAuth() {
   return { type: actionTypes.CLEAR_AUTH };
 }
@@ -166,16 +178,35 @@ export function setClickType(clickType: string) {
   return { type: actionTypes.SET_CLICK_TYPE, clickType };
 }
 export function changeMainenterpriseGroup(
-  mainEnterpriseGroupKey: string,
-  mainEnterpriseGroupLogo: string,
-  mainEnterpriseGroupName: string,
-  mainEnterpriseRight:Number
+  mainEnterpriseGroupKey?: string,
+  mainEnterpriseGroupLogo?: string,
+  mainEnterpriseGroupName?: string,
+  mainEnterpriseRight?: Number
 ) {
   return {
     type: actionTypes.CHANGE_MAINENTERPRISE_GROUP,
     mainEnterpriseGroupKey,
     mainEnterpriseGroupLogo,
     mainEnterpriseGroupName,
-    mainEnterpriseRight
+    mainEnterpriseRight,
   };
 }
+export function changeEnterpriseGroupState(enterpriseGroupState: boolean) {
+  return {
+    type: actionTypes.CHANGE_ENTERPRISE_GROUP_STATE,
+    enterpriseGroupState,
+  };
+}
+export function changeTaskState(taskState: any) {
+  return {
+    type: actionTypes.CHANGE_TASK_STATE,
+    taskState,
+  };
+}
+export function setOkrMemberKey(okrMemberKey: string) {
+  return {
+    type: actionTypes.SET_OKR_MEMBER_KEY,
+    okrMemberKey,
+  };
+}
+

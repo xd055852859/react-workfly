@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import "./memberBoard.css";
 import moment from "moment";
 import _ from "lodash";
-import { Avatar } from "antd";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import { useDispatch } from "react-redux";
 
@@ -11,9 +10,12 @@ import { getTeamTask, getProjectTask } from "../../redux/actions/taskActions";
 import Task from "../../components/task/task";
 import Loading from "../../components/common/loading";
 
-import defaultGroupPng from "../../assets/img/defaultGroup.png";
-import noneBoardPng from "../../assets/img/noneBoard.png";
-import uncarePng from "../../assets/img/uncare.png";
+// import noneBoardPng from "../../assets/img/noneBoard.png";
+import noneBoardSvg from "../../assets/svg/noneBoard.svg";
+
+import uncarebSvg from "../../assets/svg/uncareb.svg";
+import Avatar from "../../components/common/avatar";
+import { useAuth } from "../../context/auth";
 interface MemberBoardProps {
   boardIndex: number;
 }
@@ -25,16 +27,19 @@ interface ProjectBoardItemProps {
 }
 const MemberBoardItem: React.FC<MemberBoardItemProps> = (props) => {
   const { memberItem } = props;
+  const { deviceWidth } = useAuth();
   return (
-    <React.Fragment>
+    <div
+      className="memberBoard-group-item-box"
+      style={{ width: deviceWidth, marginRight: "5px", flexShrink: 0 }}
+    >
       <div className="memberBoard-title">
         <Avatar
-          style={{
-            width: "22px",
-            height: "22px",
-            marginRight: "5px",
-          }}
-          src={memberItem[0][0].executorAvatar}
+          avatar={memberItem[0][0]?.executorAvatar}
+          name={memberItem[0][0].executorName}
+          type={"person"}
+          index={0}
+          size={22}
         />
         {memberItem[0][0].executorName}
       </div>
@@ -44,19 +49,11 @@ const MemberBoardItem: React.FC<MemberBoardItemProps> = (props) => {
             <div className="memberBoard-group" style={{ marginTop: "5px" }}>
               {item[0].groupName.indexOf("主项目") === -1 ? (
                 <Avatar
-                  style={{
-                    width: "22px",
-                    height: "22px",
-                    marginRight: "5px",
-                    borderRadius: "5px",
-                  }}
-                  shape="square"
-                  src={
-                    item[0].groupLogo
-                      ? item[0].groupLogo +
-                        "?imageMogr2/auto-orient/thumbnail/80x"
-                      : defaultGroupPng
-                  }
+                  avatar={item[0]?.groupLogo}
+                  name={item[0]?.groupName}
+                  type={"group"}
+                  index={0}
+                  size={22}
                 />
               ) : null}
               {item[0].groupName}
@@ -75,11 +72,12 @@ const MemberBoardItem: React.FC<MemberBoardItemProps> = (props) => {
           </div>
         );
       })}
-    </React.Fragment>
+    </div>
   );
 };
 const ProjectBoardItem: React.FC<ProjectBoardItemProps> = (props) => {
   const { projectItem } = props;
+  const { deviceWidth } = useAuth();
   const getProjectBoardTask = () => {
     let dom: any = [];
     for (let key in projectItem) {
@@ -110,7 +108,10 @@ const ProjectBoardItem: React.FC<ProjectBoardItemProps> = (props) => {
     return dom;
   };
   return (
-    <React.Fragment>
+    <div
+      className="memberBoard-group-item-box"
+      style={{ width: deviceWidth,marginRight: "5px", flexShrink: 0 }}
+    >
       <div className="memberBoard-group-item">
         <img
           src={projectItem.groupObj.groupLogo}
@@ -120,7 +121,7 @@ const ProjectBoardItem: React.FC<ProjectBoardItemProps> = (props) => {
         {projectItem.groupObj.groupName}
       </div>
       {getProjectBoardTask()}
-    </React.Fragment>
+    </div>
   );
 };
 const MemberBoard: React.FC<MemberBoardProps> = (props) => {
@@ -299,22 +300,9 @@ const MemberBoard: React.FC<MemberBoardProps> = (props) => {
   return (
     <div className="memberBoard">
       {loading ? <Loading loadingWidth="80px" loadingHeight="80px" /> : null}
-      {/* <Dropdown overlay={downMenu}>
-        <div
-          className="memberBoard-maintitle"
-          onClick={() => {
-            setBoardVisible(true);
-          }}
-        >
-          {boardIndex === 0 ? '关注好友看板' : '关注项目看板'}
-
-          <img
-            src={downArrowPng}
-            alt=""
-            style={{ width: '15px', height: '9px', marginLeft: '15px' }}
-          />
-        </div>
-      </Dropdown> */}
+      <div className="memberBoard-bigtitle">
+        {boardIndex === 1 ? "项目" : "队友"}看板
+      </div>
       {boardIndex === 0 ? (
         <div className="memberBoard-item">
           {memberGroupArray.length > 0 ? (
@@ -328,12 +316,12 @@ const MemberBoard: React.FC<MemberBoardProps> = (props) => {
             })
           ) : (
             <React.Fragment>
-              <img src={noneBoardPng} className="memberBoard-item-img" alt="" />
+              <img src={noneBoardSvg} className="memberBoard-item-img" alt="" />
               <div className="memberBoard-item-title">
                 点击项目和好友右侧的
                 <img
                   style={{ width: "17px", height: "15px", margin: "0px 5px" }}
-                  src={uncarePng}
+                  src={uncarebSvg}
                   alt=""
                 />
                 关注

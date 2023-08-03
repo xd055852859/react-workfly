@@ -8,10 +8,11 @@ interface ChordChartProps {
   height: number;
   width: number;
   chordId: string;
+  onClick?: any
 }
 
 const ChordChart: React.FC<ChordChartProps> = (props) => {
-  const { data, height, width, chordId } = props;
+  const { data, height, width, chordId, onClick } = props;
 
   let chordRef = useRef<any>(null);
   useMount(() => {
@@ -32,6 +33,12 @@ const ChordChart: React.FC<ChordChartProps> = (props) => {
       },
     });
     chordRef.current.render();
+    chordRef.current.on('element:click', (...args) => {
+      // let index = ...args
+      onClick(args[0].data.data.source,args[0].data.data.target)
+    });
+    // plot.on('plot:click', (...args) => {
+    // });
     return () => {
       chordRef.current.destroy();
     };
@@ -41,6 +48,7 @@ const ChordChart: React.FC<ChordChartProps> = (props) => {
       chordRef.current.update({
         data: data,
       });
+
     }
   }, [data]);
   return <div id={chordId}></div>;

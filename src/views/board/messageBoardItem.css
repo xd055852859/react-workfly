@@ -1,0 +1,132 @@
+.messageBoard-item-header {
+    height: 40px;
+    width: 100%;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed #efefef;
+}
+
+.messageBoard-item-name {
+    width: calc(100% - 60px);
+    height: 39px;
+    line-height: 39px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333333;
+    /* display: flex; */
+    /* align-items: center; */
+}
+
+.messageBoard-item-container {
+    width: calc(100% - 49px);
+    padding: 9px 17px;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0px 0px 9px 1px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    color: #333;
+    position: relative;
+}
+
+.messageBoard-item-task {}
+
+.messageBoard-item-time,
+.messageBoard-item-taskTime,
+.messageBoard-item-taskTitle {
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+    font-weight: 400;
+    color: #8091a0;
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.messageBoard-item-taskGroup {
+    width: calc(100% - 30px);
+    margin-left: 6px;
+    cursor: pointer
+}
+
+.messageBoard-item-taskButton {
+    width: 11px;
+    height: 10px;
+    margin-right: 5px;
+}
+
+.messageBoard-item-tasksubTime {
+    width: 15px;
+    height: 15px;
+    margin: 0px 5px 0px 3px;
+    position: relative;
+    z-index: 1;
+    background-size: cover;
+    font-size: 8px;
+}
+
+.messageBoard-item-day {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    zoom: 0.6;
+    color: #fff;
+}
+
+.messageBoard-item-hour {
+    position: absolute;
+    right: 2px;
+    top: 0px;
+    zoom: 0.5;
+    color: #9ea2a8;
+}
+
+.messageBoard-item-url {
+    height: 18px;
+    width: 18px;
+    cursor: pointer;
+    margin-left: 8px
+}
+
+.messageBoard-item-taskContainer {
+    width: 100%;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    color: #8091a0;
+    margin-top: 10px;
+}
+
+.messageBoard-item-name2 {
+    font-size: 14px;
+    font-weight: 400;
+    color: #8091a0;
+}
+
+.messageBoard-item-commentContent {
+    width: 100%;
+    background: #eeeeee;
+    border-radius: 8px;
+    padding: 9px 13px;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-weight: 400;
+    color: #8091a0;
+    line-height: 20px;
+}
+
+.messageBoard-item-button {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.messageBoard-item-footer {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}

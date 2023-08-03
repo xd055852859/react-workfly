@@ -1,37 +1,40 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { Button, Tooltip, Input, Avatar, Progress } from "antd";
-import { GlobalOutlined } from "@ant-design/icons";
+import { Button, Tooltip, Input, Progress, Dropdown } from "antd";
+import { GlobalOutlined, CheckOutlined } from "@ant-design/icons";
 import _ from "lodash";
 import api from "../../services/api";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 
-import { getWorkingTableTask } from "../../redux/actions/taskActions";
+import { getGroupInfo } from "../../redux/actions/groupActions";
 import {
   getGroupTask,
   setChooseKey,
   changeLabelarray,
+  getWorkingTableTask,
 } from "../../redux/actions/taskActions";
 import { setMessage } from "../../redux/actions/commonActions";
 import { changeMusic } from "../../redux/actions/authActions";
 
+import IconFont from "../../components/common/iconFont";
 import DropMenu from "../common/dropMenu";
 import Dialog from "../common/dialog";
 import Loading from "../common/loading";
 import "./taskNav.css";
 import plusPng from "../../assets/img/plus.png";
 import ellipsisPng from "../../assets/img/ellipsis.png";
-import defaultPersonPng from "../../assets/img/defaultPerson.png";
-import checkPersonPng from "../../assets/img/checkPerson.png";
+import AvatarIcon from "../common/avatar";
+import eyeSvg from "../../assets/svg/eye.svg";
+import uneyeSvg from "../../assets/svg/uneye.svg";
 
-const { TextArea } = Input;
+const { TextArea, Search } = Input;
 interface TaskNavProps {
   avatar?: any;
   executorKey?: any;
   name: string;
   role: string | number;
   colorIndex: number;
-  taskNavArray: any;
+  taskNavArray?: any;
   taskNavWidth: number | string;
   setChooseLabelKey?: any;
   chooseLabelKey?: string;
@@ -40,6 +43,9 @@ interface TaskNavProps {
   arrlength?: number;
   taskNavTask?: any;
   changeLabelTaskType?: any;
+  type?: string;
+  followList?: any;
+  changeFollowList?: any;
 }
 const TaskNav: React.FC<TaskNavProps> = (prop) => {
   const {
@@ -52,8 +58,11 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
     setChooseLabelKey,
     chooseLabelKey,
     batchTaskArray,
-    changeLabelAvatar,
+    // changeLabelAvatar,
     taskNavTask,
+    type,
+    followList,
+    changeFollowList,
   } = prop;
   const groupKey = useTypedSelector((state) => state.group.groupKey);
   const labelArray = useTypedSelector((state) => state.task.labelArray);
@@ -65,10 +74,11 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
   const groupMemberArray = useTypedSelector(
     (state) => state.member.groupMemberArray
   );
+  const clickType = useTypedSelector((state) => state.auth.clickType);
   const dispatch = useDispatch();
   const [labelName, setLabelName] = useState("");
   const [labelNameVisible, setLabelNameVisible] = useState(false);
-  const [labelAvatar, setLabelAvatar] = useState("");
+  const [labelAvatar, setLabelAvatar] = useState<any>("");
   const [batchVisible, setBatchVisible] = useState(false);
   const [avatarVisible, setAvatarVisible] = useState(false);
   const [batchAddVisible, setBatchAddVisible] = useState(false);
@@ -85,6 +95,8 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
   const [allNum, setAllNum] = useState(0);
   const [moveState, setMoveState] = useState(false);
   const [urlInput, setUrlInput] = useState("");
+  const [searchMemberInput, setSearchMemberInput] = useState("");
+  const [searchMemberArray, setSearchMemberArray] = useState<any>([]);
   const color = [
     "#6FD29A",
     "#21ABE4",
@@ -142,7 +154,25 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
       setAllNum(allNum);
     }
   }, [taskNavTask]);
-
+  useEffect(() => {
+    if (searchMemberInput) {
+      setSearchMemberArray((prevSearchMemberArray) => {
+        prevSearchMemberArray = groupMemberArray.filter(
+          (item: any, index: number) => {
+            return (
+              item.nickName &&
+              item.nickName
+                .toUpperCase()
+                .indexOf(searchMemberInput.toUpperCase()) !== -1
+            );
+          }
+        );
+        return [...prevSearchMemberArray];
+      });
+    } else {
+      setSearchMemberArray(groupMemberArray);
+    }
+  }, [searchMemberInput, groupMemberArray]);
   const BgColorArray = [
     "rgba(48,191,191,0.3)",
     "rgba(0,170,255,0.3)",
@@ -189,23 +219,42 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
         filterObject.groupKey ||
         filterObject.filterType.indexOf("今天") === -1
       ) {
-        dispatch(setMessage(true, "新建成功,请清除过滤项后查看", "warning"));
+        dispatch(
+          setMessage(true, "新建成功,如果未显示请清除过滤项后查看", "warning")
+        );
       } else {
         dispatch(setMessage(true, "新增任务成功", "success"));
       }
       dispatch(changeMusic(5));
       dispatch(setChooseKey(addTaskRes.result._key));
-      if (headerIndex === 1) {
-        dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10]));
-      } else if (headerIndex === 2) {
+      if (
+        targetUserInfo &&
+        targetUserInfo._key &&
+        (headerIndex === 2 || clickType === "self")
+      ) {
+        setLoading(true);
         dispatch(
           getWorkingTableTask(
             user._key === targetUserInfo._key ? 4 : 2,
             targetUserInfo._key,
             1,
-            [0, 1, 2, 10]
+            [0, 1, 2, 10],
+            1
           )
         );
+        dispatch(
+          getWorkingTableTask(
+            user._key === targetUserInfo._key ? 4 : 2,
+            targetUserInfo._key,
+            1,
+            [0, 1, 2, 10],
+            2
+          )
+        );
+      } else if (headerIndex === 1 && clickType !== "self") {
+        setLoading(true);
+        dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10], 1));
+        dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10], 2));
       } else if (headerIndex === 3) {
         dispatch(getGroupTask(3, groupKey, "[0,1,2,10]"));
       }
@@ -229,38 +278,84 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
       if (labelInfo._key) {
         api.group.setCardLabel({
           labelKey: labelInfo._key,
-          newLabelName: labelName,
+          newLabelName: labelName ? labelName.replace("个人事务 /", "") : "",
         });
       } else {
         api.group.setCardLabel({
           groupKey: groupInfo._key,
-          newLabelName: labelName,
+          newLabelName: labelName ? labelName.replace("个人事务 /", "") : "",
         });
       }
     }
     setLabelNameVisible(false);
   };
-  const changeDefaultExecutor = (executorItem: any, labelKey: string) => {
+  const changeDefaultExecutor = async (
+    executorItem: any,
+    labelKey: string,
+    cleartype?: string
+  ) => {
     let key = labelKey ? labelKey : taskNavArray[0]._key;
     let type = labelKey ? 1 : 2;
-    let targetKey = "";
-    if (executorItem.userId === executorKey) {
-      targetKey = "";
-      setLabelAvatar(defaultPersonPng);
-      changeLabelAvatar(
-        {
-          executorKey: "",
-          executorAvatar: "",
-          executorNickName: "",
-        },
-        colorIndex
-      );
+    let targetKey = null;
+    if (cleartype === "clear") {
+      targetKey = null;
+      setLabelAvatar(null);
+      // changeLabelAvatar(
+      //   {
+      //     executorKey: null,
+      //     executorAvatar: "",
+      //     executorNickName: "",
+      //   },
+      //   colorIndex
+      // );
     } else {
       targetKey = executorItem ? executorItem.userId : null;
       setLabelAvatar(executorItem.avatar);
-      changeLabelAvatar(executorItem, colorIndex);
+      // changeLabelAvatar(executorItem, colorIndex);
     }
-    api.group.setLabelOrGroupExecutorKey(key, targetKey, type);
+    let res: any = await api.group.setLabelOrGroupExecutorKey(
+      key,
+      targetKey,
+      type
+    );
+    if (res.msg === "OK") {
+      // setCompanyGroupList(res.result);
+      if (headerIndex === 3) {
+        dispatch(getGroupInfo(groupKey));
+        dispatch(getGroupTask(3, groupKey, "[0,1,2,10]"));
+      }
+    } else {
+      dispatch(setMessage(true, res.msg, "error"));
+    }
+  };
+  const changeDefaultFollow = (followItem: any, labelKey: string) => {
+    let newFollowList = _.cloneDeep(followList);
+    let followKeyList: any = [];
+
+    let followIndex = _.findIndex(newFollowList[colorIndex], {
+      _key: followItem.userId,
+    });
+    if (followIndex !== -1) {
+      newFollowList[colorIndex].splice(followIndex, 1);
+    } else {
+      newFollowList[colorIndex].push({
+        _key: followItem.userId,
+        name: followItem.nickName,
+        avatar: followItem.avatar,
+      });
+    }
+    let key = labelKey ? labelKey : taskNavArray[0]._key;
+    let type = labelKey ? 1 : 2;
+    changeFollowList([...newFollowList]);
+    newFollowList[colorIndex].forEach((item, index) => {
+      if (item._key) {
+        followKeyList.push(item._key);
+      }
+    });
+    if (headerIndex === 3) {
+      dispatch(getGroupInfo(groupKey));
+    }
+    api.group.setLabelOrGroupFollowUKeyArray(key, followKeyList, type);
   };
   const changeDefaultTaskType = (taskType: number) => {
     let newLabelArray = _.cloneDeep(labelArray);
@@ -302,17 +397,34 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
     if (batchTaskRes.msg === "OK") {
       dispatch(setMessage(true, "新增成功", "success"));
       dispatch(changeMusic(5));
-      if (headerIndex === 1) {
-        dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10]));
-      } else if (headerIndex === 2) {
+      if (
+        targetUserInfo &&
+        targetUserInfo._key &&
+        (headerIndex === 2 || clickType === "self")
+      ) {
+        setLoading(true);
         dispatch(
           getWorkingTableTask(
             user._key === targetUserInfo._key ? 4 : 2,
             targetUserInfo._key,
             1,
-            [0, 1, 2, 10]
+            [0, 1, 2, 10],
+            1
           )
         );
+        dispatch(
+          getWorkingTableTask(
+            user._key === targetUserInfo._key ? 4 : 2,
+            targetUserInfo._key,
+            1,
+            [0, 1, 2, 10],
+            2
+          )
+        );
+      } else if (headerIndex === 1 && clickType !== "self") {
+        setLoading(true);
+        dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10], 1));
+        dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10], 2));
       } else if (headerIndex === 3) {
         dispatch(getGroupTask(3, groupKey, "[0,1,2,10]"));
       }
@@ -328,17 +440,34 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
     );
     if (deleteLabelRes.msg === "OK") {
       dispatch(setMessage(true, "删除成功", "success"));
-      if (headerIndex === 1) {
-        dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10]));
-      } else if (headerIndex === 2) {
+      if (
+        targetUserInfo &&
+        targetUserInfo._key &&
+        (headerIndex === 2 || clickType === "self")
+      ) {
+        setLoading(true);
         dispatch(
           getWorkingTableTask(
             user._key === targetUserInfo._key ? 4 : 2,
             targetUserInfo._key,
             1,
-            [0, 1, 2, 10]
+            [0, 1, 2, 10],
+            1
           )
         );
+        dispatch(
+          getWorkingTableTask(
+            user._key === targetUserInfo._key ? 4 : 2,
+            targetUserInfo._key,
+            1,
+            [0, 1, 2, 10],
+            2
+          )
+        );
+      } else if (headerIndex === 1 && clickType !== "self") {
+        setLoading(true);
+        dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10], 1));
+        dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10], 2));
       } else if (headerIndex === 3) {
         dispatch(getGroupTask(3, groupKey, "[0,1,2,10]"));
       }
@@ -349,10 +478,12 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
   };
   return (
     <React.Fragment>
-      {taskNavArray && taskNavArray[0] && taskNavArray[1] ? (
+      {(taskNavArray && taskNavArray[0] && taskNavArray[1]) ||
+      type === "person" ? (
         <div
           className="taskNav-container"
           style={
+            taskNavArray &&
             (taskNavArray[1]._key + "" === chooseLabelKey ||
               taskNavArray[0]._key + "" === chooseLabelKey) &&
             addTaskVisible
@@ -371,9 +502,9 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
           >
             <div
               className="taskNav-name-info"
-              style={{
-                maxWidth: "calc(100% - 55px)",
-              }}
+              // style={{
+              //   maxWidth: "calc(100% - 55px)",
+              // }}
               ref={taskNavRef}
             >
               {avatar ? (
@@ -390,102 +521,197 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
                     }
                   }}
                 >
-                  <Avatar
-                    size={30}
-                    icon={
-                      <img
-                        src={
-                          labelAvatar
-                            ? labelAvatar +
-                              "?imageMogr2/auto-orient/thumbnail/80x"
-                            : defaultPersonPng
-                        }
-                        alt=""
-                        onError={(e: any) => {
-                          e.target.onerror = null;
-                          e.target.src = defaultPersonPng;
-                        }}
-                      />
-                    }
+                  <AvatarIcon
+                    avatar={labelAvatar}
+                    name={labelName}
+                    type={"group"}
+                    index={colorIndex}
                   />
-                  <DropMenu
-                    visible={
-                      (taskNavArray[1]._key === chooseLabelKey ||
-                        taskNavArray[0]._key === chooseLabelKey) &&
-                      avatarVisible
-                    }
-                    dropStyle={{
-                      width: "80%",
-                      height: "350px",
-                      top: "45px",
-                      color: "#333",
-                    }}
-                    onClose={() => {
-                      setChooseLabelKey("");
-                      setAvatarVisible(false);
-                    }}
-                    title={"设置默认执行人"}
-                  >
-                    <div className="defaultExecutor-info">
-                      {groupMemberArray
-                        ? groupMemberArray.map(
-                            (
-                              groupMemberItem: any,
-                              groupMemberIndex: number
-                            ) => {
-                              return (
-                                <div
-                                  key={"groupMember" + groupMemberIndex}
-                                  className="defaultExecutor-info-item"
-                                  style={{ justifyContent: "space-between" }}
-                                  onClick={() => {
-                                    changeDefaultExecutor(
-                                      groupMemberItem,
-                                      taskNavArray[1]._key
-                                    );
-                                  }}
-                                >
-                                  <div className="defaultExecutor-info-left">
-                                    <Avatar
-                                      size={26}
-                                      icon={
-                                        <img
-                                          src={
-                                            groupMemberItem.avatar
-                                              ? groupMemberItem.avatar +
-                                                "?imageMogr2/auto-orient/thumbnail/80x"
-                                              : defaultPersonPng
-                                          }
-                                          alt=""
-                                          onError={(e: any) => {
-                                            e.target.onerror = null;
-                                            e.target.src = defaultPersonPng;
-                                          }}
-                                        />
-                                      }
-                                      style={{ marginRight: "10px" }}
-                                    />
-                                    {groupMemberItem.nickName}
-                                  </div>
-                                  {executorKey === groupMemberItem.userId ? (
-                                    <img
-                                      src={checkPersonPng}
-                                      alt=""
-                                      style={{
-                                        width: "20px",
-                                        height: "12px",
-                                      }}
-                                    />
-                                  ) : null}
-                                </div>
-                              );
-                            }
-                          )
-                        : null}
-                    </div>
-                  </DropMenu>
                 </div>
               ) : null}
+              {/* {followList &&
+              followList[colorIndex] &&
+              followList[colorIndex].length > 0 ? (
+                <div
+                  style={{ display: "flex", alignItems: "center" }}
+                  onClick={() => {
+                    if (role > 0 && role < 4 && headerIndex === 3) {
+                      setChooseLabelKey(
+                        taskNavArray[1]._key
+                          ? taskNavArray[1]._key
+                          : taskNavArray[0]._key
+                      );
+                      setAvatarVisible(true);
+                    }
+                  }}
+                >
+                  <Avatar.Group
+                    size={25}
+                    maxCount={3}
+                    maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}
+                  >
+                    {followList[colorIndex].map((followItem, followIndex) => {
+                      return (
+                        <Tooltip
+                          title={followItem?.nickName}
+                          key={avatar + "followIndex"}
+                        >
+                          {followItem?.avatar ? (
+                            <Avatar src={followItem.avatar} />
+                          ) : (
+                            <Avatar style={{ backgroundColor: "#1890ff" }}>
+                              {followItem.name.substring(0, 1)}
+                            </Avatar>
+                          )}
+                        </Tooltip>
+                      );
+                    })}
+                  </Avatar.Group>{" "}
+                </div>
+              ) : null} */}
+              <DropMenu
+                visible={
+                  taskNavArray &&
+                  (taskNavArray[1]._key === chooseLabelKey ||
+                    taskNavArray[0]._key === chooseLabelKey) &&
+                  avatarVisible
+                }
+                dropStyle={{
+                  width: "90%",
+                  height: "350px",
+                  top: "45px",
+                  color: "#333",
+                }}
+                onClose={() => {
+                  setChooseLabelKey("");
+                  setAvatarVisible(false);
+                }}
+                title={"设置默认执行人"}
+              >
+                <div className="defaultExecutor-search">
+                  <Search
+                    placeholder="请输入执行人名称"
+                    value={searchMemberInput}
+                    autoComplete="off"
+                    onChange={(e) => {
+                      setSearchMemberInput(e.target.value);
+                    }}
+                    allowClear={false}
+                    style={{ width: "calc(100% - 50px)", height: "30px" }}
+                  />
+                  <Tooltip title="清除执行人">
+                    <Button
+                      size="large"
+                      shape="circle"
+                      style={{ border: "0px" }}
+                      ghost
+                      icon={
+                        <IconFont
+                          type="icon-saoba1"
+                          style={{ fontSize: "25px" }}
+                        />
+                      }
+                      onClick={() => {
+                        changeDefaultExecutor(
+                          {},
+                          taskNavArray[1]._key,
+                          "clear"
+                        );
+                      }}
+                    />
+                  </Tooltip>
+                </div>
+                <div className="defaultExecutor-info">
+                  {searchMemberArray
+                    ? searchMemberArray.map(
+                        (groupMemberItem: any, groupMemberIndex: number) => {
+                          return (
+                            <div
+                              key={"groupMember" + groupMemberIndex}
+                              className="defaultExecutor-info-item"
+                              style={{ justifyContent: "space-between" }}
+                              onClick={() => {
+                                changeDefaultExecutor(
+                                  groupMemberItem,
+                                  taskNavArray[1]._key
+                                );
+                              }}
+                            >
+                              <div className="defaultExecutor-info-left">
+                                <AvatarIcon
+                                  avatar={groupMemberItem?.avatar}
+                                  name={groupMemberItem?.nickName}
+                                  type={"person"}
+                                  index={0}
+                                  size={30}
+                                />
+
+                                <span style={{ marginLeft: "5px" }}>
+                                  {groupMemberItem.nickName}
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "flex-end",
+                                }}
+                              >
+                                {executorKey === groupMemberItem.userId ? (
+                                  <CheckOutlined />
+                                ) : null}
+                                {followList ? (
+                                  <div
+                                    className="task-executor-dropMenu-follow"
+                                    onClick={(e: any) => {
+                                      e.stopPropagation();
+                                      changeDefaultFollow(
+                                        groupMemberItem,
+                                        taskNavArray[1]._key
+                                      );
+                                      // if (!targetGroupKey) {
+                                      //   changeFollow(taskMemberItem.userId);
+                                      // }
+                                    }}
+                                    style={
+                                      _.findIndex(followList[colorIndex], {
+                                        _key: groupMemberItem.userId,
+                                      }) !== -1
+                                        ? { display: "flex" }
+                                        : {}
+                                    }
+                                  >
+                                    {_.findIndex(followList[colorIndex], {
+                                      _key: groupMemberItem.userId,
+                                    }) !== -1 ? (
+                                      <img
+                                        src={eyeSvg}
+                                        alt=""
+                                        style={{
+                                          width: "16px",
+                                          height: "19px",
+                                        }}
+                                      />
+                                    ) : (
+                                      <img
+                                        src={uneyeSvg}
+                                        alt=""
+                                        style={{
+                                          width: "16px",
+                                          height: "19px",
+                                        }}
+                                      />
+                                    )}
+                                  </div>
+                                ) : null}
+                              </div>
+                            </div>
+                          );
+                        }
+                      )
+                    : null}
+                </div>
+              </DropMenu>
               {!labelNameVisible ? (
                 <Tooltip
                   title={
@@ -499,7 +725,10 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
                   <div
                     className="taskNav-name"
                     onClick={() => {
-                      if (role > 0 && role < 4 && headerIndex === 3) {
+                      if (
+                        (role > 0 && role < 4 && headerIndex === 3) ||
+                        (clickType === "self" && headerIndex === 2)
+                      ) {
                         setLabelNameVisible(true);
                       }
                     }}
@@ -527,7 +756,11 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
               {unFinsihNum || allNum ? (
                 // <div style={{ width: '20px', height: '20px' }}>
                 <Tooltip
-                  title={allNum - unFinsihNum + " / " + allNum}
+                  title={
+                    "完成" +
+                    Math.round(((allNum - unFinsihNum) / allNum) * 100) +
+                    "%"
+                  }
                   getPopupContainer={() => taskNavRef.current}
                 >
                   <Progress
@@ -538,6 +771,7 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
                     size="small"
                     status="active"
                     width={35}
+                    format={() => allNum}
                     // style={{ zoom: 0.3, color: '#fff' }}
                   />
                 </Tooltip>
@@ -571,139 +805,155 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
                 >
                   <img src={plusPng} className="taskNav-name-plus" alt="" />
                 </div>
-                <div
-                  className="icon-container"
-                  onClick={() => {
-                    setChooseLabelKey(
-                      taskNavArray[1]._key
-                        ? taskNavArray[1]._key
-                        : taskNavArray[0]._key
-                    );
-                    setBatchVisible(true);
-                    setAddTaskVisible(false);
-                    if (
+                {type !== "person" ? (
+                  <Dropdown
+                    visible={
                       taskNavArray &&
-                      taskNavArray[1]._key &&
-                      taskTypeIndex === null
-                    ) {
-                      let taskType = taskNavArray[1]._key
-                        ? taskNavArray[1].taskType
-                        : taskNavArray[0].taskType;
-                      taskTypeArr.forEach((item: any, index: number) => {
-                        if (item.id === taskType) {
-                          setTaskTypeIndex(index);
-                        }
-                      });
+                      (taskNavArray[1]._key + "" === chooseLabelKey ||
+                        taskNavArray[0]._key + "" === chooseLabelKey) &&
+                      batchVisible
                     }
-                  }}
-                >
-                  <img
-                    src={ellipsisPng}
-                    className="taskNav-name-ellipsis"
-                    alt=""
-                  />
-                </div>
-                <DropMenu
-                  visible={
-                    (taskNavArray[1]._key + "" === chooseLabelKey ||
-                      taskNavArray[0]._key + "" === chooseLabelKey) &&
-                    batchVisible
-                  }
-                  dropStyle={{
-                    width: "150px",
-                    top: "45px",
-                    left: "190px",
-                    color: "#333",
-                  }}
-                  onClose={() => {
-                    setChooseLabelKey("");
-                    setBatchVisible(false);
-                    setTaskTypeVisible(false);
-                  }}
-                  title={"设置频道"}
-                >
-                  <div className="taskNav-set">
-                    {role > 0 && role < 4 ? (
-                      <div onClick={batchTaskArray}>归档全部已完成任务</div>
-                    ) : null}
-                    {role > 0 && role < 4 && headerIndex === 3 ? (
-                      <div
-                        onClick={() => {
-                          setTaskTypeVisible(true);
-                        }}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        任务类型
-                        <div
-                          style={{
-                            backgroundColor: color[taskTypeIndex],
-                            borderRadius: "50%",
-                            width: "15px",
-                            height: "15px",
-                            cursor: "pointer",
-                            marginLeft: "10px",
-                          }}
-                        ></div>
-                        <DropMenu
-                          visible={taskTypeVisible}
-                          onClose={() => {
-                            setTaskTypeVisible(false);
-                          }}
-                          // title={'默认任务类型'}
-                          dropStyle={{
-                            width: "65px",
-                            height: "120px",
-                            left: "8px",
-                            top: "0px",
-                          }}
-                        >
-                          {taskTypeArr.map((taskTypeItem, taskTypeIndex) => {
-                            return (
+                    trigger={["click"]}
+                    overlay={
+                      <div className="dropDown-box">
+                        <div className="taskNav-set">
+                          {role > 0 && role < 4 ? (
+                            <div onClick={batchTaskArray}>
+                              归档全部已完成任务
+                            </div>
+                          ) : null}
+                          {role > 0 && role < 4 && headerIndex === 3 ? (
+                            <Dropdown
+                              visible={taskTypeVisible}
+                              trigger={["click"]}
+                              overlay={
+                                <>
+                                  {taskTypeArr.map(
+                                    (taskTypeItem, taskTypeIndex) => {
+                                      return (
+                                        <div
+                                          key={"taskType" + taskTypeIndex}
+                                          className="taskNav-taskType"
+                                          style={{
+                                            backgroundColor:
+                                              backgroundColor[taskTypeIndex],
+                                            color: color[taskTypeIndex],
+                                            height: "35px",
+                                            lineHeight: "35px",
+                                            fontSize: "10px",
+                                            cursor: "pointer",
+                                          }}
+                                          onClick={() => {
+                                            console.log(">????");
+                                            setTaskTypeIndex(taskTypeIndex);
+                                            setTaskTypeVisible(false);
+                                            changeDefaultTaskType(
+                                              taskTypeItem.id
+                                            );
+                                          }}
+                                        >
+                                          {taskTypeItem.name}
+                                        </div>
+                                      );
+                                    }
+                                  )}
+                                </>
+                              }
+                            >
                               <div
-                                key={"taskType" + taskTypeIndex}
-                                className="taskNav-taskType"
-                                style={{
-                                  backgroundColor:
-                                    backgroundColor[taskTypeIndex],
-                                  color: color[taskTypeIndex],
-                                  height: "20px",
-                                  lineHeight: "20px",
-                                  fontSize: "10px",
-                                }}
                                 onClick={() => {
-                                  setTaskTypeIndex(taskTypeIndex);
-                                  setTaskTypeVisible(false);
-                                  changeDefaultTaskType(taskTypeItem.id);
+                                  setTaskTypeVisible(true);
+                                }}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
                                 }}
                               >
-                                {taskTypeItem.name}
+                                卡片默认类型
+                                <div
+                                  style={{
+                                    backgroundColor: color[taskTypeIndex],
+                                    borderRadius: "50%",
+                                    width: "15px",
+                                    height: "15px",
+                                    cursor: "pointer",
+                                    marginLeft: "10px",
+                                  }}
+                                ></div>
                               </div>
-                            );
-                          })}
-                        </DropMenu>
+                            </Dropdown>
+                          ) : null}
+                          <div
+                            onClick={() => {
+                              setBatchAddVisible(true);
+                            }}
+                          >
+                            批量导入
+                          </div>
+                          {taskNavArray &&
+                          role > 0 &&
+                          role < 4 &&
+                          taskNavArray[1]._key ? (
+                            <div
+                              onClick={() => {
+                                setDeleteVisible(true);
+                              }}
+                            >
+                              删除频道
+                            </div>
+                          ) : null}
+                        </div>
                       </div>
-                    ) : null}
+                    }
+                    // dropStyle={{
+                    //   width: "150px",
+                    //   top: "45px",
+                    //   left: "190px",
+                    //   color: "#333",
+                    // }}
+                    onVisibleChange={(visible) => {
+                      if (!visible) {
+                        setChooseLabelKey("");
+                        setBatchVisible(false);
+                        setTaskTypeVisible(false);
+                      }
+                    }}
+                    // onClose={() => {}}
+                  >
                     <div
+                      className="icon-container"
                       onClick={() => {
-                        setBatchAddVisible(true);
+                        setChooseLabelKey(
+                          taskNavArray[1]._key
+                            ? taskNavArray[1]._key
+                            : taskNavArray[0]._key
+                        );
+                        setBatchVisible(true);
+                        setAddTaskVisible(false);
+                        if (
+                          taskNavArray &&
+                          taskNavArray[1]._key &&
+                          taskTypeIndex === null
+                        ) {
+                          let taskType = taskNavArray[1]._key
+                            ? taskNavArray[1].taskType
+                            : taskNavArray[0].taskType;
+                          taskTypeArr.forEach((item: any, index: number) => {
+                            if (item.id === taskType) {
+                              setTaskTypeIndex(index);
+                            }
+                          });
+                        }
                       }}
                     >
-                      批量导入
+                      <img
+                        src={ellipsisPng}
+                        className="taskNav-name-ellipsis"
+                        alt=""
+                      />
                     </div>
-                    {role > 0 && role < 3 && taskNavArray[1]._key ? (
-                      <div
-                        onClick={() => {
-                          setDeleteVisible(true);
-                        }}
-                      >
-                        删除频道
-                      </div>
-                    ) : null}
-                  </div>
-                </DropMenu>
+                  </Dropdown>
+                ) : null}
                 {/* <DropMenu
                 visible={addTaskVisible}
                 dropStyle={{
@@ -741,6 +991,7 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
                     setBatchAddText(e.target.value);
                   }}
                   className="taskNav-textarea"
+                  placeholder="换行新建多个任务"
                 ></textarea>
               </div>
             </Dialog>
@@ -759,7 +1010,8 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
               <div className="deleteLabel-container">是否删除该频道</div>
             </Dialog>
           </div>
-          {(taskNavArray[1]._key + "" === chooseLabelKey ||
+          {taskNavArray &&
+          (taskNavArray[1]._key + "" === chooseLabelKey ||
             taskNavArray[0]._key + "" === chooseLabelKey) &&
           addTaskVisible &&
           headerIndex !== 3 ? (
@@ -775,7 +1027,9 @@ const TaskNav: React.FC<TaskNavProps> = (prop) => {
                   }}
                   style={{ width: "100%" }}
                   onKeyDown={(e: any) => {
-                    if (e.keyCode === 13 && !loading) {
+                    if (e.shiftKey && e.keyCode === 13) {
+                      setAddInput(e.target.value + "\n");
+                    } else if (e.keyCode === 13 && !loading) {
                       e.preventDefault();
                       addTask(taskNavArray[0], taskNavArray[1]);
                     }

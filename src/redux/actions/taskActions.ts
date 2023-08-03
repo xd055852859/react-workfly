@@ -1,29 +1,31 @@
 export const actionTypes = {
-  GET_GROUP_TASK: 'GET_GROUP_TASK',
-  GET_GROUP_TASK_SUCCESS: 'GET_GROUP_TASK_SUCCESS',
-  GET_TEAM_TASK: 'GET_TEAM_TASK',
-  GET_TEAM_TASK_SUCCESS: 'GET_TEAM_TASK_SUCCESS',
-  GET_PROJECT_TASK: 'GET_PROJECT_TASK',
-  GET_PROJECT_TASK_SUCCESS: 'GET_PROJECT_TASK_SUCCESS',
-  GET_SELF_TASK: 'GET_SELF_TASK',
-  GET_SELF_TASK_SUCCESS: 'GET_SELF_TASK_SUCCESS',
-  GET_WORKING_TABLE_TASK: 'GET_WORKING_TABLE_TASK',
-  GET_WORKING_TABLE_TASK_SUCCESS: 'GET_WORKING_TABLE_TASK_SUCCESS',
-  ADD_WORKING_TABLE_TASK: 'CREATE_WORKING_TABLE_TASK',
-  ADD_WORKING_TABLE_TASK_SUCCESS: 'CREATE_WORKING_TABLE_TASK_SUCCESS',
-  SET_TASK_KEY: 'SET_TASK_KEY',
-  SET_TASK_INFO: 'SET_TASK_INFO',
-  SET_CHOOSE_KEY: 'SET_CHOOSE_KEY',
-  EDIT_TASK: 'EDIT_TASK',
-  EDIT_TASK_SUCCESS: 'EDIT_TASK_SUCCESS',
-  SET_FILTER_OBJECT: 'SET_FILTER_OBJECT',
-  CHANGE_TASKINFO_VISIBLE: 'CHANGE_TASKINFO_VISIBLE',
-  SET_TASK_ACTION: 'SET_TASK_ACTION',
-  GET_CALENDAR_LIST: 'GET_CALENDAR_LIST',
-  GET_CALENDAR_LIST_SUCCESS: 'GET_CALENDAR_LIST_SUCCESS',
-  SET_NEW_TASK_ARRAY: 'SET_NEW_TASK_ARRAY',
-  CLEAR_TASK: 'CLEAR_TASK',
-  CHANGE_LABELARRAY:'CHANGE_LABELARRAY'
+  GET_GROUP_TASK: "GET_GROUP_TASK",
+  GET_GROUP_TASK_SUCCESS: "GET_GROUP_TASK_SUCCESS",
+  GET_TEAM_TASK: "GET_TEAM_TASK",
+  GET_TEAM_TASK_SUCCESS: "GET_TEAM_TASK_SUCCESS",
+  GET_PROJECT_TASK: "GET_PROJECT_TASK",
+  GET_PROJECT_TASK_SUCCESS: "GET_PROJECT_TASK_SUCCESS",
+  GET_SELF_TASK: "GET_SELF_TASK",
+  GET_SELF_TASK_SUCCESS: "GET_SELF_TASK_SUCCESS",
+  GET_WORKING_TABLE_TASK: "GET_WORKING_TABLE_TASK",
+  GET_WORKING_TABLE_TASK_SUCCESS: "GET_WORKING_TABLE_TASK_SUCCESS",
+  ADD_WORKING_TABLE_TASK: "CREATE_WORKING_TABLE_TASK",
+  ADD_WORKING_TABLE_TASK_SUCCESS: "CREATE_WORKING_TABLE_TASK_SUCCESS",
+  SET_TASK_KEY: "SET_TASK_KEY",
+  SET_TASK_INFO: "SET_TASK_INFO",
+  SET_CHOOSE_KEY: "SET_CHOOSE_KEY",
+  EDIT_TASK: "EDIT_TASK",
+  EDIT_TASK_SUCCESS: "EDIT_TASK_SUCCESS",
+  SET_FILTER_OBJECT: "SET_FILTER_OBJECT",
+  CHANGE_TASKINFO_VISIBLE: "CHANGE_TASKINFO_VISIBLE",
+  SET_TASK_ACTION: "SET_TASK_ACTION",
+  GET_CALENDAR_LIST: "GET_CALENDAR_LIST",
+  GET_CALENDAR_LIST_SUCCESS: "GET_CALENDAR_LIST_SUCCESS",
+  SET_NEW_TASK_ARRAY: "SET_NEW_TASK_ARRAY",
+  CLEAR_TASK: "CLEAR_TASK",
+  CHANGE_LABELARRAY: "CHANGE_LABELARRAY",
+  CHANGE_DELETE_STATE: "CHANGE_DELETE_STATE",
+  CHANGE_DELETE_KEY: "CHANGE_DELETE_KEY",
 };
 
 export function getGroupTask(
@@ -104,7 +106,7 @@ export function getWorkingTableTask(
   targetUKey: string,
   type2: number,
   finishPercentArray: number[],
-  fileDay?: number
+  isPath?: number
 ) {
   return {
     type: actionTypes.GET_WORKING_TABLE_TASK,
@@ -112,7 +114,7 @@ export function getWorkingTableTask(
     targetUKey: targetUKey,
     type2: type2,
     finishPercentArray: finishPercentArray,
-    fileDay: fileDay,
+    isPath: isPath ? isPath : 1,
   };
 }
 export function getWorkingTableSuccess(data: any) {
@@ -165,10 +167,14 @@ export function setFilterObject(filterObj: any) {
     filterObj: filterObj,
   };
 }
-export function changeTaskInfoVisible(taskInfoVisible: boolean) {
+export function changeTaskInfoVisible(
+  taskInfoVisible: boolean,
+  showComment?: boolean
+) {
   return {
     type: actionTypes.CHANGE_TASKINFO_VISIBLE,
     taskInfoVisible: taskInfoVisible,
+    showComment: showComment,
   };
 }
 export function setTaskAction(taskAction: any) {
@@ -205,4 +211,10 @@ export function clearTask(clearType: any) {
 }
 export function changeLabelarray(labelArray: any) {
   return { type: actionTypes.CHANGE_LABELARRAY, labelArray: labelArray };
+}
+export function changeDeleteState(deleteState: any) {
+  return { type: actionTypes.CHANGE_DELETE_STATE, deleteState: deleteState };
+}
+export function changeDeleteKey(deleteKey: string) {
+  return { type: actionTypes.CHANGE_DELETE_KEY, deleteKey: deleteKey };
 }

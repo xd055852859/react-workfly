@@ -28,7 +28,7 @@ const GroupModel: React.FC<GroupModelProps> = (props) => {
   const [modelInfoIndex, setModelInfoIndex] = useState<any>(null);
   const [modelState, setModelState] = useState(false);
 
-  const [taskCheck, setTaskCheck] = useState(false);
+  const [taskCheck, setTaskCheck] = useState(true);
   const [modelTotal, setModelTotal] = useState(0);
   const [modelInput, setModelInput] = useState("");
 
@@ -40,7 +40,7 @@ const GroupModel: React.FC<GroupModelProps> = (props) => {
     "rgba(242,237,166,0.3)",
   ];
   let unDistory = useRef<any>(true);
-  
+
   useMount(() => {
     return () => {
       unDistory.current = false;
@@ -179,20 +179,7 @@ const GroupModel: React.FC<GroupModelProps> = (props) => {
                       />
                       {modelInfoIndex === index ? (
                         <div className="groupModel-right-item-button">
-                          {/* <Button
-                            variant="contained"
-                            color="primary"
-                            style={{
-                              marginLeft: '10px',
-                              width: '70%',
-                              color: '#fff',
-                            }}
-                            onClick={() => {
-                              toGroupSet(item._key, taskCheck);
-                            }}
-                          >
-                            使用此模板
-                          </Button> */}
+                          {item.name}
                         </div>
                       ) : null}
                     </div>
@@ -208,20 +195,18 @@ const GroupModel: React.FC<GroupModelProps> = (props) => {
                 );
               })}
             </div>
-            {modelTotal > 9 ? (
-              <div className="groupModel-pagination">
-                <Pagination
-                  total={modelTotal}
-                  onChange={(page: number) => {
-                    if (modelInput) {
-                      searchModel(page);
-                    } else {
-                      getModelTypeList(page, modelTypeArr[modelIndex]);
-                    }
-                  }}
-                />
-              </div>
-            ) : null}
+            <div className="groupModel-pagination">
+              <Pagination
+                total={modelTotal}
+                onChange={(page: number) => {
+                  if (modelInput) {
+                    searchModel(page);
+                  } else {
+                    getModelTypeList(page, modelTypeArr[modelIndex]);
+                  }
+                }}
+              />
+            </div>
           </React.Fragment>
         ) : (
           <div className="groupModel-right-info">
@@ -246,20 +231,21 @@ const GroupModel: React.FC<GroupModelProps> = (props) => {
                   {modelInfo.usePersonNumber ? modelInfo.usePersonNumber : 0}
                 </div>
                 <img src={clickNumSvg} alt="" />
-                <div>
+                <div style={{ marginRight: "10px" }}>
                   {modelInfo.clickPersonNumber
                     ? modelInfo.clickPersonNumber + 1
                     : 1}
                 </div>
                 <Checkbox
                   checked={taskCheck}
-                  onChange={(e) => {
-                    setTaskCheck(e.target.checked);
+                  onClick={(e) => {
+                    setTaskCheck(!taskCheck);
                   }}
                   type="primary"
                   // className={classes.root}
-                />
-                含卡片内容
+                >
+                  含卡片内容
+                </Checkbox>
                 <Button
                   type="primary"
                   style={{

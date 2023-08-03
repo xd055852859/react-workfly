@@ -2,19 +2,18 @@ import React, { useState, useEffect, useCallback } from "react";
 import "./mainBoard.css";
 import moment from "moment";
 import _ from "lodash";
-import { Avatar } from "antd";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import { useDispatch } from "react-redux";
+import { useMount } from "../../hook/common";
 
 import { getSelfTask } from "../../redux/actions/taskActions";
 
 import Task from "../../components/task/task";
+import Avatar from "../../components/common/avatar";
+import Loading from "../../components/common/loading";
 
-import defaultGroupPng from "../../assets/img/defaultGroup.png";
 import nothingsSvg from "../../assets/svg/nothings.svg";
 
-import Loading from "../../components/common/loading";
-import { useMount } from "../../hook/common";
 
 interface MainBoardItemProps {
   mainItem: any;
@@ -35,21 +34,22 @@ const MainBoardItem: React.FC<MainBoardItemProps> = (props) => {
       <div>
         <div className="mainBoard-title">
           {!myState ? (
-            <Avatar
+            <div
               style={{
                 width: "22px",
                 height: "22px",
                 marginRight: "5px",
                 borderRadius: "5px",
+                overflow: 'hidden'
               }}
-              shape="square"
-              src={
-                mainItem[0].groupLogo
-                  ? mainItem[0].groupLogo +
-                    "?imageMogr2/auto-orient/thumbnail/80x"
-                  : defaultGroupPng
-              }
-            />
+            >
+              <Avatar
+                avatar={mainItem[0]?.groupLogo}
+                name={mainItem[0]?.groupName}
+                type={'group'}
+                index={0}
+              />
+            </div>
           ) : null}
           {mainItem[0].groupName}
         </div>
@@ -66,7 +66,7 @@ interface MainBoardProps {
 }
 
 const MainBoard: React.FC<MainBoardProps> = (props) => {
-  const userKey = useTypedSelector((state) => state.auth.user);
+  const userKey = useTypedSelector((state) => state.auth.userKey);
   const user = useTypedSelector((state) => state.auth.user);
   const selfTaskArray = useTypedSelector((state) => state.task.selfTaskArray);
   const taskInfo = useTypedSelector((state) => state.task.taskInfo);
@@ -105,7 +105,7 @@ const MainBoard: React.FC<MainBoardProps> = (props) => {
       time = Math.floor(
         (moment(item.taskEndDate).endOf("day").valueOf() -
           moment(new Date().getTime()).endOf("day").valueOf()) /
-          86400000
+        86400000
       );
     }
     item.time = time < 0 ? Math.abs(time) : Math.abs(time) + 1;
@@ -114,65 +114,67 @@ const MainBoard: React.FC<MainBoardProps> = (props) => {
   }, []);
   const getData = useCallback(
     (selfTaskArray: any, finishPercentArr: any) => {
-      let groupObj: any = {};
-      let state = "";
-      const startTime = moment().startOf("day").valueOf();
-      const endTime = moment().endOf("day").valueOf();
-      if (finishPercentArr && finishPercentArr.indexOf("0") !== -1) {
-        state =
-          state +
-          "(item.finishPercent === 0 " +
-          " && item.taskEndDate <= " +
-          endTime +
-          ")";
-      }
-      if (finishPercentArr && finishPercentArr.indexOf("1") !== -1) {
-        state =
-          state +
-          (state
-            ? "||(item.finishPercent === 1 && item.taskEndDate >= " +
-              startTime +
-              "  && item.taskEndDate <= " +
-              endTime +
-              ")"
-            : "(item.finishPercent === 1 && item.taskEndDate >= " +
-              startTime +
-              "  && item.taskEndDate <= " +
-              endTime +
-              ")");
-      }
-      if (finishPercentArr && finishPercentArr.indexOf("2") !== -1) {
-        state =
-          state +
-          (state
-            ? "||(item.finishPercent === 0 && item.taskEndDate <= " +
-              endTime +
-              ")"
-            : "(item.finishPercent === 0 && item.taskEndDate <=" +
-              endTime +
-              ")");
-      }
-      selfTaskArray.forEach((item: any, index: number) => {
-        if (
-          // eslint-disable-next-line
-          eval(state) &&
-          item.taskEndDate &&
-          (item.type === 2 || item.type === 6) &&
-          (item.executorKey === user._key || item.creatorKey === user._key)
-        ) {
-          if (item.executorKey === user._key) {
-            if (!groupObj[item.groupKey]) {
-              groupObj[item.groupKey] = [];
-            }
-            item = formatDay(item);
-            groupObj[item.groupKey].push(item);
-            groupObj[item.groupKey] = _.sortBy(groupObj[item.groupKey], [
-              "serialNumber",
-            ]).reverse();
-          }
+      if (user) {
+        let groupObj: any = {};
+        let state = "";
+        const startTime = moment().startOf("day").valueOf();
+        const endTime = moment().endOf("day").valueOf();
+        if (finishPercentArr && finishPercentArr.indexOf("0") !== -1) {
+          state =
+            state +
+            "(item.finishPercent === 0 " +
+            " && item.taskEndDate <= " +
+            endTime +
+            ")";
         }
-      });
-      setMainArray(_.sortBy(_.values(groupObj), ["groupName"]));
+        if (finishPercentArr && finishPercentArr.indexOf("1") !== -1) {
+          state =
+            state +
+            (state
+              ? "||(item.finishPercent === 1 && item.taskEndDate >= " +
+              startTime +
+              "  && item.taskEndDate <= " +
+              endTime +
+              ")"
+              : "(item.finishPercent === 1 && item.taskEndDate >= " +
+              startTime +
+              "  && item.taskEndDate <= " +
+              endTime +
+              ")");
+        }
+        if (finishPercentArr && finishPercentArr.indexOf("2") !== -1) {
+          state =
+            state +
+            (state
+              ? "||(item.finishPercent === 0 && item.taskEndDate <= " +
+              endTime +
+              ")"
+              : "(item.finishPercent === 0 && item.taskEndDate <=" +
+              endTime +
+              ")");
+        }
+        selfTaskArray.forEach((item: any, index: number) => {
+          if (
+            // eslint-disable-next-line
+            eval(state) &&
+            item.taskEndDate &&
+            (item.type === 2 || item.type === 6) &&
+            (item.executorKey === user._key || item.creatorKey === user._key)
+          ) {
+            if (item.executorKey === user._key) {
+              if (!groupObj[item.groupKey]) {
+                groupObj[item.groupKey] = [];
+              }
+              item = formatDay(item);
+              groupObj[item.groupKey].push(item);
+              groupObj[item.groupKey] = _.sortBy(groupObj[item.groupKey], [
+                "serialNumber",
+              ]).reverse();
+            }
+          }
+        });
+        setMainArray(_.sortBy(_.values(groupObj), ["groupName"]));
+      }
     },
     [user, formatDay]
   );

@@ -1,25 +1,28 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./workingReport.css";
+import { useDispatch } from "react-redux";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import { Input, Button, Tooltip, DatePicker } from "antd";
 import _ from "lodash";
 import api from "../../services/api";
 import moment from "moment";
-
-import { useDispatch } from "react-redux";
-import { setMessage } from "../../redux/actions/commonActions";
 import { useMount } from "../../hook/common";
 
+import { setMessage } from "../../redux/actions/commonActions";
 import { changeMusic } from "../../redux/actions/authActions";
+import { changeDeleteState } from "../../redux/actions/taskActions";
+
 import Task from "../../components/task/task";
 
 import memberSvg from "../../assets/svg/member.svg";
+import noReportSvg from "../../assets/svg/noReport.svg";
 import deletePng from "../../assets/img/deleteDiary.png";
 import commentPng from "../../assets/img/comment.png";
 import reportIcon from "../../assets/svg/reportIcon.svg";
-import defaultPersonPng from "../../assets/img/defaultPerson.png";
+import Avatar from "../../components/common/avatar";
 
 const { RangePicker } = DatePicker;
+const { TextArea } = Input;
 export interface WorkingReportProps {
   headerType?: boolean;
 }
@@ -32,14 +35,14 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
   const headerIndex = useTypedSelector((state) => state.common.headerIndex);
   const mainGroupKey = useTypedSelector((state) => state.auth.mainGroupKey);
 
-  const taskInfo = useTypedSelector((state) => state.task.taskInfo);
+  const deleteState = useTypedSelector((state) => state.task.deleteState);
   const groupKey = useTypedSelector((state) => state.group.groupKey);
   const [reportDateList, setReportDateList] = useState<any>([]);
   const [reportObj, setReportObj] = useState<any>(null);
-  const [reportIndex, setReportIndex] = useState<any>(0);
+  const [reportIndex, setReportIndex] = useState<any>(
+    moment().endOf("day").valueOf()
+  );
   const [reportInfoIndex, setReportInfoIndex] = useState<any>(0);
-
-  const [diaryKey, setDiaryKey] = useState<any>(null);
   const [comment, setComment] = useState("");
   const [positive, setPositive] = useState("");
   const [negative, setNegative] = useState("");
@@ -53,10 +56,10 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
   const [memberArray, setMemberArray] = useState<any>([]);
   const [moveState, setMoveState] = useState<any>(null);
   const [startMonthDate, setStartMonthDate] = useState<any>(
-    moment().startOf("month").valueOf()
+    moment().subtract(35, "days").startOf("day").valueOf()
   );
   const [endMonthDate, setEndMonthDate] = useState<any>(
-    moment().endOf("month").valueOf()
+    moment().endOf("day").valueOf()
   );
   const commentLimit = 10;
   let unDistory = useRef<any>(true);
@@ -66,104 +69,123 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
       unDistory.current = false;
     };
   });
-  const getData = useCallback(
-    async (
-      targetUKey: string,
-      targetGKey: string,
-      type: number,
-      startDate: number,
-      endDate: number
-    ) => {
-      let reportDateRes: any = null;
-      switch (type) {
-        case 1:
-          reportDateRes = await api.auth.getReportList(
-            targetUKey,
-            startDate,
-            endDate + 1
-          );
-          break;
-        case 2:
-          reportDateRes = await api.auth.getGroupReportList(
-            targetGKey,
-            startDate,
-            endDate + 1
-          );
-          break;
-        case 3:
-          reportDateRes = await api.auth.getMemberReportList(
-            targetUKey,
-            targetGKey,
-            startDate,
-            endDate + 1
-          );
-          break;
+  const getData = async (
+    targetUKey: string,
+    targetGKey: string,
+    type: number,
+    startDate: number,
+    endDate: number,
+    startType?: string
+  ) => {
+    let reportDateRes: any = null;
+    switch (type) {
+      case 1:
+        reportDateRes = await api.auth.getReportList(
+          targetUKey,
+          startDate,
+          endDate + 1
+        );
+        break;
+      case 2:
+        reportDateRes = await api.auth.getGroupReportList(
+          targetGKey,
+          startDate,
+          endDate + 1
+        );
+        break;
+      case 3:
+        reportDateRes = await api.auth.getMemberReportList(
+          targetUKey,
+          targetGKey,
+          startDate,
+          endDate + 1
+        );
+        break;
+    }
+    if (reportDateRes.msg === "OK") {
+      reportDateRes.result = reportDateRes.result.filter((item) => {
+        return item.myCreateCardNumber || item.myPlanCardNumber;
+      });
+      console.log(reportDateRes.result);
+      //@ts-ignore
+      setReportDateList(_.orderBy(reportDateRes.result, ["st"], ["desc"]));
+      if (!startType) {
+        chooseReport(startDate, 0, targetUKey);
       }
-      if (reportDateRes.msg === "OK") {
-        reportDateRes.result = reportDateRes.result.filter((item) => {
-          return item.myCreateCardNumber || item.myPlanCardNumber;
-        });
-        //@ts-ignore
-        setReportDateList(_.orderBy(reportDateRes.result, ["st"], ["desc"]));
-      } else {
-        dispatch(setMessage(true, reportDateRes.msg, "error"));
-      }
-    },
-    [dispatch]
-  );
+    } else {
+      dispatch(setMessage(true, reportDateRes.msg, "error"));
+    }
+  };
   useEffect(() => {
     if (
       (user?._key && headerIndex === 1) ||
       (targetUserInfo?._key && headerIndex === 2) ||
-      (groupKey && headerIndex === 3)
+      (groupKey && headerIndex === 3) ||
+      headerType
     ) {
-      switch (headerIndex) {
-        case 1:
-          getData(user._key, "", 1, startMonthDate, endMonthDate);
-          break;
-        case 2:
-          getData(targetUserInfo._key, "", 1, startMonthDate, endMonthDate);
-          break;
-        case 3:
-          getData("", groupKey, 2, startMonthDate, endMonthDate);
-          break;
+      if (headerIndex === 1 || headerType) {
+        getData(user._key, "", 1, startMonthDate, endMonthDate, "start");
+      } else if (headerIndex === 2) {
+        getData(
+          targetUserInfo._key,
+          "",
+          1,
+          startMonthDate,
+          endMonthDate,
+          "start"
+        );
+      } else if (headerIndex === 3) {
+        getData("", groupKey, 2, startMonthDate, endMonthDate, "start");
       }
       chooseReport(moment().startOf("day").valueOf(), 0);
     }
     //eslint-disable-next-line
   }, [
-    user,
-    targetUserInfo,
     headerIndex,
+    targetUserInfo,
     groupKey,
     startMonthDate,
     endMonthDate,
+    headerType,
   ]);
   useEffect(() => {
-    setStartMonthDate(moment().startOf("month").valueOf());
-    setEndMonthDate(moment().endOf("month").valueOf());
+    setStartMonthDate(moment().subtract(35, "days").startOf("day").valueOf());
+    setEndMonthDate(moment().endOf("day").valueOf());
   }, [headerIndex]);
   useEffect(() => {
-    if (taskInfo) {
+    if (deleteState) {
+      changeDeleteState(false);
+      chooseReport(reportIndex, reportInfoIndex);
     }
-  }, [taskInfo]);
+    //eslint-disable-next-line
+  }, [deleteState]);
 
-  const chooseReport = async (item: number, index: number) => {
+  const chooseReport = async (
+    item: number,
+    index: number,
+    newMemberKey?: string
+  ) => {
     setReportIndex(item);
     setReportInfoIndex(index);
-    if (memberKey) {
-      getReportData(memberKey, groupKey, item, 3);
+    console.log(index);
+    let key = newMemberKey ? newMemberKey : memberKey;
+    if (key) {
+      getReportData(key, groupKey, item, 3);
     } else {
-      switch (headerIndex) {
-        case 1:
-          getReportData(user._key, "", item, 1);
-          break;
-        case 2:
-          getReportData(targetUserInfo._key, "", item, 1);
-          break;
-        case 3:
-          getReportData("", groupKey, item, 2);
-          break;
+      if (headerType) {
+        getReportData(user._key, "", item, 1);
+      } else {
+        switch (headerIndex) {
+          case 1:
+            getReportData(user._key, "", item, 1);
+            break;
+          case 2:
+            getReportData(targetUserInfo._key, "", item, 1);
+            break;
+          case 3:
+            getReportData("", groupKey, item, 2);
+            break;
+        }
       }
     }
     if (headerIndex !== 3) {
@@ -174,65 +196,49 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
       setCommentList([]);
       setComment("");
       getDiaryNote(item);
-      getDiaryList(item, moment(item).endOf("day").valueOf());
+      // getDiaryList(item, moment(item).endOf("day").valueOf());
     }
   };
   const choosePerson = (key: string) => {
     setMemberKey(key);
-    console.log(key, groupKey);
     getData(key, groupKey, 3, startMonthDate, endMonthDate);
-    getReportData(key, groupKey, moment().startOf("day").valueOf(), 3);
+    console.log(key, groupKey, moment().startOf("day").valueOf(), 3);
+    // getReportData(key, groupKey, moment().startOf("day").valueOf(), 3);
   };
 
   const getDiaryNote = async (startTime: number) => {
-    if (diaryKey) {
-      let noteRes: any = await api.auth.getNote(
-        headerIndex === 1 || headerType ? user._key : targetUserInfo._key,
-        startTime
-      );
-      if (unDistory.current) {
-        if (noteRes.msg === "OK") {
-          setPositive(noteRes.result.positive);
-          setNegative(noteRes.result.negative);
-          setNote(noteRes.result.note);
-        } else {
-          if (noteRes.msg === "无该成就/风险/随记") {
-            await api.auth.setNote({
-              startTime: moment().startOf("day").valueOf(),
-              type: 2,
-              positive: "",
-              negative: "",
-              note: "",
-              positiveClose: "",
-              negativeClose: "",
-              noteClose: "",
-            });
-          } else {
-            dispatch(setMessage(true, noteRes.msg, "error"));
-          }
-        }
-      }
-    }
-  };
-  const getDiaryList = async (startTime: number, endTime: number) => {
-    let res: any = await api.auth.getDiaryList(
+    let noteRes: any = await api.auth.getNote(
       headerIndex === 1 || headerType ? user._key : targetUserInfo._key,
-      startTime,
-      endTime
+      startTime
     );
     if (unDistory.current) {
-      if (res.msg === "OK") {
-        if (res.result.length > 0) {
-          if (res.result[0]._key) {
-            setContentKey(res.result[0]._key);
-            getCommentList(1, res.result[0]._key);
-          }
-        }
+      if (noteRes.msg === "OK") {
+        setPositive(noteRes.result.positive);
+        setNegative(noteRes.result.negative);
+        setNote(noteRes.result.note);
+        setContentKey(noteRes.result._key);
+        getCommentList(1, noteRes.result._key);
       } else {
-        dispatch(setMessage(true, res.msg, "error"));
+        dispatch(setMessage(true, noteRes.msg, "error"));
       }
     }
   };
+  // const getDiaryList = async (startTime: number, endTime: number) => {
+  //   let res: any = await api.auth.getDiaryList(
+  //     headerIndex === 1 || headerType ? user._key : targetUserInfo._key,
+  //     startTime,
+  //     endTime
+  //   );
+  //   if (res.msg === "OK") {
+  //     if (res.result.length > 0) {
+  //       if (res.result[0]._key) {
+  //         getCommentList(1, res.result[0]._key);
+  //       }
+  //     }
+  //   } else {
+  //     dispatch(setMessage(true, res.msg, "error"));
+  //   }
+  // };
   const getCommentList = async (page: number, contentKey: number | string) => {
     let newCommentList = _.cloneDeep(commentList);
     setCommentPage(page);
@@ -277,7 +283,6 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
     type: number
   ) => {
     let reportInfoRes: any = null;
-    console.log(targetUKey, targetGKey, type);
     switch (type) {
       case 1:
         reportInfoRes = await api.auth.getReportInfo(targetUKey, reportDate);
@@ -297,6 +302,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
         break;
     }
     if (reportInfoRes.msg === "OK") {
+      console.log(reportInfoRes.result);
       setReportObj(reportInfoRes.result);
       if (type === 2) {
         setMemberArray(reportInfoRes.result.userArray);
@@ -314,7 +320,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
       note: note,
     });
     if (noteRes.msg === "OK") {
-      dispatch(setMessage(true, "随记保存成功", "success"));
+      dispatch(setMessage(true, "保存成功", "success"));
     } else {
       dispatch(setMessage(true, noteRes.msg, "error"));
     }
@@ -348,7 +354,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
       moment(time).format("dd"),
       moment(time).year() === moment().year()
         ? moment(time).format("MM.DD")
-        : moment(time).format("YY.MM.DD"),
+        : moment(time).format("YYYY.MM.DD"),
     ];
   };
   const addTask = async () => {
@@ -362,21 +368,15 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
       dispatch(setMessage(true, "新增任务成功", "success"));
       dispatch(changeMusic(5));
       getReportData(user._key, "", reportIndex, 1);
-      // newPersonObj[reportIndex][diaryKey].executorArray.unshift(
-      //   addTaskRes.result
-      // );
-      // newPersonObj[reportIndex][diaryKey].creatorArray.unshift(
-      //   addTaskRes.result
-      // );
-      // setPersonObj(newPersonObj);
     } else {
       dispatch(setMessage(true, addTaskRes.msg, "error"));
     }
   };
   //修改日程日期
   const changeDate = (dates) => {
-    setStartMonthDate(dates[0].valueOf());
-    setEndMonthDate(dates[1].valueOf());
+    console.log(dates);
+    setStartMonthDate(dates[0].startOf("day").valueOf());
+    setEndMonthDate(dates[1].endOf("day").valueOf());
   };
   return (
     <div className="diary">
@@ -446,8 +446,9 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
             <div className="diary-container-box">
               {reportDateList[reportInfoIndex] ? (
                 <React.Fragment>
-                  {headerIndex !== 3 ? <h2>一、任务看板</h2> : null}
-                  {/* {diaryKey !== "全部" ? ( */}
+                  {headerIndex !== 3 || headerType ? (
+                    <h2>一、任务看板</h2>
+                  ) : null}
                   <div className="diary-container-mainTitle">
                     <div>
                       <img
@@ -467,16 +468,21 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                           formatTime(reportDateList[reportInfoIndex].st)[0] +
                           " "}
                       </span>
-                      <span>
-                        ( 新建完成{" "}
-                        {
-                          reportDateList[reportInfoIndex]
-                            .myCreateFinishCardNumber
-                        }{" "}
-                        条 计划完成{" "}
-                        {reportDateList[reportInfoIndex].myPlanFinishCardNumber}{" "}
-                        条 )
-                      </span>
+                      {headerIndex !== 3 ? (
+                        <span>
+                          ( 新建完成{" "}
+                          {
+                            reportDateList[reportInfoIndex]
+                              .myCreateFinishCardNumber
+                          }{" "}
+                          条 计划完成{" "}
+                          {
+                            reportDateList[reportInfoIndex]
+                              .myPlanFinishCardNumber
+                          }{" "}
+                          条 )
+                        </span>
+                      ) : null}
                     </div>
                     <div>
                       {headerIndex === 1 ? (
@@ -507,7 +513,19 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                     </div>
                   </div>
                 </React.Fragment>
-              ) : null}
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <img src={noReportSvg} alt=""></img>
+                </div>
+              )}
               {reportObj.userArray.map((item, index) => {
                 return (
                   <React.Fragment key={"report" + index}>
@@ -519,11 +537,11 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                         {headerIndex === 3 ? (
                           <div className="diaryall-subtitle">
                             <div className="diaryall-subtitle-img">
-                              <img
-                                src={
-                                  item.avatar ? item.avatar : defaultPersonPng
-                                }
-                                alt=""
+                              <Avatar
+                                avatar={item?.avatar}
+                                name={item?.nickName}
+                                index={index}
+                                type={"person"}
                               />
                             </div>
                             <span style={{ fontWeight: "bold" }}>
@@ -561,6 +579,11 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                               <div
                                 key={"date" + taskIndex}
                                 className="diary-container-item"
+                                style={
+                                  headerIndex === 3 && moveState !== "top"
+                                    ? { paddingRight: "35px" }
+                                    : {}
+                                }
                                 // onClick={() => {
                                 //   setDiaryIndex(reportIndex);
                                 // }}
@@ -658,7 +681,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                     </div>
                     <div className="diary-content-info">
                       {headerIndex === 1 || headerType ? (
-                        <textarea
+                        <TextArea
                           value={positive}
                           placeholder="成绩,收获,价值创造"
                           className="diary-content-textarea"
@@ -670,7 +693,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                         <div className="diary-content-textarea">{positive}</div>
                       )}
                       {headerIndex === 1 || headerType ? (
-                        <textarea
+                        <TextArea
                           value={negative}
                           placeholder="困难，挑战，潜在问题"
                           className="diary-content-textarea"
@@ -685,7 +708,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                   </div>
                   <h2>三、随记</h2>
                   {headerIndex === 1 || headerType ? (
-                    <textarea
+                    <TextArea
                       value={note}
                       placeholder="随记"
                       className="diary-textarea"
@@ -811,7 +834,7 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
         </div>
       </div>
       <React.Fragment>
-        {headerIndex === 3 && reportObj?.userArray ? (
+        {headerIndex === 3 && reportObj?.userArray && !headerType ? (
           <div
             className="diary-member"
             style={
@@ -871,9 +894,11 @@ const WorkingReport: React.FC<WorkingReportProps> = (props) => {
                             : {}
                         }
                       >
-                        <img
-                          src={item.avatar ? item.avatar : defaultPersonPng}
-                          alt=""
+                        <Avatar
+                          avatar={item?.avatar}
+                          name={item?.nickName}
+                          index={index}
+                          type={"person"}
                         />
                       </div>
                     </React.Fragment>

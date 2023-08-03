@@ -6,14 +6,14 @@ import { Tooltip } from "antd";
 import _ from "lodash";
 import moment from "moment";
 import api from "../../services/api";
-
+import { changeMusic } from "../../redux/actions/authActions";
 import { setMessage } from "../../redux/actions/commonActions";
-
-import GridTree from "./gridTree";
+import { editTask, setTaskInfo } from "../../redux/actions/taskActions";
 import Loading from "../common/loading";
 import Avatar from "../common/avatar";
 
 import { useMount } from "../../hook/common";
+import Task from "../task/task";
 interface GridProps {
   gridState: boolean;
 }
@@ -33,20 +33,29 @@ const Grid: React.FC<GridProps> = (prop) => {
   const memberArray = useTypedSelector((state) => state.member.memberArray);
   const taskArray = useTypedSelector((state) => state.task.taskArray);
   const labelArray = useTypedSelector((state) => state.task.labelArray);
+  const workingGroupArray = useTypedSelector(
+    (state) => state.task.workingGroupArray
+  );
+  const workingTaskArray = useTypedSelector(
+    (state) => state.task.workingTaskArray
+  );
   const [gridGroupArray, setGridGroupArray] = useState<any>([]);
   const [allGridGroupArray, setAllGridGroupArray] = useState<any>(null);
   const [allGridTaskArray, setAllGridTaskArray] = useState<any>(null);
   const [taskNavDate, setTaskNavDate] = useState<any>([]);
   const [taskNavDay, setTaskNavDay] = useState<any>(null);
   const [taskNavWeek, setTaskNavWeek] = useState<any>([]);
-  const [avatarWidth, setAvatarWidth] = useState("25px");
-
+  const [avatarWidth, setAvatarWidth] = useState("30px");
+  const [chooseIndex, setChooseIndex] = useState(100);
   const [loading, setLoading] = useState(false);
+  const [trIndex, setTrIndex] = useState("");
   const labelRef: React.RefObject<any> = useRef();
   const avatarRef: React.RefObject<any> = useRef();
-
+  const leftRef = useRef<any>(null);
+  const rightRef = useRef<any>(null);
+  const topRef = useRef<any>(null);
   let unDistory = useRef<any>(true);
-  
+
   useEffect(() => {
     return () => {
       unDistory.current = false;
@@ -66,7 +75,7 @@ const Grid: React.FC<GridProps> = (prop) => {
     let newTaskNavDate: any = [];
     let newTaskNavDay: any = [];
     let newTaskNavWeek: any = [];
-    for (let i = 0; i < 20; i += 1) {
+    for (let i = 0; i < 30; i += 1) {
       let taskDate = moment().add(i, "days");
       newTaskNavDate.push(taskDate.date());
       newTaskNavDay.push({
@@ -192,20 +201,22 @@ const Grid: React.FC<GridProps> = (prop) => {
               key !== "show"
             ) {
               //eslint-disable-next-line no-loop-func
-              item[key].arr.forEach((arrItem: any) => {
+              item[key].arr = item[key].arr.filter((arrItem: any) => {
                 newTaskNavDay.forEach((dayItem: any) => {
                   let state = gridState
                     ? arrItem.taskEndDate >= dayItem.startTime &&
                       arrItem.taskEndDate <= dayItem.endTime
                     : dayItem.userId === arrItem.executorKey;
+                  //  !== 2
                   if (
                     state &&
-                    arrItem.finishPercent !== 2 &&
-                    arrItem.type === 2
+                    arrItem.finishPercent === 0 &&
+                    (arrItem.type === 2 || arrItem.type === 6)
                   ) {
                     dayItem.allTaskNum = dayItem.allTaskNum + arrItem.hour;
                   }
                 });
+                return arrItem.finishPercent === 0;
               });
             }
           }
@@ -233,8 +244,8 @@ const Grid: React.FC<GridProps> = (prop) => {
                     : dayItem.userId === arrItem.executorKey;
                   if (
                     state &&
-                    arrItem.finishPercent !== 2 &&
-                    arrItem.type === 2
+                    arrItem.finishPercent === 0 &&
+                    (arrItem.type === 2 || arrItem.type === 6)
                   ) {
                     arrItem.dayArr.push(arrItem.hour);
                   } else {
@@ -250,7 +261,6 @@ const Grid: React.FC<GridProps> = (prop) => {
         newGridGroupArray = _.sortBy(newGridGroupArray, [
           "arrlength",
         ]).reverse();
-        console.log(newGridGroupArray);
         setGridGroupArray(newGridGroupArray);
         setTaskNavDay(newTaskNavDay);
 
@@ -259,84 +269,74 @@ const Grid: React.FC<GridProps> = (prop) => {
     },
     [formatData, gridState]
   );
-  const getGridData = useCallback(
-    async (
-      headerIndex: number,
-      groupKey: string,
-      targetUserKey: string,
-      groupMemberArray: any,
-      memberArray: any
-    ) => {
-      let obj: any = {
-        type1: headerIndex,
-        finishPercentArray: [0],
-      };
-      if (headerIndex === 3) {
-        obj.groupKey = groupKey;
-      } else {
-        obj.type2 = gridState ? 3 : 4;
-        if (headerIndex === 2) {
-          obj.targetUKey = targetUserKey;
-        }
+  const getGridData = async (
+    headerIndex: number,
+    groupKey: string,
+    targetUserKey: string,
+    groupMemberArray: any,
+    memberArray: any
+  ) => {
+    let obj: any = {
+      type1: headerIndex,
+      finishPercentArray: [0],
+    };
+    if (headerIndex === 3) {
+      obj.groupKey = groupKey;
+    } else {
+      obj.type2 = gridState ? 3 : 4;
+      if (headerIndex === 2) {
+        obj.targetUKey = targetUserKey;
       }
-      // setLoading(true);
-      let gridRes: any = await api.task.allGridGroupTask(obj);
-      if (unDistory.current) {
-        if (gridRes.msg === "OK") {
-          // setLoading(false);
-          let gridObj: any = _.cloneDeep(gridRes.result);
-          let newAllGridChildArray: any = [];
-          let newAllGridTaskArray: any = [];
-          let newAllGridGroupArray: any = [];
-          let cardIndex = _.findIndex(gridObj.groupArray, {
-            _key: localStorage.getItem("mainGroupKey"),
-          });
-          if (gridObj.groupArray.length > 0) {
-            gridObj.groupArray.unshift(
-              gridObj.groupArray.splice(cardIndex, 1)[0]
-            );
-            gridObj.cardArray.unshift(
-              gridObj.cardArray.splice(cardIndex, 1)[0]
-            );
-          }
-          newAllGridGroupArray = gridObj.groupArray;
-          newAllGridTaskArray = gridObj.cardArray.map(
-            (item: any, index: number) => {
-              item = item.filter((taskItem: any, taskIndex: number) => {
-                return (
-                  taskItem.finishPercent === 0 ||
-                  (taskItem.finishPercent === 1 &&
-                    taskItem.children.length > 0) ||
-                  (taskItem.finishPercent === 2 && taskItem.children.length > 0)
-                );
-              });
-              return item;
-            }
+    }
+    // setLoading(true);
+    let gridRes: any = await api.task.allGridGroupTask(obj);
+    if (unDistory.current) {
+      if (gridRes.msg === "OK") {
+        // setLoading(false);
+        let gridObj: any = _.cloneDeep(gridRes.result);
+        let newAllGridChildArray: any = [];
+        let newAllGridTaskArray: any = [];
+        let newAllGridGroupArray: any = [];
+        let cardIndex = _.findIndex(gridObj.groupArray, {
+          _key: localStorage.getItem("mainGroupKey"),
+        });
+        if (gridObj.groupArray.length > 0) {
+          gridObj.groupArray.unshift(
+            gridObj.groupArray.splice(cardIndex, 1)[0]
           );
-          gridObj.sonCardArray.forEach((item: any, index: number) => {
-            newAllGridChildArray[index] = {};
-            for (let key in item) {
-              if (
-                item[key].finishPercent === 0 ||
-                (item[key].finishPercent === 1 &&
-                  item[key].children.length > 0) ||
-                (item[key].finishPercent === 2 && item[key].children.length > 0)
-              ) {
-                newAllGridChildArray[index][key] = item[key];
-              }
-            }
-          });
-          setAllGridGroupArray(newAllGridGroupArray);
-          setAllGridTaskArray(newAllGridTaskArray);
-          formatData(headerIndex, groupMemberArray, memberArray);
-          setLoading(false);
-        } else {
-          dispatch(setMessage(true, gridRes.msg, "error"));
+          gridObj.cardArray.unshift(gridObj.cardArray.splice(cardIndex, 1)[0]);
         }
+        newAllGridGroupArray = gridObj.groupArray;
+
+        // (taskItem.finishPercent === 1 &&
+        //   taskItem.children.length > 0) ||
+        // (taskItem.finishPercent === 2 && taskItem.children.length > 0)
+        newAllGridTaskArray = gridObj.cardArray.map(
+          (item: any, index: number) => {
+            item = item.filter((taskItem: any, taskIndex: number) => {
+              return taskItem.finishPercent === 0;
+            });
+            return item;
+          }
+        );
+        gridObj.sonCardArray.forEach((item: any, index: number) => {
+          newAllGridChildArray[index] = {};
+          for (let key in item) {
+            if (item[key].finishPercent === 0) {
+              newAllGridChildArray[index][key] = item[key];
+            }
+          }
+        });
+        setAllGridGroupArray(newAllGridGroupArray);
+        setAllGridTaskArray(newAllGridTaskArray);
+        formatData(headerIndex, groupMemberArray, memberArray);
+        setLoading(false);
+      } else {
+        dispatch(setMessage(true, gridRes.msg, "error"));
       }
-    },
-    [dispatch, formatData, gridState]
-  );
+    }
+  };
+
   useEffect(() => {
     if (headerIndex === 3 && groupInfo && labelArray && taskArray) {
       let groupArray: any = _.cloneDeep([groupInfo]);
@@ -346,9 +346,24 @@ const Grid: React.FC<GridProps> = (prop) => {
         // return _.cloneDeep(format.formatFilter(item, filterObject));
         return item;
       });
+      console.log(groupArray);
+      console.log(cardArray);
       getGroupData(
         groupArray,
         cardArray,
+        headerIndex,
+        groupMemberArray,
+        memberArray
+      );
+    } else if (
+      headerIndex !== 3 &&
+      workingGroupArray &&
+      workingTaskArray &&
+      gridState
+    ) {
+      getGroupData(
+        workingGroupArray,
+        workingTaskArray,
         headerIndex,
         groupMemberArray,
         memberArray
@@ -365,15 +380,13 @@ const Grid: React.FC<GridProps> = (prop) => {
         memberArray
       );
     }
+    //eslint-disable-next-line
   }, [
-    headerIndex,
     groupInfo,
     labelArray,
     taskArray,
-    groupMemberArray,
-    memberArray,
-    getGroupData,
-    getGridData,
+    workingGroupArray,
+    workingTaskArray,
     groupKey,
     targetUserKey,
   ]);
@@ -407,25 +420,6 @@ const Grid: React.FC<GridProps> = (prop) => {
     groupMemberArray,
     memberArray,
   ]);
-  // useEffect(() => {
-  //   // 用户已登录
-  //   if (taskInfo && allGridTaskArray) {
-  //     let newAllGridTaskArray: any = _.cloneDeep(allGridTaskArray);
-  //     newAllGridTaskArray = newAllGridTaskArray.map((item: any) => {
-  //       item = item.map((taskItem: any) => {
-  //         if (taskItem._key === taskInfo._key) {
-  //           console.log(taskInfo);
-  //           console.log(taskItem);
-  //           return _.cloneDeep(taskInfo);
-  //         } else {
-  //           return taskItem;
-  //         }
-  //       });
-  //       return item;
-  //     });
-  //     setAllGridTaskArray(newAllGridTaskArray);
-  //   }
-  // }, [taskInfo]);
 
   const sortArr = (arr: any, item: any) => {
     let time = 0;
@@ -490,211 +484,332 @@ const Grid: React.FC<GridProps> = (prop) => {
   // playTreeAudio() {
   //   this.$refs.treeAudio.play();
   // },
-  const changeTaskNum = (newTaskNavDay: any) => {
-    setTaskNavDay(newTaskNavDay);
-  };
-  const getItem = (item: any) => {
+  const getLeftItem = (item: any) => {
     let dom: any = [];
     for (let groupIndex in item) {
       let groupItem: any = item[groupIndex];
       dom.push(
-        <div key={"group" + groupIndex} className="grid-group-item">
+        <React.Fragment>
           {groupItem.labelObj && groupItem.show && groupItem.arr.length > 0 ? (
-            <div>
-              <div className="grid-title">
-                <div
-                  className="grid-title-subtitle"
-                  style={{
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <div
-                    className="grid-grouptitle"
-                    style={{ border: "0px", color: "#000" }}
-                  >
-                    {/* <div className="point-label"></div> */}
-                    {groupItem.labelObj.cardLabelName}
-                  </div>
-                </div>
-                <div className="grid-label-tr">
-                  {taskNavDate.map((dateItem: any, dateIndex: number) => {
-                    return (
-                      <div
-                        key={"taskNavItem" + dateIndex}
-                        style={{ border: "1px solid #fff" }}
-                        className="grid-label-td"
-                      ></div>
-                    );
-                  })}
-                </div>
+            <React.Fragment>
+              <div
+                className="grid-left-label grid-left-item"
+                style={{ height: "35px" }}
+                key={"left" + groupIndex}
+              >
+                {groupItem.labelObj.cardLabelName}
               </div>
               {groupItem.arr.map((taskItem: any, taskIndex: number) => {
                 return (
                   <div
                     key={"task" + taskIndex}
-                    className="grid-title-task chooseTr"
+                    className="grid-left-item"
+                    style={{
+                      backgroundColor:trIndex===groupIndex + "-" + taskIndex? "rgba(240, 240, 240, 0.3)":"",
+                    }}
                   >
                     {taskItem ? (
-                      <GridTree
+                      <Task
                         taskItem={taskItem}
-                        left={45}
-                        lineLeft={58}
-                        gridState={gridState}
-                        taskNavDate={taskNavDate}
-                        taskNavDay={taskNavDay}
-                        changeTaskNum={changeTaskNum}
-                        // @playTreeAudio="playTreeAudio"
+                        bottomtype={"grid"}
+                        changeTask={changeTask}
                       />
                     ) : null}
                   </div>
                 );
               })}
-            </div>
+            </React.Fragment>
           ) : null}
-        </div>
+        </React.Fragment>
       );
     }
     return dom;
   };
+  const getRightItem = (item: any) => {
+    let dom: any = [];
+    for (let groupIndex in item) {
+      let groupItem: any = item[groupIndex];
+      dom.push(
+        <React.Fragment>
+          {groupItem.labelObj && groupItem.show && groupItem.arr.length > 0 ? (
+            <React.Fragment>
+              <div className="grid-right-item"></div>
+              {groupItem.arr.map((taskItem: any, taskIndex: number) => {
+                return (
+                  <div
+                    className="grid-right-item grid-right-tr"
+                    style={{
+                      marginBottom: "-1px",
+                    }}
+                    key={"right" + taskIndex}
+                    onMouseEnter={() => {
+                      setTrIndex(groupIndex + "-" + taskIndex);
+                    }}
+                  >
+                    {taskItem.dayArr.map((dateItem: any, dateIndex: number) => {
+                      return (
+                        <div
+                          // v-for="() in taskItem.dayArr"
+                          key={"dateItem" + dateIndex}
+                          className="grid-right-td"
+                          onClick={() => {
+                            chooseTask(taskItem, dateIndex);
+                          }}
+                          onMouseEnter={() => {
+                            setChooseIndex(dateIndex);
+                          }}
+                          style={{
+                            backgroundColor: dateItem
+                              ? "rgba(59,82,107,0.6)"
+                              : dateIndex === chooseIndex
+                              ? "rgba(240, 240, 240, 0.3)"
+                              : "transparent",
+                            border: "1px solid #fff",
+                            margin: "0px -1px -1px 0px",
+                            // paddingBottom: "-1px",
+                          }}
+                        >
+                          {dateItem}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </React.Fragment>
+          ) : null}
+        </React.Fragment>
+      );
+    }
+    return dom;
+  };
+  const changeTask = (item: any) => {
+    // let newGridTaskItem = _.cloneDeep(gridTaskItem);
+    // for (let key in newGridTaskItem) {
+    //   if (item[key]) {
+    //     newGridTaskItem[key] = item[key];
+    //   }
+    // }
+    // setGridTaskItem(newGridTaskItem);
+  };
+  const chooseTask = (item: any, index: number) => {
+    // this.$emit("playTreeAudio");
+    let newTaskNavDay = _.cloneDeep(taskNavDay);
+    let taskNavIndex = _.findIndex(item.dayArr, (item: any) => {
+      return item !== "";
+    });
+    item.dayArr[taskNavIndex] = "";
+    if (newTaskNavDay[taskNavIndex]?.allTaskNum) {
+      newTaskNavDay[taskNavIndex].allTaskNum = parseFloat(
+        (newTaskNavDay[taskNavIndex].allTaskNum - item.hour).toFixed(1)
+      );
+      item.dayArr[index] = 0;
+    }
+    item.dayArr[index] = item.hour;
+    console.log(newTaskNavDay[index].allTaskNum);
+    newTaskNavDay[index].allTaskNum = parseFloat(
+      (newTaskNavDay[index].allTaskNum + item.hour).toFixed(1)
+    );
+    if (!gridState) {
+      item.executorKey = newTaskNavDay[index].userId;
+      item.executorName = newTaskNavDay[index].nickName;
+      item.executorAvatar = newTaskNavDay[index].avatar;
+      // newGridTaskItem.executorKey = taskNavDay[index].userId;
+      api.group.addGroupMember(item.groupKey, [
+        {
+          userKey: taskNavDate[index].userId,
+          nickName: taskNavDate[index].nickName,
+          avatar: taskNavDate[index].avatar,
+          gender: taskNavDate[index].gender,
+          role: 4,
+        },
+      ]);
+    } else {
+      item.taskEndDate = new Date().getTime() + index * 86400000;
+    }
+
+    setTaskNavDay(newTaskNavDay);
+    console.log(index);
+    dispatch(editTask({ key: item._key, ...item }, 4));
+    dispatch(setTaskInfo(item));
+    setGridGroupArray((prevGridGroupArray) => {
+      prevGridGroupArray.forEach((gridItem: any) => {
+        for (let groupIndex in gridItem) {
+          let groupItem: any = gridItem[groupIndex];
+          if (
+            groupItem.labelObj &&
+            groupItem.show &&
+            groupItem.arr.length > 0
+          ) {
+            groupItem.arr = groupItem.arr.map(
+              (taskItem: any, taskIndex: number) => {
+                if (taskItem._key === item._key) {
+                  console.log(moment(item.taskEndDate).format("MM-DD"));
+                  return _.cloneDeep(item);
+                } else {
+                  return _.cloneDeep(taskItem);
+                }
+              }
+            );
+          }
+        }
+      });
+      return [..._.cloneDeep(prevGridGroupArray)];
+    });
+    dispatch(changeMusic(11));
+  };
+  const setScrollTop = (e: any) => {
+    console.log();
+    leftRef.current.scrollTop = e.target.scrollTop;
+    rightRef.current.scrollTop = e.target.scrollTop;
+    topRef.current.scrollLeft = e.target.scrollLeft;
+  };
   return (
     <div className="grid">
       {loading ? <Loading /> : null}
-      <div className="grid-group-date">
-        <div className="grid-date-label-title">任务时长统计</div>
-        <div className="grid-date-label">
-          {taskNavDay
-            ? taskNavDate.map((dateItem: any, dateIndex: number) => {
-                return (
-                  <div
-                    style={{ border: "0px" }}
-                    className="grid-label-td"
-                    ref={labelRef}
-                    key={"taskNavDate" + dateIndex}
-                  >
+      <div className="grid-date">
+        <div className="grid-date-left">
+          <div className="grid-date-title">任务时长统计</div>
+          <div className="grid-date-title">
+            {gridState ? "任务时间" : "执行人"}
+          </div>
+        </div>
+        <div className="grid-date-right" ref={topRef}>
+          <div className="grid-date-label">
+            {taskNavDay
+              ? taskNavDate.map((dateItem: any, dateIndex: number) => {
+                  return (
                     <div
-                      style={{
-                        background:
-                          taskNavDay[dateIndex].allTaskNum > 8 &&
-                          headerIndex === 1
-                            ? "#E94848"
-                            : taskNavDay[dateIndex].allTaskNum !== 0
-                            ? "#16AE7A"
-                            : "#B6B6B6",
-                        borderRadius: "50%",
-                        width: avatarWidth,
-                        height: avatarWidth,
-                        textAlign: "center",
-                        lineHeight: avatarWidth,
-                      }}
+                      style={{ border: "0px" }}
+                      className="grid-date-td"
+                      ref={labelRef}
+                      key={"taskNavDate" + dateIndex}
                     >
-                      {taskNavDay[dateIndex].allTaskNum > 0
-                        ? taskNavDay[dateIndex].allTaskNum.toFixed(1)
-                        : ""}
+                      <div
+                        style={{
+                          background:
+                            taskNavDay[dateIndex].allTaskNum > 8 &&
+                            headerIndex === 1
+                              ? "#E94848"
+                              : taskNavDay[dateIndex].allTaskNum !== 0
+                              ? "#16AE7A"
+                              : "#B6B6B6",
+                          borderRadius: "50%",
+                          width: avatarWidth,
+                          height: avatarWidth,
+                          textAlign: "center",
+                          lineHeight: avatarWidth,
+                        }}
+                      >
+                        {taskNavDay[dateIndex].allTaskNum > 0
+                          ? taskNavDay[dateIndex].allTaskNum.toFixed(1)
+                          : ""}
+                      </div>
                     </div>
-                  </div>
-                );
-              })
-            : null}
-        </div>
-      </div>
-      <div className="grid-group-date">
-        <div className="grid-date-label-title">
-          {gridState ? "任务时间" : "执行人"}
-        </div>
-        <div className="grid-date-label">
-          {taskNavDate.map((dateItem: any, dateIndex: number) => {
-            return (
-              <div
-                key={"taskNavLabel" + dateIndex}
-                className="grid-label-bottomTd"
-                style={{
-                  backgroundColor: gridState
-                    ? taskNavWeek[dateIndex] > 4 && gridState
-                      ? "#BABABA"
-                      : "#505050"
-                    : "",
-                  paddingRight: "-1px",
-                }}
-              >
-                {gridState ? (
-                  <React.Fragment>{dateItem}</React.Fragment>
-                ) : (
-                  <Tooltip title={dateItem.nickName}>
-                    <div
-                      className="grid-label-td-avatar"
-                      style={{
-                        height: "35px",
-                        borderRight:
-                          dateIndex !== taskNavDate.length - 1
-                            ? "1px solid transparent"
-                            : "0px",
-                      }}
-                    >
-                      {/* <div slot="title">{dateItem.nickName}</div> */}
+                  );
+                })
+              : null}
+          </div>
+          <div className="grid-date-label">
+            {taskNavDate.map((dateItem: any, dateIndex: number) => {
+              return (
+                <div
+                  key={"taskNavLabel" + dateIndex}
+                  className="grid-date-td"
+                  style={{
+                    backgroundColor: gridState
+                      ? taskNavWeek[dateIndex] > 4 && gridState
+                        ? "#BABABA"
+                        : "#505050"
+                      : "",
+                    paddingRight: "-1px",
+                  }}
+                >
+                  {gridState ? (
+                    <React.Fragment>{dateItem}</React.Fragment>
+                  ) : (
+                    <Tooltip title={dateItem.nickName}>
+                      <div
+                        className="grid-label-td-avatar"
+                        style={{
+                          borderRight:
+                            dateIndex !== taskNavDate.length - 1
+                              ? "1px solid transparent"
+                              : "0px",
+                        }}
+                      >
+                        {/* <div slot="title">{dateItem.nickName}</div> */}
 
-                      <Avatar
-                        name={taskNavDay[dateIndex].nickName}
-                        avatar={taskNavDay[dateIndex].avatar}
-                        type={"person"}
-                        index={dateIndex}
-                      />
-                    </div>
-                  </Tooltip>
-                )}
-              </div>
-            );
-          })}
+                        <Avatar
+                          name={dateItem.nickName}
+                          avatar={taskNavDay[dateIndex].avatar}
+                          type={"person"}
+                          index={dateIndex}
+                          size={35}
+                        />
+                      </div>
+                    </Tooltip>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
       <div className="grid-container">
-        {gridGroupArray.map((item: any, index: number) => {
+        {/* {gridGroupArray.map((item: any, index: number) => {
           return (
             <React.Fragment key={"gridGroup" + index}>
-              {item.arrlength > 0 ? (
-                <div className="grid-group-container">
-                  {headerIndex !== 3 ? (
-                    <div className="grid-title">
-                      <div
-                        className="grid-title-subtitle"
-                        style={{ color: "#000", paddingLeft: "30px" }}
-                      >
-                        <div className="grid-grouptitle">
-                          {/* <div className="point-group"></div> */}
-                          <div
-                            className="grid-groupLogo"
-                            style={{ border: "0px", color: "#000" }}
-                          >
-                            {/* <div className="point-label"></div> */}
-
-                            <Avatar
-                              name={item.groupObj.groupName}
-                              avatar={item.groupObj.groupLogor}
-                              type={"group"}
-                              index={index}
-                            />
-                          </div>
-                          {item.groupObj.groupName}
-                        </div>
-                      </div>
-                      <div className="grid-label-tr">
-                        {taskNavDate.map((dateItem: any, dateIndex: number) => {
-                          return (
-                            <div
-                              key={"tr" + dateIndex}
-                              className="grid-label-td"
-                              style={{ border: "1px solid #fff" }}
-                            ></div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ) : null}
-                  {getItem(item)}
-                </div>
-              ) : null}
+              {item.arrlength > 0 ? <React.Fragment></React.Fragment> : null}
             </React.Fragment>
           );
-        })}
+        })} */}
+        <div className="grid-left" ref={leftRef} onScroll={setScrollTop}>
+          {gridGroupArray.map((item: any, index: number) => {
+            return (
+              <React.Fragment key={"gridGroup" + index}>
+                {item.arrlength > 0 ? (
+                  <React.Fragment>
+                    {headerIndex !== 3 ? (
+                      <div
+                        className="grid-left-label grid-left-item"
+                        style={{ height: "35px" }}
+                      >
+                        <Avatar
+                          name={item.groupObj.groupName}
+                          avatar={item.groupObj.groupLogor}
+                          type={"group"}
+                          index={index}
+                          size={30}
+                        />
+                        <span style={{ marginLeft: "8px" }}>
+                          {item.groupObj.groupName}
+                        </span>
+                      </div>
+                    ) : null}
+                    {getLeftItem(item)}
+                  </React.Fragment>
+                ) : null}
+              </React.Fragment>
+            );
+          })}
+        </div>
+        <div className="grid-right" ref={rightRef} onScroll={setScrollTop}>
+          {gridGroupArray.map((item: any, index: number) => {
+            return (
+              <React.Fragment key={"gridGroup" + index}>
+                {item.arrlength > 0 ? (
+                  <React.Fragment>
+                    {headerIndex !== 3 ? (
+                      <div className="grid-right-item"></div>
+                    ) : null}
+                    {getRightItem(item)}
+                  </React.Fragment>
+                ) : null}
+              </React.Fragment>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

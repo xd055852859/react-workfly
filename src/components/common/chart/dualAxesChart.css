@@ -1,0 +1,17 @@
+.dualAxesChart-box {
+    padding: 10px 5px;
+    color: #333
+}
+
+.dualAxesChart-title {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.dualAxesChart-box>div {
+    margin: 8px 0px
+}
+
+/* .dualAxesChart-content {
+
+} */

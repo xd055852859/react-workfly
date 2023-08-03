@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./htmlWelcome.css";
 import { Button, Carousel, BackTop, Dropdown } from "antd";
 import Code from "../../components/qrCode/qrCode";
@@ -7,6 +7,7 @@ import welcomeLogoSvg from "../../assets/svg/welcomeLogo.svg";
 import bgWSvg from "../../assets/svg/bg-white.svg";
 import cloudSvg from "../../assets/svg/clouds.svg";
 import welcomeSvg from "../../assets/svg/welcome.svg";
+import homePng from "../../assets/img/home.png";
 
 import phonePng from "../../assets/img/phone.png";
 import computerPng from "../../assets/img/computer.png";
@@ -28,9 +29,9 @@ import question9Svg from "../../assets/svg/question9.svg";
 import cooperation1Svg from "../../assets/svg/cooperation1.svg";
 import cooperation2Svg from "../../assets/svg/cooperation2.svg";
 import cooperation3Svg from "../../assets/svg/cooperation3.svg";
-import person1Png from "../../assets/img/person1.png";
-import person2Png from "../../assets/img/person2.png";
-import person3Png from "../../assets/img/person3.png";
+// import person1Png from "../../assets/img/person1.png";
+// import person2Png from "../../assets/img/person2.png";
+// import person3Png from "../../assets/img/person3.png";
 import work1Png from "../../assets/img/work1.png";
 import work2Png from "../../assets/img/work2.png";
 import work3Png from "../../assets/img/work3.png";
@@ -41,8 +42,10 @@ import work7Png from "../../assets/img/work7.png";
 import work8Png from "../../assets/img/work8.png";
 import work9Png from "../../assets/img/work9.png";
 import work10Png from "../../assets/img/work10.png";
-import leftSvg from "../../assets/svg/left.svg";
-import rightSvg from "../../assets/svg/right.svg";
+// import leftSvg from "../../assets/svg/left.svg";
+// import rightSvg from "../../assets/svg/right.svg";
+import HomeImg from "./homeImg";
+declare var window: Window 
 interface HtmlWelcomeProps {
   toLogin: Function;
   version: string;
@@ -51,6 +54,8 @@ interface HtmlWelcomeProps {
 }
 const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
   const { toLogin, version, clientWidth, clientHeight } = props;
+  const [isLearn, setIsLearn] = useState(false)
+  const [isImg, setIsImg] = useState(false)
   const carouselRef: React.RefObject<any> = useRef();
   const questionImg = [
     question1Svg,
@@ -116,7 +121,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
     };
     document.addEventListener("mousewheel", scrollFunc, false);
     return () => {
-      document.removeEventListener("mousewheel", scrollFunc,false);
+      document.removeEventListener("mousewheel", scrollFunc, false);
     };
   }, []);
   return (
@@ -135,6 +140,28 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
           <div
             className="pages-link-item"
             onClick={() => {
+              setIsLearn(false)
+              setIsImg(false)
+              carouselRef.current.goTo(0);
+            }}
+          >
+            首页
+          </div>
+          <div
+            className="pages-link-item"
+            onClick={() => {
+              setIsLearn(false)
+              setIsImg(true)
+              carouselRef.current.goTo(0);
+            }}
+          >
+            简介
+          </div>
+          <div
+            className="pages-link-item"
+            onClick={() => {
+              setIsLearn(false)
+              setIsImg(false)
               carouselRef.current.goTo(0);
             }}
           >
@@ -143,6 +170,8 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
           <div
             className="pages-link-item"
             onClick={() => {
+              setIsLearn(false)
+              setIsImg(false)
               carouselRef.current.goTo(1);
             }}
           >
@@ -151,11 +180,16 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
           <div
             className="pages-link-item"
             onClick={() => {
-              window.open("https://workfly.cn/help/1");
+              setIsLearn(true)
+              setIsImg(false)
+              // window.open("https://workfly.cn/help/1");
             }}
           >
             学习
           </div>
+          {/* <div className="welcomePage-button btn">
+            开始
+          </div> */}
           <button
             // type="primary"
             className="welcomePage-button btn btn-primary btn-ghost btn-shine"
@@ -171,6 +205,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
         className="welcomePage-cloud"
         style={{ backgroundImage: `url(${cloudSvg})` }}
       ></div>
+
 
       <Carousel
         infinite={false}
@@ -193,7 +228,8 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
             <div className="downloadPage-container pages-container">
               <div className="downloadPage-item">
                 <div className="downloadPage-title">手机端</div>
-                <img src={phonePng} alt="" className="downloadPage-phone" />
+                <div className="downloadPage-img"> <img src={phonePng} alt="" className="downloadPage-phone" /></div>
+
                 <div className="downloadPage-icon">
                   <Dropdown
                     overlay={
@@ -202,7 +238,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
                           url={
                             "https://itunes.apple.com/cn/app/id1516401175?ls=1&mt=8"
                           }
-                          id={"ios"}
+                          id={"IOS"}
                         />
                       </div>
                     }
@@ -214,6 +250,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
                         width: "60px",
                         height: "60px",
                         background: "transparent",
+                        marginRight: '40px'
                       }}
                       icon={
                         <img
@@ -239,7 +276,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
                       <div className="dropDown-box">
                         <Code
                           url={"https://workingdownload.qingtime.cn/"}
-                          id={"android"}
+                          id={"Android"}
                         />
                       </div>
                     }
@@ -275,11 +312,11 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
               </div>
               <div className="downloadPage-item">
                 <div className="downloadPage-title">桌面端</div>
-                <img
+                <div className="downloadPage-img"> <img
                   src={computerPng}
                   alt=""
                   className="downloadPage-computer"
-                />
+                /></div>
                 <div className="downloadPage-icon" style={{ width: "204px" }}>
                   <Button
                     style={{
@@ -287,6 +324,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
                       width: "60px",
                       height: "60px",
                       background: "transparent",
+                      marginRight: '40px'
                     }}
                     icon={
                       <img
@@ -335,7 +373,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
               </div>
               <div className="downloadPage-item">
                 <div className="downloadPage-title">Google插件</div>
-                <img src={googPng} alt="" className="downloadPage-google" />
+                <div className="downloadPage-img"> <img src={googPng} alt="" className="downloadPage-google" /></div>
                 <div className="downloadPage-icon" style={{ width: "204px" }}>
                   <Button
                     style={{
@@ -343,6 +381,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
                       width: "60px",
                       height: "60px",
                       background: "transparent",
+                      marginRight: '40px'
                     }}
                     icon={
                       <img
@@ -411,9 +450,9 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
             </div>
           </div>
         </div>
-        <div>
+        {/* <div>
           <div className="pages personPage" style={{ height: clientHeight }}>
-            <div className="pages-title">喜欢用workfly</div>
+            <div className="pages-title">喜欢用Workfly</div>
             <div className="personPage-container">
               <div className="personPage-icon">
                 <img src={leftSvg} alt="" />
@@ -423,7 +462,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
                   <img src={person1Png} alt="" />
                 </div>
                 <div className="personPage-item-content">
-                  文字案例能手机越来越普及，我们这老一代人基本都不太会用那么多复杂的软件，亲信这款简洁易用APP，特别适合我们。
+                  智能手机越来越普及，我们这老一代人基本都不太会用那么多复杂的软件，亲信这款简洁易用APP，特别适合我们。
                 </div>
                 <div className="personPage-item-nickName">司恒</div>
                 <div className="personPage-item-post">一名来自安徽的志愿者</div>
@@ -445,7 +484,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
                   <img src={person3Png} alt="" />
                 </div>
                 <div className="personPage-item-content">
-                  时光科技用开发的软件、办公和项目管理系统，我们一直很赞赏和崇拜。
+                  时光科技开发的软件、办公和项目管理系统，我们一直很赞赏和崇拜。
                 </div>
                 <div className="personPage-item-nickName">思琪</div>
                 <div className="personPage-item-post">航旅科技</div>
@@ -455,14 +494,14 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         <div>
           <div
             className="pages  cooperationPage"
             style={{ height: clientHeight }}
           >
             <div className="pages-title">
-              workfly如何帮助你和你的团队更好的协作
+              Workfly如何帮助你和你的团队更好的协作
             </div>
             <div className="cooperationPage-container  pages-container">
               <div className="cooperationPage-item">
@@ -473,7 +512,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
                 />
                 <div className="cooperationPage-title">结构化的目标</div>
                 <div className="cooperationPage-content">
-                  workfly独有的树形态任务发布方式。可以让你轻松的把目标变成结构化体系化的知识。从而变成团队的执行力。
+                  Workfly独有的树形态任务发布方式。可以让你轻松的把目标变成结构化体系化的知识。从而变成团队的执行力。
                 </div>
               </div>
               <div
@@ -487,7 +526,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
                 />
                 <div className="cooperationPage-title">靠谱的工作</div>
                 <div className="cooperationPage-content">
-                  件件有回应，事事有着落。这就是靠谱团队的品质。也是workfly软件设计的核心思想。
+                  件件有回应，事事有着落。这就是靠谱团队的品质。也是Workfly软件设计的核心思想。
                 </div>
               </div>
               <div className="cooperationPage-item">
@@ -498,7 +537,7 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
                 />
                 <div className="cooperationPage-title">及时的沟通</div>
                 <div className="cooperationPage-content">
-                  workfly可以就某个项目甚至是某个任务直接找到相关责任人进行沟通。沟通有语义，就有了效率。
+                  Workfly可以就某个项目甚至是某个任务直接找到相关责任人进行沟通。沟通有语义，就有了效率。
                 </div>
               </div>
             </div>
@@ -506,12 +545,12 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
         </div>
         <div>
           <div className="pages  workPage" style={{ height: clientHeight }}>
-            <div className="pages-title">workfly帮助各种组织和企业迈向成功</div>
+            <div className="pages-title">Workfly帮助各种组织和企业迈向成功</div>
             <div className="workPage-container  pages-container">
               {workImg.map((workItem, workIndex) => {
                 return (
                   <div className="workPage-item" key={"work" + workIndex}>
-                    <img src={workItem} alt="" />
+                    <div className="workPage-item-img"><img src={workItem} alt="" /></div>
                     <div className="workPage-item-title">
                       {workTitle[workIndex]}
                     </div>
@@ -533,6 +572,37 @@ const HtmlWelcome: React.FC<HtmlWelcomeProps> = (props) => {
         </div>
       </Carousel>
       <BackTop visibilityHeight={clientHeight} />
+      {isLearn ? <div
+        style={{
+          position: "fixed",
+          width: "100%",
+          height: "calc(100% - 70px)",
+          zIndex: 18,
+          top: '70px',
+          left: '0px',
+        }}
+      >
+        <iframe
+          src={"https://workfly.cn/help/1"}
+          frameBorder="0"
+          style={{ width: "100%", height: "100%" }}
+          title=" "
+        ></iframe>
+      </div> : null}
+      {isImg ? <div
+        style={{
+          position: "fixed",
+          width: "100%",
+          height: "100%",
+          zIndex: 18,
+          top: '70px',
+          left: '0px',
+          overflow: 'auto',
+          backgroundColor: '#fff'
+        }}
+      >
+        <HomeImg homePng={homePng} />
+      </div> : null}
     </div>
   );
 };

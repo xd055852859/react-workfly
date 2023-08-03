@@ -1,0 +1,382 @@
+.okrTable {
+  width: 100%;
+  background-color: #fff;
+  padding: 23px 20px 13px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.okrTable-header,
+.okrTable-footer {
+  width: 100%;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.okrTable-footer {
+  margin-top: 10px;
+}
+
+.okrTable-left {
+  width: 30%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.okrTable-header .okrTable-left {
+  font-size: 14px;
+  color: #7c8192;
+  padding-left: 5px;
+  box-sizing: border-box;
+}
+
+.okrTable-kr-container {
+  width: 100%;
+}
+
+.okrTable-kr .okrTable-left {
+  padding-left: 45px;
+  box-sizing: border-box;
+}
+
+.okrTable-right {
+  width: 70%;
+  height: 100%;
+  min-height: 35px;
+  font-size: 14px;
+  color: #7c8192;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #7c8192;
+}
+
+.okrTable-right > div {
+  width: 10%;
+  height: 100%;
+  min-height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.okrTable-right > div:nth-child(1),
+.okrTable-right > div:nth-child(2) {
+  width: 24%;
+}
+
+.okrTable-right > div:nth-child(3) {
+  width: 20%;
+}
+.okrTable-o .okrTable-right:hover,
+.okr-drag .okrTable-right:hover {
+  background-color: #f0f0f0;
+}
+.okrTable-button {
+  width: 75px;
+  height: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.okrTable-o,
+.okrTable-kr {
+  width: 100%;
+  min-height: 35px;
+  display: flex;
+  align-items: center;
+}
+
+.okrTable-o {
+  /* height: 35px; */
+  font-size: 18px;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 20px;
+}
+
+.okrTable-kr {
+  width: 100%;
+  margin-bottom: 5px;
+  justify-content: space-between;
+}
+
+.okrTable-o > div,
+.okrTable-kr > div {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.okrTable-o-right {
+  width: 150px;
+}
+
+.okrTable-oTitle .ant-input {
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  padding: 0px 5px !important;
+}
+
+.kr-item .ant-input {
+  width: 100% !important;
+  padding-left: 0px !important;
+}
+
+.kr-item2 {
+  position: relative;
+  z-index: 1;
+}
+
+.kr-item-button {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  z-index: 2;
+  display: none;
+}
+
+.kr-item2:hover,
+.oItem-downAlign-item:hover {
+  background-color: #edf5ff;
+}
+
+.kr-item2:hover .kr-item-button,
+.oItem-downAlign-item:hover .kr-item-button {
+  display: block;
+}
+
+.okrTable-oTitle {
+  width: calc(100% - 280px);
+  margin-right: 15px;
+}
+
+.okrTable-krLogo {
+  font-size: 12px;
+  /* color: #999; */
+  margin-right: 10px;
+}
+
+.okr-oLogo-title {
+  width: 65px;
+  height: 28px;
+  margin-bottom: 12px;
+  line-height: 28px;
+  cursor: pointer;
+}
+
+.krItem-title {
+  width: 100%;
+  height: 50px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  display: flex;
+  align-items: center;
+}
+
+.krItem-name {
+  display: flex;
+}
+
+.ant-radio-inner::after {
+  width: 28px;
+  height: 28px;
+  margin-top: -14px;
+  margin-left: -14px;
+}
+
+.oItem-downAlign {
+  font-size: 14px;
+}
+
+.oItem-group-item,
+.oItem-downAlign-item,
+.oItem-align-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  justify-content: flex-start;
+}
+
+.oItem-downAlign-item {
+  width: 100%;
+  padding: 5px 0px;
+}
+
+.oItem-group-item {
+  justify-content: center;
+  padding: 5px 0px;
+}
+
+.okr-set-button {
+  position: absolute;
+  top: 28px;
+  right: 15px;
+  z-index: 2;
+}
+
+.krList-content {
+  width: 100%;
+  height: calc(100vh - 225px);
+  overflow: auto;
+  margin-top: 20px;
+}
+
+.krItem-progress {
+  width: 350px;
+  height: 40px;
+  position: relative;
+  z-index: 1;
+  margin-top: 30px;
+}
+
+.krItem-progress-box {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  top: 4px;
+  z-index: 2;
+  background-color: #1890ff;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.krItem-progress-num {
+  height: 20px;
+  position: absolute;
+  top: -18px;
+  z-index: 3;
+  user-select: none;
+}
+
+.drop-box {
+  overflow: auto;
+  max-height: calc(100vh - 400px);
+}
+
+.dropover-box {
+  max-width: 700px;
+  overflow: auto;
+  max-height: 500px;
+}
+
+/* .ant-radio-checked:nth-child(1)::after {
+    border: 1px solid #ff9a01 !important;
+}
+
+.ant-radio-inner:nth-child(1)::after {
+    background-color: #ff9a01 !important;
+} */
+/* input[type="radio"]+label::before {
+    border: 1px solid #ff9a01;
+}
+
+input[type="radio"]:checked+label::before {
+    background-color: #ff9a01;
+} */
+
+.bar {
+  width: 10px;
+  height: 20px;
+  background: #369;
+  position: absolute;
+  top: -7px;
+  left: 0;
+  cursor: pointer;
+}
+.okr-comment-tabs {
+  width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: flex-start;
+  line-height: 32px;
+  border-bottom: 1px solid #d3d3d3;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+}
+
+.okr-comment-historyLog {
+  width: 100%;
+  font-size: 12px;
+  color: #8091a0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.okr-comment-title {
+  width: calc(100% - 65px);
+  display: flex;
+  /* align-items: center; */
+}
+
+.okr-comment-history {
+  padding-top: 15px;
+}
+
+.okr-comment-history .ant-timeline-item-content {
+  min-height: 20px !important;
+  margin: 0px !important;
+}
+
+.okr-cancel-box {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.okr-cancel-align {
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+  margin-left: 15px;
+  display: none;
+}
+
+.okrTable-left:hover .okr-cancel-align {
+  display: block;
+}
+
+.okr-drag {
+  position: relative;
+  z-index: 1;
+}
+
+.okr-drag-handle {
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 10px;
+  z-index: 2;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+.kr-dialog-container {
+  position: relative;
+  z-index: 1;
+}
+.kr-dialog-mask {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  z-index: 5;
+}

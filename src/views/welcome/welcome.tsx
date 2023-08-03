@@ -3,15 +3,19 @@ import "./welcome.css";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import api from "../../services/api";
+import { is_mobile } from "../../services/util";
 import { useMount } from "../../hook/common";
 
-import { setMessage } from "../../redux/actions/commonActions";
+import {
+  setMessage,
+  changeContentVisible,
+} from "../../redux/actions/commonActions";
 
 import HtmlWelcome from "./htmlWelcome";
 import PhoneWelcome from "./phoneWelcome";
 import bgWSvg from "../../assets/svg/bg-white.svg";
 import { useAuth } from "../../context/auth";
-
+declare var window: Window;
 export default function Welcome() {
   const history = useHistory();
   const { deviceState } = useAuth();
@@ -31,6 +35,8 @@ export default function Welcome() {
       }
     }
     window.addEventListener("message", handle, false);
+    document.title = "Workfly";
+    dispatch(changeContentVisible(false));
     return () => {
       window.removeEventListener("message", handle, false);
       unDistory.current = false;
@@ -87,22 +93,20 @@ export default function Welcome() {
       if (localStorage.getItem("showType")) {
         redirect = `${window.location.protocol}//${window.location.host}/home/showPage`;
       } else if (localStorage.getItem("createType")) {
-        redirect = `${window.location.protocol}//${window.location.host}/home/create`;
+        redirect = `${window.location.protocol}//${window.location.host}/home/phoneHome`;
+      } else if (is_mobile() || deviceState === "xxs") {
+        redirect = `${window.location.protocol}//${window.location.host}/home/phoneHome`;
       } else {
         redirect = `${window.location.protocol}//${window.location.host}/home/basic`;
       }
       let href: string = `https://account.qingtime.cn?apphigh=27&redirect=${redirect}&logo=https://cdn-icare.qingtime.cn/1605251458500_workingVip`;
-      // if (deviceState !== "xxl" && deviceState !== "xl") {
-      //   window.open(href, "_self");
-      // } else {
-        window.open(
-          href,
-          "new",
-          `width=360, height=560, resizable=false, toolbar=no, menubar=no, location=no, status=no, top=${
-            (clientHeight - 420) / 2
-          }, left=${(clientWidth - 360) / 2}`
-        );
-      // }
+      window.open(
+        href,
+        "new",
+        `width=360, height=560, resizable=false, toolbar=no, menubar=no, location=no, status=no, top=${
+          (clientHeight - 420) / 2
+        }, left=${(clientWidth - 360) / 2}`
+      );
     }
   };
 
@@ -114,7 +118,7 @@ export default function Welcome() {
         backgroundImage: `url(${bgWSvg})`,
       }}
     >
-      {deviceState !== "xxl" && deviceState !== "xl" ? (
+      {is_mobile() || deviceState === "xxs" ? (
         <PhoneWelcome
           toLogin={toLogin}
           version={version}

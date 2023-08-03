@@ -17,6 +17,9 @@ export interface TaskType {
   taskActionArray: any;
   taskAction: any;
   taskInfo: any;
+  deleteState: boolean;
+  deleteKey: string;
+  showComment: boolean;
 }
 
 const defaultState: TaskType = {
@@ -35,6 +38,9 @@ const defaultState: TaskType = {
   taskActionArray: [],
   taskAction: {},
   taskInfo: null,
+  deleteState: false,
+  showComment: false,
+  deleteKey: "",
 };
 
 export const task = (state = defaultState, action: any) => {
@@ -99,6 +105,12 @@ export const task = (state = defaultState, action: any) => {
           );
         }
       }
+      action.data.cardArray = action.data.cardArray.map((item) => {
+        item = item.filter((newItem) => {
+          return !newItem.isKR && !newItem.isO;
+        });
+        return item;
+      });
       return {
         ...state,
         workingGroupArray: action.data.groupArray,
@@ -164,7 +176,6 @@ export const task = (state = defaultState, action: any) => {
                 }
               }
             }
-
             return taskItem;
           }
         );
@@ -173,7 +184,6 @@ export const task = (state = defaultState, action: any) => {
         ...state,
       };
     // case actionTypes.ADD_WORKING_TABLE_TASK_SUCCESS:
-    //   console.log('新建成功');
     // return {
     //   ...state,
     //   // taskKey: action.taskKey
@@ -193,8 +203,9 @@ export const task = (state = defaultState, action: any) => {
           executorKey: null,
           executorAvatar: "",
           executorName: "",
-          filterType: ["过期", "今天", "未来", "已完成"],
+          filterType: ["过期", "今天", "未来", "未完成", "已完成"],
           headerIndex: 0,
+          fileDay: "7",
         };
       }
       for (let key in action.filterObj) {
@@ -202,6 +213,9 @@ export const task = (state = defaultState, action: any) => {
       }
       if (!filterObject.headerIndex) {
         filterObject.headerIndex = 0;
+      }
+      if (!filterObject.fileDay) {
+        filterObject.fileDay = "7";
       }
       return {
         ...state,
@@ -211,6 +225,7 @@ export const task = (state = defaultState, action: any) => {
       return {
         ...state,
         taskInfoVisible: action.taskInfoVisible,
+        showComment: action.showComment,
       };
     case actionTypes.SET_TASK_ACTION:
       return {
@@ -274,6 +289,16 @@ export const task = (state = defaultState, action: any) => {
       }
       return {
         ...state,
+      };
+    case actionTypes.CHANGE_DELETE_STATE:
+      return {
+        ...state,
+        deleteState: action.deleteState,
+      };
+    case actionTypes.CHANGE_DELETE_KEY:
+      return {
+        ...state,
+        deleteKey: action.deleteKey,
       };
     default:
       return state;

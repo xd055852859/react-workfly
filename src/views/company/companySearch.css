@@ -4,8 +4,8 @@
 }
 .companySearch-listSearch {
   position: absolute;
-  top: 12px;
-  right: 48px;
+  top: 10px;
+  right: 10px;
   z-index: 10;
 }
 .companySearch-tree {

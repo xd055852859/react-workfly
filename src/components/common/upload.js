@@ -1,61 +1,70 @@
 import * as qiniu from "qiniu-js";
+import api from "../../services/api";
 const uploadFile = {
   reloadNum: 0,
-  uploadImg: async (file, uptoken, mimeType, callback, fileType) => {
+  uploadImg: async (file, mimeType, callback, fileType) => {
     //let res = await api.upload.getUptoken(window.localStorage.getItem("TOKEN"));
-    if (!uptoken) {
-      alert("uptoken不存在");
-      return;
-    }
-    if (!file) {
-      alert("无文件");
-      return;
-    }
-    const domain = "https://cdn-icare.qingtime.cn/";
-    console.log("进入");
-    if (file.size > 20000000) {
-      alert("文件不能大于20M,请重新选择");
-      return;
-    }
-    let putExtra = {
-      // 文件原文件名
-      fname: "",
-      // 自定义变量
-      params: {},
-      // 限制上传文件类型
-      mimeType: mimeType,
-    };
-    let config = {
-      useCdnDomain: true,
-      disableStatisticsReport: false,
-      retryCount: 5,
-      region: qiniu.region.z0,
-      forceDirect: true,
-    };
-    let observer = {
-      next(res) {},
-      error(err) {
-        alert(err.message);
-      },
-      complete(res) {
-        // content = content.replace(/(data:image\/){1}(jpeg|gif|png){1}(;){1}.*?\"/, "http://cdn-icare.qingtime.cn/" + res.key + "\"");
-        console.log("domain + res.key", domain + res.key);
-        callback(domain + res.key);
-        //return domain + res.key;
-      },
-    };
-    // 上传
-    let observable = qiniu.upload(
-      file,
-      fileType
-        ? new Date().getTime() + "_workingVip." + fileType
-        : new Date().getTime() + "_workingVip",
-      uptoken,
-      putExtra,
-      config
+    let res = await api.auth.getUptoken(
+      window.localStorage.getItem("TOKEN")
     );
-    // 上传开始
-    observable.subscribe(observer);
+    if (res.msg === "OK") {
+      // localStorage.setItem("uptoken", res.result);
+      let uptoken=res.result;
+      if (!file) {
+        alert("无文件");
+        return;
+      }
+      console.log("file", file);
+      const domain = "https://workfly.qingtime.cn/";
+      if (file.size > 20000000) {
+        alert("文件不能大于20M,请重新选择");
+        return;
+      }
+      let putExtra = {
+        // 文件原文件名
+        fname: "",
+        // 自定义变量
+        params: {},
+        // 限制上传文件类型
+        mimeType: mimeType,
+      };
+      let config = {
+        useCdnDomain: true,
+        disableStatisticsReport: false,
+        retryCount: 5,
+        region: qiniu.region.z0,
+        forceDirect: true,
+      };
+      let observer = {
+        next(res) {},
+        async error(err) {
+          alert(JSON.stringify(err));
+          console.log(err)
+        },
+        complete(res) {
+          // content = content.replace(/(data:image\/){1}(jpeg|gif|png){1}(;){1}.*?\"/, "http://cdn-icare.qingtime.cn/" + res.key + "\"");
+          console.log("domain + res.key", domain + res.key);
+          callback(domain + res.key);
+          //return domain + res.key;
+        },
+      };
+      // 上传
+      let observable = qiniu.upload(
+        file,
+        fileType
+          ? new Date().getTime() + "_workingVip." + fileType
+          : new Date().getTime() +
+              "_workingVip" +
+              (file.name ? file.name.substr(file.name.lastIndexOf(".")) : ".png"),
+        uptoken,
+        putExtra,
+        config
+      );
+      // 上传开始
+      observable.subscribe(observer);
+    }
+    
+    
   },
   // qiniuUpload(uptoken, target, file, isVideo, callback = null) {
   //   // const dispatch = useDispatch();
@@ -92,16 +101,15 @@ const uploadFile = {
   //       }
   //     },
   //     complete(res) {
-  //       const domain = 'https://cdn-icare.qingtime.cn/';
+  //       const domain = 'https://workfly.qingtime.cn/';
   //       const url = domain + encodeURIComponent(res.key);
-  //       console.log(url, callback);
   //       if (callback) {
   //         callback(url);
   //       } else {
   //         if (isVideo) {
   //           target.innerHTML = `<video src="${url}" style="width: 600px;" controls="" class="fr-draggable">您的浏览器不支持 HTML5 视频。</video>`;
   //         } else {
-  //           console.log('target', target);
+
   //           target.src = url;
   //         }
   //       }
@@ -143,7 +151,7 @@ const uploadFile = {
         alert("上传失败！");
       },
       complete(res) {
-        const domain = "https://cdn-icare.qingtime.cn/";
+        const domain = "https://workfly.qingtime.cn/";
         const url = domain + encodeURIComponent(res.key);
         if (isVideo) {
           target.innerHTML = `<video src="${url}" style="width: 600px;" controls="" class="fr-draggable">您的浏览器不支持 HTML5 视频。</video>`;
@@ -234,7 +242,9 @@ const uploadFile = {
     while (n--) {
       u8arr[n] = bstr.charCodeAt(n);
     }
-    return new File([u8arr], filename, { type: mime });
+    return new File([u8arr], filename, {
+      type: mime,
+    });
   },
 };
 

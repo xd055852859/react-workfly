@@ -1,13 +1,14 @@
 export const actionTypes = {
-  GET_GROUP: 'GET_GROUP',
-  GET_GROUP_SUCCESS: 'GET_GROUP_SUCCESS',
-  SET_GROUP_KEY: 'SET_GROUP_KEY',
-  GET_GROUP_INFO: 'GET_GROUP_INFO',
-  GET_GROUP_INFO_SUCCESS: 'GET_GROUP_INFO_SUCCESS',
-  CHANGE_GROUP_INFO: 'CHANGE_GROUP_INFO',
-  CHANGE_GROUP_INFO_SUCCESS: 'CHANGE_GROUP_INFO_SUCCESS',
-  CHANGE_START_ID: 'CHANGE_START_ID',
-  CLEAR_GROUP:'CLEAR_GROUP'
+  GET_GROUP: "GET_GROUP",
+  GET_GROUP_SUCCESS: "GET_GROUP_SUCCESS",
+  SET_GROUP_KEY: "SET_GROUP_KEY",
+  GET_GROUP_INFO: "GET_GROUP_INFO",
+  GET_GROUP_INFO_SUCCESS: "GET_GROUP_INFO_SUCCESS",
+  CHANGE_GROUP_INFO: "CHANGE_GROUP_INFO",
+  CHANGE_LOCAL_GROUP_INFO: "CHANGE_LOCAL_GROUP_INFO",
+  CHANGE_GROUP_INFO_SUCCESS: "CHANGE_GROUP_INFO_SUCCESS",
+  CHANGE_START_ID: "CHANGE_START_ID",
+  CLEAR_GROUP: "CLEAR_GROUP",
 };
 
 export function getGroup(
@@ -19,7 +20,7 @@ export function getGroup(
     type: actionTypes.GET_GROUP,
     listType: listType,
     simple: simple,
-    sortType: sortType,
+    sortType: sortType ? sortType : 2,
   };
 }
 export function getGroupSuccess(data: any) {
@@ -36,6 +37,9 @@ export function getGroupInfoSuccess(data: any) {
 }
 export function changeGroupInfo(key: string | number, patchData: any) {
   return { type: actionTypes.CHANGE_GROUP_INFO, key, patchData };
+}
+export function changeLocalGroupInfo(groupInfo: any) {
+  return { type: actionTypes.CHANGE_LOCAL_GROUP_INFO, groupInfo };
 }
 export function changeGroupInfoSuccess(data: any) {
   return { type: actionTypes.CHANGE_GROUP_INFO_SUCCESS, data };

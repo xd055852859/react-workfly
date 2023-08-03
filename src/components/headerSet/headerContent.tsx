@@ -8,8 +8,12 @@ import api from "../../services/api";
 import _ from "lodash";
 import { useMount } from "../../hook/common";
 
-import { setMessage } from "../../redux/actions/commonActions";
+import {
+  setMessage,
+  setCommonHeaderIndex,
+} from "../../redux/actions/commonActions";
 import { setTheme } from "../../redux/actions/authActions";
+import { setWorkHeaderIndex } from "../../redux/actions/memberActions";
 
 import UserCenter from "../userCenter/userCenter";
 import Vitality from "../vitality/vitality";
@@ -19,15 +23,20 @@ import set5Svg from "../../assets/svg/set5.svg";
 import set6Svg from "../../assets/svg/set6.svg";
 import set8Svg from "../../assets/svg/set8.svg";
 import set9Svg from "../../assets/svg/set9.svg";
-import set11Svg from "../../assets/svg/set11.svg";
+// import set11Svg from "../../assets/svg/set11.svg";
 import rightArrowPng from "../../assets/img/rightArrow.png";
 import logoutPng from "../../assets/img/logout.png";
-import batterySvg from "../../assets/svg/battery.svg";
+import fireBlueSvg from "../../assets/svg/fireBlue.svg";
 import bgImg from "../../assets/img/bgImg.png";
+import { useAuth } from "../../context/auth";
+declare var window: Window 
+interface HeaderContentProps {
+  type?: string;
+  setChooseKey?:any
+}
 
-interface HeaderContentProps { }
-
-const HeaderContent: React.FC<HeaderContentProps> = () => {
+const HeaderContent: React.FC<HeaderContentProps> = (prop) => {
+  const { type,setChooseKey } = prop;
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useTypedSelector((state) => state.auth.user);
@@ -38,7 +47,7 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
   const [showVitality, setShowVitality] = useState(false);
   const [targetInfo, setTargetInfo] = useState<any>(null);
   let unDistory = useRef<any>(true);
-
+  let { deviceType } = useAuth();
   const getVitalityInfo = useCallback(async () => {
     let res: any = await api.auth.getTargetUserInfo(userKey);
     if (unDistory.current) {
@@ -74,52 +83,113 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
     <React.Fragment>
       {/* <Tabs defaultActiveKey="1">
         <TabPane tab="设置" key="1"> */}
-      <div className="contentHeader-set-title">
-        <div
-          className="contentHeader-set-avatar"
-          onClick={(e) => {
-            e.stopPropagation();
-            setMoveType(1);
-          }}
-        >
-          {user ? <img src={user.profile.avatar} alt="" /> : null}
-        </div>
-        <div
-          className="contentHeader-set-item contentHeader-set-vitality"
-          onClick={() => {
-            setShowVitality(true);
-          }}
-        >
-          <div className="contentHeader-set-item-bg-info">
-            <img
-              src={set6Svg}
-              alt=""
-              style={{
-                width: "15px",
-                height: "17px",
-                marginRight: "10px",
-                cursor: "pointer",
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setMoveType(1);
-              }}
-            />
-            <div>{user?.profile?.nickName}</div>
+      {type === "phone" ? (
+        <div className="contentHeader-set-phone">
+          <div
+            className="contentHeader-phone-avatar"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMoveType(1);
+            }}
+          >
+            {user ? <img src={user.profile.avatar} alt="" /> : null}
           </div>
-          <div className="bg-item-right">
-            <img src={batterySvg} alt="" className="contentHeader-set-numImg" />
-            <div style={{ color: "#1890ff", fontSize: "12px" }}>
-              活力 {targetInfo && targetInfo.energyValueTotal}
+          <div
+            className="contentHeader-phone-title"
+            onClick={() => {
+              // setShowVitality(true);
+              if (type !== "phone") {
+                dispatch(setCommonHeaderIndex(1));
+                dispatch(setWorkHeaderIndex(5));
+              }
+            }}
+          >
+            <div className="contentHeader-set-item-bg-info">
+              <img
+                src={set6Svg}
+                alt=""
+                style={{
+                  width: "15px",
+                  height: "17px",
+                  marginRight: "10px",
+                  cursor: "pointer",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMoveType(1);
+                }}
+              />
+              <div>{user?.profile?.nickName}</div>
+            </div>
+            <div className="bg-item-right">
+              <img
+                src={fireBlueSvg}
+                alt=""
+                className="contentHeader-set-numImg"
+              />
+              <div style={{ color: "#1890ff" }}>
+                活力 {targetInfo && targetInfo.energyValueTotal}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="contentHeader-set-title">
+          <div
+            className="contentHeader-set-avatar"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMoveType(1);
+            }}
+          >
+            {user ? <img src={user.profile.avatar} alt="" /> : null}
+          </div>
+          <div
+            className="contentHeader-set-item contentHeader-set-vitality"
+            onClick={() => {
+              // setShowVitality(true);
+              if (type !== "phone") {
+                dispatch(setCommonHeaderIndex(1));
+                dispatch(setWorkHeaderIndex(6));
+              }
+            }}
+          >
+            <div className="contentHeader-set-item-bg-info">
+              <img
+                src={set6Svg}
+                alt=""
+                style={{
+                  width: "15px",
+                  height: "17px",
+                  marginRight: "10px",
+                  cursor: "pointer",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMoveType(1);
+                }}
+              />
+              <div>{user?.profile?.nickName}</div>
+            </div>
+            <div className="bg-item-right">
+              <img
+                src={fireBlueSvg}
+                alt=""
+                className="contentHeader-set-numImg"
+              />
+              <div style={{ color: "#1890ff", fontSize: "12px" }}>
+                活力 {targetInfo && targetInfo.energyValueTotal}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div
         className="contentHeader-set-item"
         onClick={() => {
           setMoveType(2);
         }}
+        style={{ color: type === "phone" ? "#fff" : "#000" }}
       >
         <div className="contentHeader-set-item-bg-info">
           <img
@@ -139,8 +209,8 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
             style={{
               backgroundImage: theme.backgroundImg
                 ? "url(" +
-                theme.backgroundImg +
-                "?imageMogr2/auto-orient/thumbnail/80x)"
+                  theme.backgroundImg +
+                  "?imageMogr2/auto-orient/thumbnail/80x)"
                 : "",
               backgroundColor: !theme.backgroundImg
                 ? theme.backgroundColor
@@ -212,7 +282,10 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
           />
         </div>
       </div> */}
-      <div className="contentHeader-set-item">
+      <div
+        className="contentHeader-set-item"
+        style={{ color: type === "phone" ? "#fff" : "#000" }}
+      >
         <div className="contentHeader-set-item-title">
           <img
             src={set5Svg}
@@ -234,7 +307,7 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
           />
         </div>
       </div>
-      <div className="contentHeader-set-item">
+      {/* <div className="contentHeader-set-item">
         <div className="contentHeader-set-item-title">
           <img
             src={set11Svg}
@@ -254,13 +327,14 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
               changeBoard("soundVisible", checked);
             }}
           />
-        </div>
-      </div>
+        </div> 
+      </div>*/}
       <div
         className="contentHeader-set-item"
         onClick={() => {
           window.open("https://workfly.cn/help/1");
         }}
+        style={{ color: type === "phone" ? "#fff" : "#000" }}
       >
         <div className="contentHeader-set-item-title">
           <img
@@ -280,6 +354,7 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
         onClick={() => {
           window.open("https://workfly.cn/home/download");
         }}
+        style={{ color: type === "phone" ? "#fff" : "#000" }}
       >
         <div className="contentHeader-set-item-title">
           <img
@@ -294,26 +369,31 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
           <div>下载</div>
         </div>
       </div>
-      <div className="contentHeader-set-item">
+      {deviceType !== "tool" ? (
         <div
-          className="contentHeader-set-item-title"
-          onClick={() => {
-            logout();
-          }}
-          style={{ cursor: "pointer" }}
+          className="contentHeader-set-item"
+          style={{ color: type === "phone" ? "#fff" : "#000" }}
         >
-          <img
-            src={logoutPng}
-            alt=""
-            style={{
-              width: "16px",
-              height: "15px",
-              marginRight: "5px",
+          <div
+            className="contentHeader-set-item-title"
+            onClick={() => {
+              logout();
             }}
-          />
-          <div>退出登录</div>
+            style={{ cursor: "pointer" }}
+          >
+            <img
+              src={logoutPng}
+              alt=""
+              style={{
+                width: "16px",
+                height: "15px",
+                marginRight: "5px",
+              }}
+            />
+            <div>退出登录</div>
+          </div>
         </div>
-      </div>
+      ) : null}
       {/* </TabPane> */}
       {/* <TabPane tab="文件" key="2">
           <FileList
@@ -341,7 +421,7 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
           //   childRef.current.getInfo();
           // }
         }}
-        width={280}
+        width={deviceType !== "tool" ? 280 : 400}
         bodyStyle={{
           padding: "10px",
           boxSizing: "border-box",
@@ -368,7 +448,7 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
           //   childRef.current.getInfo();
           // }
         }}
-        width={280}
+        width={deviceType !== "tool" ? 280 : 400}
         bodyStyle={{
           padding: "10px",
           boxSizing: "border-box",
@@ -383,7 +463,7 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
         destroyOnClose={true}
         title={"壁纸设置"}
       >
-        <HeaderBg />
+        <HeaderBg setChooseWallKey={setChooseKey}/>
       </Drawer>
 
       <Modal
@@ -402,7 +482,7 @@ const HeaderContent: React.FC<HeaderContentProps> = () => {
         }}
       >
         <Vitality
-          vitalityType={2}
+          vitalityType={1}
           vitalityKey={user._key}
           fatherVitalityInfo={targetInfo}
         />

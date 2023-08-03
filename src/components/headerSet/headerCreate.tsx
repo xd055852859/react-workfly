@@ -1,33 +1,44 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import "./headerSet.css";
 import "./headerCreate.css";
-import { Button, Input, Modal, Tabs, Dropdown } from "antd";
-import { CloseOutlined, GlobalOutlined } from "@ant-design/icons";
+import { Button, Input, Modal, Tabs, Dropdown, Checkbox } from "antd";
+import {
+  CloseOutlined,
+  GlobalOutlined,
+  PlusCircleOutlined,
+} from "@ant-design/icons";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import { useDispatch } from "react-redux";
 import api from "../../services/api";
 import moment from "moment";
 import _ from "lodash";
 
-import { setMessage, setFileInfo } from "../../redux/actions/commonActions";
+import {
+  setMessage,
+  setFileInfo,
+  setFileVisible,
+} from "../../redux/actions/commonActions";
 import { changeMusic } from "../../redux/actions/authActions";
 import {
   getSelfTask,
   getWorkingTableTask,
   getGroupTask,
 } from "../../redux/actions/taskActions";
-import { getGroup } from "../../redux/actions/groupActions";
 
 import CreateMoreTask from "../createMoreTask/createMoreTask";
 import Task from "../task/task";
 import IconFont from "../../components/common/iconFont";
 import FileList from "../../components/fileList/fileList";
-import FileInfo from "../../components/fileInfo/fileInfo";
 
-import addCreateSvg from "../../assets/svg/addCreate.svg";
-import unaddCreateSvg from "../../assets/svg/unaddCreate.svg";
-import defaultGroupPng from "../../assets/img/defaultGroup.png";
 import { useMount } from "../../hook/common";
+import Avatar from "../common/avatar";
 
 const { TabPane } = Tabs;
 const { TextArea } = Input;
@@ -37,20 +48,18 @@ interface HeaderCreateProps {
   createStyle?: any;
   createType?: string;
   onClose?: any;
+  type?: string;
 }
 
-const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
-  const { createStyle, createType, onClose } = props;
+const HeaderCreate = forwardRef((props: HeaderCreateProps, ref) => {
+  const { createStyle, createType, onClose, type } = props;
   const dispatch = useDispatch();
-  const user = useTypedSelector((state) => state.auth.user);
+  const userKey = useTypedSelector((state) => state.auth.userKey);
   const headerIndex = useTypedSelector((state) => state.common.headerIndex);
   const groupKey = useTypedSelector((state) => state.group.groupKey);
   const targetUserInfo = useTypedSelector((state) => state.auth.targetUserInfo);
   const taskInfo = useTypedSelector((state) => state.task.taskInfo);
-  const groupArray = useTypedSelector((state) => state.group.groupArray);
-  const mainGroupKey = useTypedSelector((state) => state.auth.mainGroupKey);
-  const fileInfo = useTypedSelector((state) => state.common.fileInfo);
-  const fileVisible = useTypedSelector((state) => state.common.fileVisible);
+  const deleteKey = useTypedSelector((state) => state.task.deleteKey);
   const [addInput, setAddInput] = useState("");
   const [groupVisible, setGroupVisible] = useState(false);
   const [createTaskList, setCreateTaskList] = useState<any>([]);
@@ -61,14 +70,15 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
   const [groupChooseArray, setGroupChooseArray] = useState<any>([]);
   const [labelChooseArray, setLabelChooseArray] = useState<any>([]);
   const [chooseIndex, setChooseIndex] = useState<any>(0);
-  const [addState, setAddState] = useState(false);
   const [closeVisible, setCloseVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [urlInput, setUrlInput] = useState("");
   const [moveState, setMoveState] = useState(false);
   const [tabKey, setTabKey] = useState("1");
   const [filterType, setFilterType] = useState(0);
-  const limit = 10;
+  const [moreTaskCheck, setMoreTaskCheck] = useState(false);
+  const [moreTaskVisible, setMoreTaskVisible] = useState(false);
+  const limit = 20;
   const createRef: React.RefObject<any> = useRef();
   const searchRef: React.RefObject<any> = useRef();
   const createDivRef: React.RefObject<any> = useRef();
@@ -76,77 +86,89 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
   const searchRefInput: React.RefObject<any> = useRef();
   const filterArray = ["全部", "未完成", "指派他人", "已完成", "已归档"];
   useMount(() => {
-    dispatch(setFileInfo(null, false));
+    dispatch(setFileInfo(null));
+    dispatch(setFileVisible(false));
+    searchRefInput.current.focus();
+    getGroupArray();
   });
+  useImperativeHandle(ref, () => ({
+    changeSave: () => {
+      if (addInput !== "") {
+        setCloseVisible(true);
+      } else {
+        onClose();
+      }
+    },
+  }));
   useEffect(() => {
-    if (user) {
-      if (!groupArray) {
-        setLoading(true);
-        dispatch(getGroup(3));
-      }
-    }
-  }, [user, groupArray, dispatch]);
-  // useEffect(() => {
-  //   if (searchRefInput.current) {
-  //     searchRefInput.current.focus();
-  //   }
-  // }, [visible]);
-  const getGroupArray = useCallback(async (groupArray: any) => {
-    let newGroupAllArray: any = [];
-    let newLabelAllArray: any = [];
-    let newGroupChooseArray: any = [];
-    let newLabelChooseArray: any = [];
-    let createGroupIndex = 0;
-    let createGroupItem: any = null;
-    let createLabelIndex = 0;
-    let createLabelArrayItem: any = null;
-    let createLabelItem: any = null;
-    groupArray.forEach((item: any, index: number) => {
-      if (item.role && item.role < 4) {
-        newGroupAllArray.push(_.cloneDeep(item));
-        newLabelAllArray.push(_.cloneDeep(item.labelInfo));
-      }
-    });
-    newLabelChooseArray[0] = [];
-    if (localStorage.getItem("createGroupKey")) {
-      createGroupIndex = _.findIndex(newGroupAllArray, {
-        _key: localStorage.getItem("createGroupKey"),
+    if (deleteKey) {
+      setCreateTaskList((prevCreateTaskList) => {
+        let taskIndex = _.findIndex(prevCreateTaskList, { _key: deleteKey });
+        if (taskIndex !== -1) {
+          prevCreateTaskList.splice(taskIndex, 1);
+        }
+        return prevCreateTaskList;
       });
-      if (createGroupIndex !== -1) {
-        createGroupItem = _.cloneDeep(newGroupAllArray[createGroupIndex]);
-        newGroupAllArray.splice(createGroupIndex, 1);
-        newGroupAllArray.unshift(createGroupItem);
-        createLabelArrayItem = _.cloneDeep(newLabelAllArray[createGroupIndex]);
-        newLabelAllArray.splice(createGroupIndex, 1);
-        newLabelAllArray.unshift(createLabelArrayItem);
-      }
     }
-    if (localStorage.getItem("createLabelKey")) {
-      createLabelIndex = _.findIndex(newLabelAllArray[0], {
-        labelKey: localStorage.getItem("createLabelKey"),
+  }, [deleteKey]);
+
+  const getGroupArray = useCallback(async () => {
+    let groupRes: any = await api.group.getGroup(3, 3);
+    if (groupRes.msg === "OK") {
+      let groupArray = groupRes.result;
+      let newGroupAllArray: any = [];
+      let newLabelAllArray: any = [];
+      let newGroupChooseArray: any = [];
+      let newLabelChooseArray: any = [];
+      let createGroupIndex = 0;
+      let createGroupItem: any = null;
+      let createLabelIndex = 0;
+      let createLabelArrayItem: any = null;
+      let createLabelItem: any = null;
+      groupArray.forEach((item: any, index: number) => {
+        if (item.role && item.role < 5 && item.frozenStatus !== 1) {
+          newGroupAllArray.push(_.cloneDeep(item));
+          newLabelAllArray.push(_.cloneDeep(item.labelInfo));
+        }
       });
-      if (createLabelIndex !== -1) {
-        createLabelItem = _.cloneDeep(newLabelAllArray[0][createLabelIndex]);
-        newLabelAllArray[0].splice(createLabelIndex, 1);
-        newLabelAllArray[0].unshift(createLabelItem);
+      newLabelChooseArray[0] = [];
+      if (localStorage.getItem("createGroupKey")) {
+        createGroupIndex = _.findIndex(newGroupAllArray, {
+          _key: localStorage.getItem("createGroupKey"),
+        });
+        if (createGroupIndex !== -1) {
+          createGroupItem = _.cloneDeep(newGroupAllArray[createGroupIndex]);
+          newGroupAllArray.splice(createGroupIndex, 1);
+          newGroupAllArray.unshift(createGroupItem);
+          createLabelArrayItem = _.cloneDeep(
+            newLabelAllArray[createGroupIndex]
+          );
+          newLabelAllArray.splice(createGroupIndex, 1);
+          newLabelAllArray.unshift(createLabelArrayItem);
+        }
       }
+      if (localStorage.getItem("createLabelKey")) {
+        createLabelIndex = _.findIndex(newLabelAllArray[0], {
+          labelKey: localStorage.getItem("createLabelKey"),
+        });
+        if (createLabelIndex !== -1) {
+          createLabelItem = _.cloneDeep(newLabelAllArray[0][createLabelIndex]);
+          newLabelAllArray[0].splice(createLabelIndex, 1);
+          newLabelAllArray[0].unshift(createLabelItem);
+        }
+      }
+      newGroupChooseArray.push(_.cloneDeep(newGroupAllArray[0]));
+      newLabelChooseArray[0].push(_.cloneDeep(newLabelAllArray[0][0]));
+      newGroupChooseArray[0].index = 0;
+      newLabelChooseArray[0][0].index = 0;
+      setGroupChooseArray(newGroupChooseArray);
+      setLabelChooseArray(newLabelChooseArray);
+      setGroupAllArray(newGroupAllArray);
+      setLabelAllArray(newLabelAllArray);
+    } else {
+      dispatch(setMessage(true, groupRes.msg, "error"));
     }
-    newGroupChooseArray.push(_.cloneDeep(newGroupAllArray[0]));
-    newLabelChooseArray[0].push(_.cloneDeep(newLabelAllArray[0][0]));
-    newGroupChooseArray[0].index = 0;
-    newLabelChooseArray[0][0].index = 0;
-    setGroupChooseArray(newGroupChooseArray);
-    setLabelChooseArray(newLabelChooseArray);
-    console.log("newGroupAllArray", newGroupAllArray);
-    setGroupAllArray(newGroupAllArray);
-    setLabelAllArray(newLabelAllArray);
-  }, []);
-  useEffect(() => {
-    if (groupArray && groupArray.length > 0) {
-      setLoading(false);
-      getGroupArray(groupArray);
-    }
-  }, [groupArray, getGroupArray]);
+  }, [dispatch]);
 
   const getTaskCreate = useCallback(
     async (page: number, createTaskList: any, filterType: number) => {
@@ -199,6 +221,11 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
     let groupArr: any = [];
     let labelArr: any = [];
     let obj: any = {};
+    let newAddInput = addInput;
+    if (!newAddInput) {
+      dispatch(setMessage(true, "请输入任务内容", "error"));
+      return;
+    }
     _.cloneDeep(labelChooseArray).forEach((item: any, index: number) => {
       groupArr.push(groupChooseArray[index]._key);
       labelArr[index] = [];
@@ -210,10 +237,11 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
       });
     });
     obj = {
-      title: addInput,
+      title: newAddInput,
       groupKeyArray: groupArr,
       labelKey2Array: labelArr,
       hour: 1,
+      multiple: moreTaskCheck,
     };
     if (urlInput) {
       obj.extraData = {
@@ -228,35 +256,40 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
     let addTaskRes: any = await api.task.togetherCreateCard(obj);
     if (addTaskRes.msg === "OK") {
       setLoading(false);
+      // if (addTaskRes.result.length === 0) {
+      //   dispatch(setMessage(true, "请输入任务内容", "error"));
+      //   return;
+      // }
       dispatch(setMessage(true, "新增对应项目任务成功", "success"));
       dispatch(changeMusic(5));
       if (createTaskList) {
         let newCreateTaskList = _.cloneDeep(createTaskList);
-        let newGroupChooseArray = _.cloneDeep(groupChooseArray);
-        let newLabelChooseArray = _.cloneDeep(labelChooseArray);
-        let groupChooseItem = _.cloneDeep(newGroupChooseArray)[0];
-        let labelChooseItem = _.cloneDeep(newLabelChooseArray)[0];
+        // let newGroupChooseArray = _.cloneDeep(groupChooseArray);
+        // let newLabelChooseArray = _.cloneDeep(labelChooseArray);
+        // let groupChooseItem = _.cloneDeep(newGroupChooseArray)[0];
+        // let labelChooseItem = _.cloneDeep(newLabelChooseArray)[0];
         newCreateTaskList.unshift(...addTaskRes.result);
         setCreateTaskList(newCreateTaskList);
-        newGroupChooseArray = [groupChooseItem];
-        newLabelChooseArray = [labelChooseItem];
-        setGroupChooseArray(newGroupChooseArray);
-        setLabelChooseArray(newLabelChooseArray);
+        // newGroupChooseArray = [groupChooseItem];
+        // newLabelChooseArray = [labelChooseItem];
+        // setGroupChooseArray(newGroupChooseArray);
+        // setLabelChooseArray(newLabelChooseArray);
       }
       setAddInput("");
       setUrlInput("");
       setGroupVisible(false);
       if (headerIndex === 0) {
-        dispatch(getSelfTask(1, user._key, "[0, 1]"));
+        dispatch(getSelfTask(1, userKey, "[0, 1]"));
       } else if (headerIndex === 1) {
-        dispatch(getWorkingTableTask(1, user._key, 1, [0, 1, 2, 10]));
+        dispatch(getWorkingTableTask(1, userKey, 1, [0, 1, 2, 10], 2));
       } else if (headerIndex === 2) {
         dispatch(
           getWorkingTableTask(
-            user._key === targetUserInfo._key ? 4 : 2,
+            userKey === targetUserInfo._key ? 4 : 2,
             targetUserInfo._key,
             1,
-            [0, 1, 2, 10]
+            [0, 1, 2, 10],
+            2
           )
         );
       } else if (headerIndex === 3) {
@@ -332,21 +365,29 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
       {!createType ? (
         <div className="headerCreate-mainTitle">新建任务</div>
       ) : null}
-      <div className="headerSet-container">
+      <div
+        className="headerSet-container"
+        style={createType === "work" ? { height: "100%" } : {}}
+      >
         <div className="headerSet-search-title" ref={searchRef}>
           <TextArea
             autoSize={{ minRows: 3 }}
             placeholder="任务名"
             style={{ width: "100%", fontSize: "16px" }}
-            value={addInput.split("↵").join("")}
+            value={addInput}
             onChange={(e) => {
+              if (e.target.value.indexOf("\n") !== -1) {
+                setMoreTaskVisible(true);
+                setMoreTaskCheck(true);
+              } else {
+                setMoreTaskVisible(false);
+                setMoreTaskCheck(false);
+              }
               setAddInput(e.target.value);
             }}
             onKeyDown={(e) => {
               if (e.keyCode === 13) {
-                setAddInput((prevAddInput) => {
-                  return prevAddInput + "↵";
-                });
+                setMoreTaskVisible(true);
               }
             }}
             ref={searchRefInput}
@@ -368,9 +409,11 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
                     className="headerCreate-title-avatar"
                     style={{ borderRadius: "5px" }}
                   >
-                    <img
-                      src={item.groupLogo ? item.groupLogo : defaultGroupPng}
-                      alt=""
+                    <Avatar
+                      avatar={item?.groupLogo}
+                      name={item?.groupName}
+                      type={"group"}
+                      index={index}
                     />
                   </div>
                   <div className="headerCreate-title-left-left toLong">
@@ -403,7 +446,7 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
                           e.stopPropagation();
                           minusGroupArray(index);
                         }}
-                        style={{ border: "0px" }}
+                        style={{ border: "0px", color: "#333" }}
                       />
                     </div>
                   ) : null}
@@ -432,13 +475,18 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
             createStyle={{
               position: "absolute",
               top:
-                115 +
+                55 +
                 (searchRef.current ? searchRef.current.offsetHeight : 0) +
-                chooseIndex * 40 +
+                chooseIndex * 47 +
                 "px",
               left: "0px",
-              height: "calc(100% - 260px)",
+              height:
+                type === "phone"
+                  ? "calc(100vh - 188px)"
+                  : "calc(100vh - 300px)",
               minHeight: "260px",
+              color: "#333",
+              width: type === "phone" ? "calc(100vw - 1px)" : "428px",
             }}
             changeGroupArray={changeGroupArray}
             onClose={() => {
@@ -463,21 +511,17 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
         </div>
 
         <div className="create-button">
-          <img
-            src={addState ? addCreateSvg : unaddCreateSvg}
-            alt=""
-            className="headerCreate-title-icon"
-            onClick={(e: any) => {
+          <Button
+            type="primary"
+            ghost
+            shape="circle"
+            icon={<PlusCircleOutlined style={{ fontSize: "18px" }} />}
+            onClick={(e) => {
               e.stopPropagation();
               setGroupVisible(true);
               setChooseIndex(groupChooseArray.length);
             }}
-            onMouseEnter={() => {
-              setAddState(true);
-            }}
-            onMouseLeave={() => {
-              setAddState(false);
-            }}
+            style={{ border: "0px" }}
           />
           <div className="headerCreate-url">
             <Button
@@ -508,6 +552,17 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
               }
             />
           </div>
+          {moreTaskVisible ? (
+            <Checkbox
+              checked={moreTaskCheck}
+              onChange={(e) => {
+                setMoreTaskCheck(e.target.checked);
+              }}
+            >
+              多任务
+            </Checkbox>
+          ) : null}
+
           <Button
             type="primary"
             onClick={() => {
@@ -520,58 +575,64 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
           </Button>
         </div>
 
-        <Tabs
-          tabBarExtraContent={tabKey === "1" ? filterMenu : null}
-          activeKey={tabKey}
-          onChange={(activeKey) => {
-            setTabKey(activeKey);
-          }}
-        >
-          <TabPane tab={"任务"} key="1">
-            <div
-              className="headerSet-search-info"
-              onScroll={scrollCreateLoading}
-              style={{
-                height:
-                  document.body.offsetHeight -
-                  ((createRef.current ? createRef.current.offsetHeight : 0) +
-                    (createType ? 270 : 300)),
-              }}
-            >
-              {createTaskList.length > 0 && createRef?.current
-                ? createTaskList.map((taskItem: any, taskIndex: number) => {
-                    return (
-                      <Task
-                        key={"create" + taskIndex}
-                        taskItem={taskItem}
-                        showGroupName={true}
-                        createTime={moment(taskItem.createTime).fromNow()}
-                        bottomtype={createType ? "" : "create"}
-                      />
-                    );
-                  })
-                : null}
-            </div>
-          </TabPane>
-          <TabPane tab={"文件"} key="2">
-            <div
-              className="headerSet-search-info"
-              // onScroll={scrollCreateLoading}
-              style={{
-                height:
-                  document.body.offsetHeight -
-                  ((createRef.current ? createRef.current.offsetHeight : 0) +
-                    (createType ? 270 : 300)),
-              }}
-            >
-              <FileList
-                groupKey={""}
-                type="最近"
-                // fileItemWidth={'calc(100% - 270px)'}
-              />
-            </div>
-          </TabPane>
-          <TabPane tab={"收藏"} key="3">
+        {createType !== "work" ? (
+          <Tabs
+            tabBarExtraContent={tabKey === "1" ? filterMenu : null}
+            activeKey={tabKey}
+            onChange={(activeKey) => {
+              setTabKey(activeKey);
+            }}
+            style={{ color: type === "phone" ? "#fff" : "#000" }}
+          >
+            <TabPane tab={"任务"} key="1">
+              <div
+                className="headerSet-search-info"
+                onScroll={scrollCreateLoading}
+                style={{
+                  height:
+                    type === "phone"
+                      ? document.body.offsetHeight - 333
+                      : document.body.offsetHeight - 310,
+                }}
+              >
+                {createTaskList.length > 0 && createRef?.current
+                  ? createTaskList.map((taskItem: any, taskIndex: number) => {
+                      return (
+                        <Task
+                          key={"create" + taskIndex}
+                          taskItem={taskItem}
+                          showGroupName={true}
+                          createTime={moment(
+                            moment().valueOf() - taskItem.createTime > 0
+                              ? taskItem.createTime
+                              : moment().valueOf() - 3000
+                          ).fromNow()}
+                          bottomtype={createType ? "" : "create"}
+                        />
+                      );
+                    })
+                  : null}
+              </div>
+            </TabPane>
+            <TabPane tab={"文件"} key="2">
+              <div
+                className="headerSet-search-info"
+                // onScroll={scrollCreateLoading}
+                style={{
+                  height:
+                    type === "phone"
+                      ? document.body.offsetHeight - 333
+                      : document.body.offsetHeight - 310,
+                }}
+              >
+                <FileList
+                  groupKey={""}
+                  type="文档"
+                  // fileItemWidth={'calc(100% - 270px)'}
+                />
+              </div>
+            </TabPane>
+            {/* <TabPane tab={"收藏"} key="3">
             <div
               className="headerSet-search-info"
               // onScroll={scrollCreateLoading}
@@ -585,11 +646,12 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
               <FileList
                 groupKey={mainGroupKey}
                 type="收藏"
-                // fileItemWidth={'calc(100% - 270px)'}
+              // fileItemWidth={'calc(100% - 270px)'}
               />
             </div>
-          </TabPane>
-        </Tabs>
+          </TabPane> */}
+          </Tabs>
+        ) : null}
       </div>
       <Modal
         visible={closeVisible}
@@ -598,25 +660,16 @@ const HeaderCreate: React.FC<HeaderCreateProps> = (props) => {
           onClose();
         }}
         onOk={() => {
-          if (addInput !== "") {
-            addMoreTask();
-          } else {
-            dispatch(setMessage(true, "请输入任务名字", "error"));
-          }
+          addMoreTask();
           setCloseVisible(false);
         }}
         title={"保存任务"}
       >
         是否需要保存任务
       </Modal>
-      {fileVisible && fileInfo ? (
-        <div className="headerCreate-fileContainer">
-          <FileInfo />
-        </div>
-      ) : null}
     </div>
     //
   );
-};
+});
 HeaderCreate.defaultProps = {};
 export default HeaderCreate;

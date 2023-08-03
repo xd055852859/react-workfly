@@ -48,7 +48,6 @@ const LineChart: React.FC<LineChartProps> = (props) => {
   });
   useEffect(() => {
     if (lineRef.current) {
-      console.log(data);
       lineRef.current.update({
         data: data,
       });

@@ -26,74 +26,96 @@
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="luckysheet"
-    style="margin: 0px; padding: 0px; position: absolute; width: 100%; height: 100%; left: 0px; top: 0px"></div>
+  <div id="luckysheet" style="
+        margin: 0px;
+        padding: 0px;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0px;
+        top: 0px;
+      "></div>
 </body>
 <script type="module">
-  import api from './api.js';
-    import util from './util.js';
-    const key = util.getQueryString('key');
-    const bookid = util.getQueryString('bookid');
-
+  import api from "./api.js";
+    import util from "./util.js";
+    const key = util.getQueryString("key");
+    const bookid = util.getQueryString("bookid");
+    const deviceType = util.getQueryString("deviceType");
+    const viewState = util.getQueryString("viewState");
     $(function () {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         api.loginByToken(token).then(function (res) {
-          if (res.statusCode === '200') {
+          if (res.statusCode === "200") {
             var user = res.result;
           } else {
             window.location.href = window.location.origin;
           }
         });
-      }
+     
 
-      api.getTaskInfo(token,key).then(function (res) {
-        if (res.msg==='OK') {
-          var docName = res.result.title || '请输入标题名';
+      api.getTaskInfo(token, key).then(function (res) {
+        if (res.msg === "OK") {
+          var docName = res.result.title || "请输入标题名";
           var luckysheetfile = res.result.content;
           //配置项
           var options = {
-            container: 'luckysheet', //luckysheet为容器id
+            container: "luckysheet", //luckysheet为容器id
             title: docName,
-            lang: 'zh',
-            myFolderUrl: '/',
+            lang: "zh",
+            myFolderUrl: "/",
             allowEdit: true,
             forceCalculation: false,
-            functionButton: res.result.readOnly ? '' : "<button id='save'>保存</button>",
+            // functionButton:
+            //   res.result.readOnly || deviceType || viewState
+            //     ? "<button'>仅支持查看</button>"
+            //     : "<button id='save'>保存</button>",
             // data: [sheetFormula, sheetFormula2],
           };
           if (luckysheetfile instanceof Array && luckysheetfile.length) {
-            options['data'] = luckysheetfile;
+            options["data"] = luckysheetfile;
           }
           luckysheet.create(options);
-
-          // 事件
-          $('#save').on('click', function () {
-            var docName = $('#luckysheet_info_detail_input').val();
-            // data => celldata
-            var luckysheetfile = luckysheet.getluckysheetfile();
-            for (let index = 0; index < luckysheetfile.length; index++) {
-              var sheet = luckysheetfile[index];
-              if (sheet.data) {
-                sheet['celldata'] = luckysheet.getGridData(sheet.data);
-                // delete sheet["data"];
-              }
-            }
-            api.updateNode(token,key, docName, luckysheetfile).then(function (res) {
-              if (res.msg === 'OK') {
-                alert('保存成功！');
-                // window.parent.postMessage({ eventName: 'refresh-finder', data: { nodeKey: key, name: docName } }, '*');
-              } else {
-                alert('服务出错！');
-              }
-            });
-          });
-        } 
-        else {
-          alert('获取文档数据失败！');
+        } else {
+          alert("获取文档数据失败！");
         }
       });
-    });
+    }
+       // 事件
+    function saveTable(){
+      var docName = $("#luckysheet_info_detail_input").val();
+            // data => celldata
+      var luckysheetfile = luckysheet.getluckysheetfile();
+      for (let index = 0; index < luckysheetfile.length; index++) {
+        var sheet = luckysheetfile[index];
+        if (sheet.data) {
+          sheet["celldata"] = luckysheet.getGridData(sheet.data);
+          // delete sheet["data"];
+        }
+      }
+      console.log("luckysheetfile", luckysheetfile);
+      api
+        .updateNode(token, key, docName, luckysheetfile)
+        .then(function (res) {
+          if (res.msg === "OK") {
+            // alert("保存成功！");
+            // window.parent.postMessage({ eventName: 'refresh-finder', data: { nodeKey: key, name: docName } }, '*');
+          } else {
+            alert(res.msg); 
+          }
+        });      
+    }
+    function handle(e) {
+      console.log(e);
+      switch (e.data.eventName) {
+        case "saveTable":
+        saveTable();
+      }
+    }
+    window.addEventListener('message', handle, false);
+  })
+  
   </script>
 
 </html>

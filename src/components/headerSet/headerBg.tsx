@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./headerSet.css";
 import { useTypedSelector } from "../../redux/reducer/RootState";
 import { useDispatch } from "react-redux";
-import { Switch, Radio } from "antd";
+import { Switch, Select } from "antd";
 import _ from "lodash";
 import api from "../../services/api";
 
@@ -10,7 +10,7 @@ import { setTheme, getThemeBg } from "../../redux/actions/authActions";
 
 import Loading from "../common/loading";
 import { useMount } from "../../hook/common";
-
+const { Option } = Select;
 interface HeaderBgProps {
   setMoveState?: any;
   setChooseWallKey?: any;
@@ -123,91 +123,90 @@ const HeaderBg: React.FC<HeaderBgProps> = (props) => {
           className="contentHeader-set-item"
           style={{ marginTop: "0px", padding: "0px" }}
         >
-          <div>更新频率</div>
-          <Radio.Group
-            onChange={(e: any) => {
-              changeRandomType(e.target.value);
-            }}
-            value={theme.randomType}
-          >
-            <Radio value="1">分钟</Radio>
-            <Radio value="2">小时</Radio>
-            <Radio value="3">日</Radio>
-          </Radio.Group>
+          <div style={{ width: '60px' }}>更新频率</div>
+          <Select value={theme.randomType} style={{ width: 120 }} onChange={(value) => {
+            changeRandomType(value);
+          }}>
+            <Option value="1">分钟</Option>
+            <Option value="2">小时</Option>
+            <Option value="3">日</Option>
+            <Option value="4">周</Option>
+            <Option value="5">月</Option>
+          </Select>
         </div>
       ) : (
-          <React.Fragment>
-            <div className="bg-title">颜色</div>
-            <div className="bg-container">
-              {color1.map((color1Item: any, color1Index: number) => {
-                return (
-                  <div
-                    style={{
-                      backgroundColor: color1Item,
-                      border:
-                        theme.backgroundColor === color1Item
-                          ? "3px solid #87B940"
-                          : "transparent",
-                    }}
-                    key={"color1" + color1Index}
-                    className="bg-item"
-                    onClick={() => {
-                      changeBg("backgroundColor", color1Item);
-                    }}
-                  >
-                    {theme.backgroundColor === color1Item ? (
-                      <div className="bg-point"></div>
-                    ) : null}
-                  </div>
-                );
-              })}
-            </div>
-            <div className="bg-title">壁纸</div>
-            <div
-              className="bg-container"
-              style={{
-                height: "calc(100% - 230px)",
-                overflow: "auto",
-              }}
-              onScroll={scrollBgLoading}
-            >
-              {loading ? (
-                <Loading loadingWidth="60px" loadingHeight="60px" />
-              ) : null}
-              {themeBg.map((imgBigArr2Item: any, imgBigArr2Index: number) => {
-                return (
-                  <React.Fragment key={"imgBigArr2" + imgBigArr2Index}>
-                    {imgBigArr2Item.url ? (
-                      <div
-                        style={{
-                          backgroundImage:
-                            "url(" +
-                            imgBigArr2Item.url +
-                            "?imageMogr2/auto-orient/thumbnail/90x)",
-                          border:
-                            theme.backgroundImg === imgBigArr2Item.url
-                              ? "2px solid #87B940"
-                              : "transparent",
-                        }}
-                        className="bg-item"
-                        onClick={() => {
-                          changeBg("backgroundImg", imgBigArr2Item);
-                          if (setChooseWallKey) {
-                            setChooseWallKey(imgBigArr2Item._key);
-                          }
-                        }}
-                      >
-                        {theme.backgroundImg === imgBigArr2Item.url ? (
-                          <div className="bg-point"></div>
-                        ) : null}
-                      </div>
-                    ) : null}
-                  </React.Fragment>
-                );
-              })}
-            </div>
-          </React.Fragment>
-        )}
+        <React.Fragment>
+          <div className="bg-title">颜色</div>
+          <div className="bg-container">
+            {color1.map((color1Item: any, color1Index: number) => {
+              return (
+                <div
+                  style={{
+                    backgroundColor: color1Item,
+                    border:
+                      theme.backgroundColor === color1Item
+                        ? "3px solid #87B940"
+                        : "transparent",
+                  }}
+                  key={"color1" + color1Index}
+                  className="bg-item"
+                  onClick={() => {
+                    changeBg("backgroundColor", color1Item);
+                  }}
+                >
+                  {theme.backgroundColor === color1Item ? (
+                    <div className="bg-point"></div>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+          <div className="bg-title">壁纸</div>
+          <div
+            className="bg-container"
+            style={{
+              height: "calc(100% - 230px)",
+              overflow: "auto",
+            }}
+            onScroll={scrollBgLoading}
+          >
+            {loading ? (
+              <Loading loadingWidth="60px" loadingHeight="60px" />
+            ) : null}
+            {themeBg.map((imgBigArr2Item: any, imgBigArr2Index: number) => {
+              return (
+                <React.Fragment key={"imgBigArr2" + imgBigArr2Index}>
+                  {imgBigArr2Item.url ? (
+                    <div
+                      style={{
+                        backgroundImage:
+                          "url(" +
+                          imgBigArr2Item.url +
+                          "?imageMogr2/auto-orient/thumbnail/90x)",
+                        border:
+                          theme.backgroundImg === imgBigArr2Item.url
+                            ? "2px solid #87B940"
+                            : "transparent",
+                      }}
+                      className="bg-item"
+                      onClick={() => {
+                        changeBg("backgroundImg", imgBigArr2Item);
+                        if (setChooseWallKey) {
+                          setChooseWallKey(imgBigArr2Item._key);
+                        }
+                      }}
+                    >
+                      {theme.backgroundImg === imgBigArr2Item.url ? (
+                        <div className="bg-point"></div>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </React.Fragment>
+      )}
     </React.Fragment>
   );
 };

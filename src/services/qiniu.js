@@ -24,7 +24,7 @@ export const qiniuUpload = (uptoken, target, file, isVideo) => {
       alert("上传失败！");
     },
     complete(res) {
-      const domain = "https://cdn-icare.qingtime.cn/";
+      const domain = "https://workfly.qingtime.cn/";
       const url = domain + encodeURIComponent(res.key);
       if (isVideo) {
         target.innerHTML = `<video src="${url}" style="width: 600px;" controls="" class="fr-draggable">您的浏览器不支持 HTML5 视频。</video>`;

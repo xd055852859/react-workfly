@@ -15,6 +15,8 @@ import { CloseOutlined } from "@ant-design/icons";
 import { setMessage } from "../../redux/actions/commonActions";
 import defaultGroupPng from "../../assets/img/defaultGroup.png";
 import { useMount } from "../../hook/common";
+import Avatar from "../../components/common/avatar";
+import Empty from "../../components/common/empty";
 const { Search } = Input;
 interface CompanyGroupProps {}
 
@@ -46,6 +48,9 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
       unDistory.current = false;
     };
   });
+  useEffect(() => {
+    setSearchInput("");
+  }, [departmentType, tabIndex]);
   const memberColumns = [
     {
       title: "名称",
@@ -64,7 +69,12 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
           {item.orgType !== 1 ? (
             <div className="company-avatar-container ">
               <div className="company-avatar">
-                <img src={logo ? logo : defaultGroupPng} alt="" />
+                <Avatar
+                  avatar={logo}
+                  name={item.name}
+                  type={"group"}
+                  index={0}
+                />
               </div>
             </div>
           ) : null}
@@ -355,22 +365,25 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
               staffKey: data[key].staffKey,
               // disabled: data[key].orgType === 2,
               childrenAll: data[key].childrenAll,
+              role: data[key].role,
+              myRole: data[key].myRole,
             };
             if (data[key].orgType === 2) {
               //?imageMogr2/auto-orient/thumbnail/80x
               newCompanyData[key].icon = data[key].avatar
-                ? data[key].avatar + "?roundPic/radius/!50p"
+                ? data[key].avatar
                 : defaultPersonSvg;
             }
             if (data[key].orgType === 3) {
               //?imageMogr2/auto-orient/thumbnail/80x
               newCompanyData[key].icon = data[key].groupLogo
-                ? data[key].groupLogo + "?imageMogr2/auto-orient/thumbnail/80x"
+                ? data[key].groupLogo
                 : defaultPersonSvg;
               newCompanyData[key].groupKey = data[key].groupKey;
             }
             if (!nodeId && !data[key].parentOrgKey) {
               nodeId = data[key]._key;
+              newCompanyData[key].name = groupInfo.groupName;
               newCompanyData[key].icon = info.groupLogo
                 ? info.groupLogo
                 : defaultGroupPng;
@@ -379,12 +392,14 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
             }
           }
           // setSelectedId(nodeId);
+          console.log(newCompanyData);
           setCompanyData(newCompanyData);
         } else {
           dispatch(setMessage(true, companyDepartmentRes.msg, "error"));
         }
       }
     },
+    //eslint-disable-next-line
     [groupKey, dispatch]
   );
   useEffect(() => {
@@ -397,6 +412,9 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
       setRows([]);
       setSearchRows([]);
       setTabIndex(0);
+      // if (newDepartmentType === 7) {
+      //   setTabIndex(1);
+      // }
       getGroupTree("", newDepartmentType, groupInfo);
     }
   }, [user, groupInfo, location, getGroupTree]);
@@ -440,7 +458,8 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
         if (departmentType === 7) {
           let companyPersonRes: any = await api.company.getCompanyMemberList(
             node.enterpriseGroupKey,
-            node.staffKey
+            node.staffKey,
+            2
           );
           if (companyPersonRes.msg === "OK") {
             companyPersonRes.result.forEach((item: any, index: number) => {
@@ -451,11 +470,11 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
                 role: item.myRole,
                 logo: item.groupLogo,
                 targetRole: item.targetRole,
+                myRole: item.myRole,
               };
               newRow[index]["targetRole" + item.targetRole] = item.targetRole;
               newRow[index].checkIndex = item.targetRole;
             });
-            console.log(node);
             setRows(newRow);
             setSearchRows(newRow);
           } else {
@@ -484,11 +503,11 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
                 staffKey: item.userId,
                 groupKey: node.groupKey,
                 targetRole: item.role,
+                myRole: item.myRole,
               });
               newRow[newRow.length - 1]["targetRole" + item.role] = item.role;
               newRow[newRow.length - 1].checkIndex = item.role;
             });
-            console.log(newRow);
             setRows(newRow);
             setSearchRows(newRow);
             // setRows(newRow);
@@ -525,6 +544,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
                 ["targetRole" + data[key].role]: data[key].role,
                 checkIndex: data[key].role,
                 orgType: data[key].orgType,
+                myRole: data[key].myRole,
               };
             }
             newRow = formatData(newRowData, nodeId);
@@ -553,6 +573,11 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
   const changeMemberRole = async (e: any, item: any, columnIndex: number) => {
     let newCompanyObj = _.cloneDeep(companyObj);
     let roleRes: any = null;
+    console.log(item);
+    // if (item.role > columnIndex) {
+    //   dispatch(setMessage(true, "权限不足，无法设置此权限", "error"));
+    //   return;
+    // }
     if (!item.checkIndex) {
       roleRes = await api.group.addGroupMember(item.groupKey, [
         {
@@ -574,12 +599,21 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
       dispatch(setMessage(true, "修改项目成员权限成功", "success"));
       chooseNode(newCompanyObj);
     } else {
-      dispatch(setMessage(true, roleRes.msg, "error"));
+      if (roleRes.msg === "角色不对2") {
+        dispatch(setMessage(true, "权限不足", "error"));
+      } else {
+        dispatch(setMessage(true, roleRes.msg, "error"));
+      }
     }
   };
   const changeRole = async (e: any, item: any, columnIndex: number) => {
     let roleRes: any = null;
     let newCompanyObj = _.cloneDeep(companyObj);
+    console.log(item, columnIndex);
+    // if (item.role > columnIndex) {
+    //   dispatch(setMessage(true, "权限不足，无法设置此权限", "error"));
+    //   return;
+    // }
     if (!item.checkIndex) {
       roleRes = await api.group.addGroupMember(newCompanyObj.groupKey, [
         {
@@ -679,10 +713,23 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
   };
   const searchDepartment = (value) => {
     let newRows = _.cloneDeep(rows);
-      newRows = newRows.filter((item) => {
-        return item.name.indexOf(value) !== -1;
-      });
-      setSearchRows(newRows);
+    newRows = newRows.filter((item) => {
+      return item.name.indexOf(value) !== -1;
+    });
+    setSearchRows(newRows);
+  };
+  const clearGroup = async () => {
+    let newCompanyObj = _.cloneDeep(companyObj);
+    let clearRes: any = await api.company.clearGroup(
+      groupKey,
+      newCompanyObj.staffKey
+    );
+    if (clearRes.msg === "OK") {
+      dispatch(setMessage(true, "清空权限成功", "success"));
+      getGroup(tabIndex, departmentType, startId, companyObj);
+    } else {
+      dispatch(setMessage(true, clearRes.msg, "error"));
+    }
   };
   return (
     <div className="company-info">
@@ -697,14 +744,28 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
             value={searchInput}
             onChange={(e) => {
               setSearchInput(e.target.value);
-              if (e.target.value!=="") {
+              if (e.target.value !== "") {
                 searchDepartment(e.target.value);
-              }else{
+              } else {
                 setSearchRows(rows);
               }
             }}
             style={{ width: 200 }}
           />
+        ) : null}
+        {departmentType === 7 && companyObj ? (
+          <div className="company-header-button">
+            <Button
+              type="primary"
+              // className={classes.button}
+              onClick={() => {
+                clearGroup();
+              }}
+              style={{ marginRight: "5px" }}
+            >
+              清空权限
+            </Button>
+          </div>
         ) : null}
       </div>
       <div
@@ -722,7 +783,7 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
               defaultSelectedId={selectedId}
               backgroundColor="#f5f5f5"
               color="#333"
-              hoverColor="#595959"
+              hoverColor="#fff"
               disabled
               handleClickNode={(node: any) => {
                 if (node.orgType !== 1 && (node.staffKey || node.groupKey)) {
@@ -770,14 +831,17 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
               </div>
             </div>
 
-            <Table
-              columns={memberColumns}
-              scroll={{ y: document.body.offsetHeight - 180 }}
-              dataSource={searchRows}
-              size="small"
-              pagination={false}
-              expandable={{ defaultExpandAllRows: true }}
-            />
+            {searchRows.length > 0 ? (
+              <Table
+                columns={memberColumns}
+                scroll={{ y: document.body.offsetHeight - 180 }}
+                dataSource={searchRows}
+                size="small"
+                key={selectedId + "table" + searchRows[0]._key}
+                pagination={false}
+                expandable={{ defaultExpandAllRows: true }}
+              />
+            ) : null}
 
             {/* ) : (
             <Table
@@ -789,7 +853,9 @@ const CompanyGroup: React.FC<CompanyGroupProps> = () => {
             />
           )} */}
           </div>
-        ) : null}
+        ) : (
+          <Empty />
+        )}
       </div>
       <Modal
         visible={deleteDialogShow}
