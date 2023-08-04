@@ -55,6 +55,7 @@ const HomeTab: React.FC<HomeTabProps> = (props) => {
   const mainEnterpriseGroup = useTypedSelector(
     (state) => state.auth.mainEnterpriseGroup
   );
+  const theme = useTypedSelector((state) => state.auth.theme);
   const [contactIndex, setContactIndex] = React.useState(0);
   const [searchVisible, setSearchVisible] = React.useState(false);
   const [searchAllVisible, setSearchAllVisible] = React.useState(false);
@@ -509,10 +510,10 @@ const HomeTab: React.FC<HomeTabProps> = (props) => {
       ref={tabsRef}
       style={{
         height:
-          // theme && theme.calendarVisible
-          //   ?
-          "calc(100% - 300px)",
-        // : "calc(100% - 210px)",
+          theme && theme.calendarVisible
+            ?
+          "calc(100% - 260px)"
+        : "calc(100% - 215px)",
       }}
       id="tab"
     >

@@ -23,7 +23,7 @@ import set5Svg from "../../assets/svg/set5.svg";
 import set6Svg from "../../assets/svg/set6.svg";
 import set8Svg from "../../assets/svg/set8.svg";
 import set9Svg from "../../assets/svg/set9.svg";
-// import set11Svg from "../../assets/svg/set11.svg";
+import set11Svg from "../../assets/svg/set11.svg";
 import rightArrowPng from "../../assets/img/rightArrow.png";
 import logoutPng from "../../assets/img/logout.png";
 import fireBlueSvg from "../../assets/svg/fireBlue.svg";
@@ -260,10 +260,10 @@ const HeaderContent: React.FC<HeaderContentProps> = (prop) => {
           }}
         />
       </div> */}
-      {/* <div className="contentHeader-set-item">
+      <div className="contentHeader-set-item">
         <div className="contentHeader-set-item-title">
           <img
-            src={set4Png}
+            src={set11Svg}
             alt=""
             style={{
               width: "20px",
@@ -271,7 +271,7 @@ const HeaderContent: React.FC<HeaderContentProps> = (prop) => {
               marginRight: "5px",
             }}
           />
-          <div>日程</div>
+          <div>OKR</div>
         </div>
         <div>
           <Switch
@@ -281,7 +281,7 @@ const HeaderContent: React.FC<HeaderContentProps> = (prop) => {
             }}
           />
         </div>
-      </div> */}
+      </div>
       <div
         className="contentHeader-set-item"
         style={{ color: type === "phone" ? "#fff" : "#000" }}

@@ -102,7 +102,7 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
     };
   });
 
-  const getPrompt = useCallback(async () => {
+  const getPrompt = async () => {
     let promptRes: any = await api.auth.getPrompt();
     if (unDistory.current) {
       if (promptRes.msg === "OK") {
@@ -111,7 +111,7 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
         dispatch(setMessage(true, promptRes.msg, "error"));
       }
     }
-  }, [dispatch]);
+  };
   const getWeather = async () => {
     let newWeatherObj: any = {};
     // let weatherRes: any = await api.common.getWeather(
@@ -151,14 +151,9 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
       getWeather();
       // }
     }
-  }, [
-    user,
-    // user?.profile.lo,
-    // user?.profile.la,
-    dispatch,
-    getPrompt,
-  ]);
+  }, [user]);
   useEffect(() => {
+    console.log(">>>>>");
     if (theme.backgroundImg) {
       localStorage.setItem("url", theme.backgroundImg);
       setBg(theme.backgroundImg);
@@ -168,29 +163,52 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
     }
     if (!theme.taskShow) {
       setMenuShow(1);
+    } else {
+      setMenuShow(0);
+    }
+    if (!theme.fileShow) {
+      setMenuShow(0);
+    } else {
+      setMenuShow(1);
     }
   }, [theme]);
-
-  const changeFinishPercentArr = (e: any, type: string) => {
-    let newTheme = _.cloneDeep(theme);
-    if (e.target.checked) {
-      newTheme.finishPercentArr.push(type);
+  useEffect(() => {
+    console.log(">>>>>");
+    if (theme.backgroundImg) {
+      localStorage.setItem("url", theme.backgroundImg);
+      setBg(theme.backgroundImg);
     } else {
-      let index = _.findIndex(newTheme.finishPercentArr, type);
-      newTheme.finishPercentArr.splice(index, 1);
+      setBg("");
+      localStorage.removeItem("url");
     }
-    dispatch(setTheme(newTheme));
-    dispatch(
-      getSelfTask(
-        1,
-        user._key,
-        "[0, 1]",
-        1,
-        moment().add(1, "days").startOf("day").valueOf(),
-        1
-      )
-    );
-  };
+  }, [theme.backgroundImg]);
+  useEffect(() => {
+    if (theme.taskShow) {
+      setMenuShow(0);
+    } else if (!theme.taskShow && theme.fileShow) {
+      setMenuShow(1);
+    }
+  }, [theme.fileShow, theme.taskShow]);
+  // const changeFinishPercentArr = (e: any, type: string) => {
+  //   let newTheme = _.cloneDeep(theme);
+  //   if (e.target.checked) {
+  //     newTheme.finishPercentArr.push(type);
+  //   } else {
+  //     let index = _.findIndex(newTheme.finishPercentArr, type);
+  //     newTheme.finishPercentArr.splice(index, 1);
+  //   }
+  //   dispatch(setTheme(newTheme));
+  //   dispatch(
+  //     getSelfTask(
+  //       1,
+  //       user._key,
+  //       "[0, 1]",
+  //       1,
+  //       moment().add(1, "days").startOf("day").valueOf(),
+  //       1
+  //     )
+  //   );
+  // };
   const changeBoard = (type: string, bool?: string) => {
     let newTheme = _.cloneDeep(theme);
     if (bool) {
@@ -354,7 +372,9 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
         </div>
         <div className="showPage-weather-item">
           <div className="showPage-weather-item-top">天气</div>
-          <div className="showPage-weather-item-bottom">{weatherObj?.info?.type}</div>
+          <div className="showPage-weather-item-bottom">
+            {weatherObj?.info?.type}
+          </div>
           {/* <div className="showPage-weather-item-img">
             <img
               src={
@@ -445,7 +465,15 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
         </div>
         <div className="showPage-time-prompt">{prompt}</div>
       </div>
-      <div className="showPage">
+      <div
+        className="showPage"
+        style={{
+          backgroundColor:
+            theme.taskShow || theme.fileShow
+              ? "rgba(255, 255, 255, 0.1)"
+              : "transparent",
+        }}
+      >
         <div className="showPage-task-title">
           <div
             className="showPage-bigLogo"
@@ -476,19 +504,23 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
               今日事务
             </div>
           ) : null}
-          <div
-            className="showPage-task-menu-item"
-            style={{
-              borderBottom:
-                menuShow === 1 ? "2px solid #1890ff" : "2px solid transparent",
-              marginLeft: "15px",
-            }}
-            onClick={() => {
-              setMenuShow(1);
-            }}
-          >
-            我的文件
-          </div>
+          {theme.fileShow ? (
+            <div
+              className="showPage-task-menu-item"
+              style={{
+                borderBottom:
+                  menuShow === 1
+                    ? "2px solid #1890ff"
+                    : "2px solid transparent",
+                marginLeft: "15px",
+              }}
+              onClick={() => {
+                setMenuShow(1);
+              }}
+            >
+              我的文件
+            </div>
+          ) : null}
           {/* <div
             className="showPage-task-menu-item"
             style={{
@@ -503,13 +535,12 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
             收藏
           </div> */}
         </div>
-        {menuShow === 0 ? (
-          theme.taskShow !== false ? (
-            <div className="showPage-task-container">
-              <MainBoard showType="showPage" />
-            </div>
-          ) : null
-        ) : menuShow === 1 ? (
+        {menuShow === 0 && theme.taskShow !== false ? (
+          <div className="showPage-task-container">
+            <MainBoard showType="showPage" />
+          </div>
+        ) : null}
+        {menuShow === 1 && theme.fileShow !== false ? (
           <div className="showPage-timeos-container">
             <FileList
               groupKey={""}
@@ -518,7 +549,8 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
               fileItemWidth={"calc(100% - 365px)"}
             />
           </div>
-        ) : // ) : menuShow === 2 ? (
+        ) : null}
+        {/* // ) : menuShow === 2 ? (
         //   <div className="showPage-timeos-container">
         //     <FileList
         //       groupKey={mainGroupKey}
@@ -527,16 +559,23 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
         //       fileItemWidth={"calc(100% - 365px)"}
         //     />
         //   </div>
-        null}
-        <img
-          src={showAddSvg}
-          alt=""
-          className="showPage-logo"
-          style={{ top: "24px", right: "45px", height: "20px", width: "20px" }}
-          onClick={(e: any) => {
-            setAddVisible(true);
-          }}
-        />
+         */}
+        {theme.taskShow ? (
+          <img
+            src={showAddSvg}
+            alt=""
+            className="showPage-logo"
+            style={{
+              top: "24px",
+              right: "45px",
+              height: "20px",
+              width: "20px",
+            }}
+            onClick={(e: any) => {
+              setAddVisible(true);
+            }}
+          />
+        ) : null}
         <img
           src={infoPng}
           alt=""
@@ -624,7 +663,7 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
               />
             </div>
           </div>
-          <div className="showPage-set-title" style={{ marginBottom: "10px" }}>
+          {/* <div className="showPage-set-title" style={{ marginBottom: "10px" }}>
             任务设置
           </div>
           <div style={{ marginBottom: "25px", marginLeft: "10px" }}>
@@ -639,7 +678,7 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
             >
               今日已完成
             </Checkbox>
-          </div>
+          </div> */}
           <div className="showPage-set-title">
             农历显示
             <Switch
@@ -649,16 +688,7 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
               }}
             />
           </div>
-          <div className="showPage-set-title">
-            任务看板
-            <Switch
-              checked={theme.taskShow !== false ? true : false}
-              onChange={() => {
-                changeBoard("taskShow");
-                setMenuShow(1);
-              }}
-            />
-          </div>
+
           <div className="showPage-set-title">
             时钟风格
             {/* <Switch
@@ -719,6 +749,26 @@ const ShowPage: React.FC<ShowPageProps> = (props) => {
               />
             </div>
           ) : null}
+          <div className="showPage-set-title">
+            任务看板
+            <Switch
+              checked={theme.taskShow !== false ? true : false}
+              onChange={() => {
+                changeBoard("taskShow");
+                // setMenuShow(1);
+              }}
+            />
+          </div>
+          <div className="showPage-set-title">
+            文件看板
+            <Switch
+              checked={theme.fileShow !== false ? true : false}
+              onChange={() => {
+                changeBoard("fileShow");
+                // setMenuShow(0);
+              }}
+            />
+          </div>
         </div>
       </Drawer>
       <Drawer

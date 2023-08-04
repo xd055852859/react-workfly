@@ -771,25 +771,28 @@ const Home: React.FC<HomeProps> = (props) => {
             {nodeMenu}
           </DropMenu>
         </div>
-        {/* {theme && theme.calendarVisible ? ( */}
-        <div
-          style={
-            headerIndex === 8 ? { background: "rgba(255, 255, 255, 0.34)" } : {}
-          }
-          className="home-header-item"
-          onClick={() => {
-            dispatch(setCommonHeaderIndex(8));
-            dispatch(setMoveState("in"));
-            // dispatch(changeColorState(true));
-            // setTimeout(() => {
-            //   dispatch(changeColorState(false));
-            // }, 1000);
-          }}
-        >
-          <img src={okrSvg} alt="" className="home-header-item-logo" />
-          OKR目标管理
-        </div>
-        <div
+        {theme && theme.calendarVisible ? (
+          <div
+            style={
+              headerIndex === 8
+                ? { background: "rgba(255, 255, 255, 0.34)" }
+                : {}
+            }
+            className="home-header-item"
+            onClick={() => {
+              dispatch(setCommonHeaderIndex(8));
+              dispatch(setMoveState("in"));
+              // dispatch(changeColorState(true));
+              // setTimeout(() => {
+              //   dispatch(changeColorState(false));
+              // }, 1000);
+            }}
+          >
+            <img src={okrSvg} alt="" className="home-header-item-logo" />
+            OKR目标管理
+          </div>
+        ) : null}
+        {/* <div
           style={
             headerIndex === 7 ? { background: "rgba(255, 255, 255, 0.34)" } : {}
           }
@@ -804,7 +807,7 @@ const Home: React.FC<HomeProps> = (props) => {
         >
           <img src={wendangSvg} alt="" className="home-header-item-logo" />
           我的文档
-        </div>
+        </div> */}
         <div
           style={
             headerIndex === 5 ? { background: "rgba(255, 255, 255, 0.34)" } : {}
